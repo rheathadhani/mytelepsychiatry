@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Dashboard</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="patient-style.css" />
+</head>
+
+<body>
+  <div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="list-group list-group-flush">
+        <a href="#" class="list-group-item list-group-item-action bg-light active">Dashboard</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light">Appointments</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light">Symptom Tracker</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light">Wellness Activities</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light mt-auto">Sign Out</a>
+      </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" class="w-100">
+      <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <button class="btn btn-primary" id="menu-toggle"> Menu </button>
+      </nav>
+
+      <div class="container-fluid">
+        <!-- Greeting and Calendar -->
+        <div class="row">
+          <div class="col-lg-8"id="greeting">
+            <div class="card mb-4" id="greeting-body">
+              <div class="card-body">
+                <h1>Welcome back, [Patient Name]!</h1>
+                <br>
+                <p>You have <strong>[number]</strong> medications to take today.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4" id="calendar">
+            <div class="card mb-4">
+              <div class="card-header">Calendar</div>
+              <div class="card-body">
+                <!-- Embed calendar here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="card mb-4">
+              <div class="card-body text-center">
+                <h6>Total Patients</h6>
+                <h3>473</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card mb-4">
+              <div class="card-body text-center">
+                <h6>Consultation</h6>
+                <h3>236</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card mb-4">
+              <div class="card-body text-center">
+                <h6>Surgery</h6>
+                <h3>132</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- List of Medications -->
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card mb-4">
+              <div class="card-header">List of Medications</div>
+              <div class="card-body">
+                <!-- List of medications goes here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- History of Appointments -->
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card mb-4">
+              <div class="card-header">History of Appointments</div>
+              <div class="card-body">
+                <!-- List of past appointments -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Bootstrap and jQuery scripts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="patient-index.js"></script>
+</body>
+
+</html>

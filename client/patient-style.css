@@ -1,0 +1,118 @@
+/* Sidebar styles */
+#sidebar-wrapper {
+  min-height: 100vh;
+  background-color: #e6f2e1;
+  width: 250px; /* Standardized width */
+}
+
+#wrapper.toggled #sidebar-wrapper {
+  margin-left: -250px;
+  transition: margin 0.25s ease-in-out;
+}
+
+#wrapper.toggled #page-content-wrapper {
+  margin-left: 0;
+  width: 100vw; /* Adjust if needed to fit your design */
+  padding: 20px 40px; /* More padding when sidebar is hidden */
+}
+
+#page-content-wrapper {
+  transition: margin 0.25s ease-in-out, width 0.25s ease-in-out;
+  padding: 20px; /* Maintain padding */
+  width: calc(100% - 250px); /* Adjust width assuming sidebar is 250px wide */
+  margin-left: 250px;
+}
+
+#wrapper #sidebar-wrapper {
+  margin-left: 0; /* Ensure sidebar is visible when not toggled */
+  transition: margin 0.25s ease-in-out;
+}
+
+#wrapper.toggled #menu-toggle {
+  display: block; /* Only show toggle when sidebar is toggled */
+}
+
+#sidebar-wrapper .sidebar-heading {
+  padding: 0.875rem 1.25rem;
+  font-size: 1.2rem;
+  color: #333;
+  background-color: #e6f2e1;
+}
+
+#sidebar-wrapper .list-group-item.active {
+  background-color: #33cc66; /* Green highlight for active link */
+  border-left: 5px solid #33cc66;
+  color: #000;
+}
+
+#sidebar-wrapper .list-group-item {
+  background-color: #e6f2e1;
+  color: #333;
+}
+
+#sidebar-wrapper,
+#page-content-wrapper {
+  transition: width 0.25s ease, padding 0.25s ease, margin-left 0.25s ease;
+}
+
+#page-content-wrapper {
+  padding: 20px;
+}
+
+#menu-toggle {
+  width: 98vw;
+  display: none;
+}
+
+.card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#greeting, #calendar {
+  height: 34vh;
+}
+
+#greeting-body {
+  height: 30vh;
+}
+
+/* Hide sidebar and show toggle button at widths below 700px */
+@media (max-width: 700px) {
+  #sidebar-wrapper {
+    margin-left: -250px; /* Ensure sidebar is hidden */
+  }
+
+  #menu-toggle {
+    display: block; /* Show toggle button */
+  }
+
+  #wrapper.toggled #sidebar-wrapper {
+    margin-left: 0; /* Show sidebar when toggled */
+  }
+
+  #wrapper.toggled #page-content-wrapper {
+    margin-left: 250px; /* Offset when sidebar is toggled */
+    width: calc(100% - 250px); /* Adjust width to accommodate sidebar */
+  }
+
+  #wrapper:not(.toggled) #page-content-wrapper {
+    margin-left: 0; /* No margin when sidebar is hidden */
+    width: 100%; /* Use full width when sidebar is hidden */
+  }
+}
+
+/* Above 700px, always show the sidebar and hide the toggle button */
+@media (min-width: 701px) {
+  #sidebar-wrapper {
+    margin-left: 0; /* Sidebar always visible */
+  }
+
+  #menu-toggle {
+    display: none; /* Hide toggle button */
+  }
+  #page-content-wrapper {
+    margin-left: 0; /* Ensure margin offsets for sidebar */
+    width: calc(100% - 250px); /* Adjust width to fill space beside sidebar */
+}
+}
