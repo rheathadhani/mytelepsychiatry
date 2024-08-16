@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Patient Dashboard</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="patient-style.css" />
+  <link rel="stylesheet" href="patient-index.css" />
 </head>
 
 <body>
@@ -14,11 +14,10 @@
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
       <div class="list-group list-group-flush">
-        <a href="#" class="list-group-item list-group-item-action bg-light active">Dashboard</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Appointments</a>
+        <a href="patient-index.html" class="list-group-item list-group-item-action bg-light active">Dashboard</a>
+        <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-light">Appointments</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Symptom Tracker</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Wellness Activities</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light" id="profile-link">Profile</a>
         <a href="#" class="list-group-item list-group-item-action bg-light mt-auto">Sign Out</a>
       </div>
     </div>
@@ -43,9 +42,9 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-4" id="calendar">
+          <div class="col-lg-4" id="upcoming-session">
             <div class="card mb-4">
-              <div class="card-header">Calendar</div>
+              <div class="card-header">Upcoming Session</div>
               <div class="card-body">
                 <!-- Embed calendar here -->
               </div>
