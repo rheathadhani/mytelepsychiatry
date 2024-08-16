@@ -42,66 +42,65 @@
         </div>
 
         <!-- Therapist Selection Section -->
-        <div class="row">
-          <div class="col-md-6">
-            <div class="card mb-3">
-              <div class="card-header">
-                Select Available Therapist
-              </div>
-              <div class="card-body">
-                <select id="therapistSelect" class="form-control">
-                  <option value="Therapist 1">Therapist 1</option>
-                  <option value="Therapist 2">Therapist 2</option>
-                  <option value="Therapist 3">Therapist 3</option>
-                </select>
-              </div>
+        <div class="card mb-3">
+          <div class="card-header" data-toggle="collapse" data-target="#therapistSelection" aria-expanded="true">
+            Select Available Therapist
+          </div>
+          <div id="therapistSelection" class="collapse show">
+            <div class="card-body">
+              <select id="therapistSelect" class="form-control">
+                <option value="Therapist 1">Therapist 1</option>
+                <option value="Therapist 2">Therapist 2</option>
+                <option value="Therapist 3">Therapist 3</option>
+              </select>
             </div>
           </div>
         </div>
 
         <!-- Date and Time Picker Section -->
-        <div class="container-fluid">
-          <!-- Date Selection -->
-          <div class="row">
-              <div class="col-md-4">
-                  <div class="card mb-3">
-                      <div class="card-body">
-                          <label for="date">Select Date:</label>
-                          <input type="date" id="date" class="form-control" placeholder="mm/dd/yyyy">
-                      </div>
-                  </div>
-              </div>
-      
-              <!-- Time Selection -->
-              <div class="col-md-4">
-                  <div class="card mb-3">
-                      <div class="card-body">
-                          <label for="time">Select Time:</label>
-                          <input type="time" id="time" class="form-control" placeholder="hh:mm">
-                      </div>
-                  </div>
-              </div>
+        <div class="card mb-3">
+          <div class="card-header" data-toggle="collapse" data-target="#dateTimePicker" aria-expanded="true">
+            Select Date and Time
           </div>
-      </div>
+          <div id="dateTimePicker" class="collapse show">
+            <div class="card-body">
+              <div class="row">
+                <!-- Date Selection -->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="date">Select Date:</label>
+                    <input type="date" id="date" class="form-control" placeholder="mm/dd/yyyy">
+                  </div>
+                </div>
 
-        <!-- Review and Confirm Section -->
-        <div class="row">
-          <div class="col-md-8">
-            <div class="card mb-3">
-              <div class="card-header">
-                Review Your Selection
-              </div>
-              <div class="card-body">
-                <p><strong>Patient Name:</strong> John Doe</p> <!-- Replace with dynamic user data -->
-                <p><strong>Selected Therapist:</strong> <span id="selectedTherapist">Therapist 1</span></p>
-                <p><strong>Session Date & Time:</strong> <span id="selectedDateTime"></span></p>
-                <button class="btn btn-success" id="confirmAppointment">Confirm Appointment</button>
+                <!-- Time Selection -->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="time">Select Time:</label>
+                    <input type="time" id="time" class="form-control" placeholder="hh:mm">
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
+        <!-- Review and Confirm Section -->
+        <div class="card mb-3">
+          <div class="card-header" data-toggle="collapse" data-target="#reviewSelection" aria-expanded="true">
+            Review Your Appointment
+          </div>
+          <div id="reviewSelection" class="collapse show">
+            <div class="card-body">
+              <p><strong>Patient Name:</strong> John Doe</p> <!-- Replace with dynamic user data -->
+              <p><strong>Selected Therapist:</strong> <span id="selectedTherapist">Therapist 1</span></p>
+              <p><strong>Session Date & Time:</strong> <span id="selectedDateTime"></span></p>
+              <button class="btn btn-success" id="confirmAppointment">Confirm Appointment</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
   <!-- /#page-content-wrapper -->
@@ -111,7 +110,8 @@
   <!-- Bootstrap and jQuery scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.amazonaws.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="patient-appointments.js"></script>
   <script>
     $(document).ready(function() {
 
