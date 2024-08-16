@@ -116,3 +116,11 @@
     width: calc(100% - 250px); /* Adjust width to fill space beside sidebar */
 }
 }
+
+
+/*profile*/
+.profile-info p {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+}
