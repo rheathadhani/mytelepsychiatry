@@ -46,51 +46,55 @@
         <div class="row">
           <div class="col-md-8">
             <div class="card mb-3">
-              <div class="card-header bg-info text-white">
+              <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#psychiatrist"
+                aria-expanded="true">
                 Select Available Therapist
               </div>
-              <div class="card-body">
-                <div class="form-group d-flex align-items-center justify-content-between">
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="therapist" id="therapist1" value="Therapist 1">
-                    <label class="form-check-label" for="therapist1">
-                      Therapist 1
-                    </label>
+              <div id="psychiatrist" class="collapse show">
+                <div class="card-body">
+                  <div class="form-group d-flex align-items-center justify-content-between">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="therapist" id="therapist1" value="Therapist 1">
+                      <label class="form-check-label" for="therapist1">
+                        Therapist 1
+                      </label>
+                    </div>
+                    <button class="btn btn-info btn-sm select-button" data-therapist="Therapist 1">Select</button>
                   </div>
-                  <button class="btn btn-info btn-sm select-button" data-therapist="Therapist 1">Select</button>
-                </div>
-                <div class="form-group d-flex align-items-center justify-content-between">
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="therapist" id="therapist2" value="Therapist 2">
-                    <label class="form-check-label" for="therapist2">
-                      Therapist 2
-                    </label>
+                  <div class="form-group d-flex align-items-center justify-content-between">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="therapist" id="therapist2" value="Therapist 2">
+                      <label class="form-check-label" for="therapist2">
+                        Therapist 2
+                      </label>
+                    </div>
+                    <button class="btn btn-info btn-sm select-button" data-therapist="Therapist 2">Select</button>
                   </div>
-                  <button class="btn btn-info btn-sm select-button" data-therapist="Therapist 2">Select</button>
-                </div>
-                <div class="form-group d-flex align-items-center justify-content-between">
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="therapist" id="therapist3" value="Therapist 3">
-                    <label class="form-check-label" for="therapist3">
-                      Therapist 3
-                    </label>
+                  <div class="form-group d-flex align-items-center justify-content-between">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="therapist" id="therapist3" value="Therapist 3">
+                      <label class="form-check-label" for="therapist3">
+                        Therapist 3
+                      </label>
+                    </div>
+                    <button class="btn btn-info btn-sm select-button" data-therapist="Therapist 3">Select</button>
                   </div>
-                  <button class="btn btn-info btn-sm select-button" data-therapist="Therapist 3">Select</button>
                 </div>
               </div>
             </div>
           </div>
 
           <!--Psychiatrist Profile-->
-          <div class="col-md-4" id="therapistProfile" style="display:none;">
+          <div class="col-md-4" id="psychiatrist-profile" style="display:none;">
             <div class="card mb-3">
-              <div class="card-header bg-info text-white">
-                Therapist Profile
+              <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#psy-profile"
+              aria-expanded="true">
+                Psychiatrist Profile
               </div>
-              <div class="card-body text-center">
-                <img id="therapistImage" src="#" alt="Therapist Image" style="width: 100px; height: 100px;">
-                <h5 id="therapistName">Therapist Name</h5>
-                <p id="therapistDetails">Therapist Profile Details Here</p>
+              <div class="card-body text-center" id="psy-profile">
+                <img id="psy-Image" src="#" alt="Psychiatrist Image" style="width: 100px; height: 100px;">
+                <h5 id="psy-Name">Therapist Name</h5>
+                <p id="psy-details">Therapist Profile Details Here</p>
               </div>
             </div>
           </div>
