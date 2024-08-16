@@ -39,11 +39,6 @@
   background-color: #e6f2e1;
 }
 
-#sidebar-wrapper .list-group-item.active {
-  background-color: #33cc66; /* Green highlight for active link */
-  border-left: 5px solid #33cc66;
-  color: #000;
-}
 
 #sidebar-wrapper .list-group-item {
   background-color: #e6f2e1;
@@ -69,7 +64,8 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-#greeting, #upcoming-session {
+#greeting,
+#upcoming-session {
   height: 34vh;
 }
 
@@ -114,7 +110,5 @@
   #page-content-wrapper {
     margin-left: 0; /* Ensure margin offsets for sidebar */
     width: calc(100% - 250px); /* Adjust width to fill space beside sidebar */
+  }
 }
-}
-
-
