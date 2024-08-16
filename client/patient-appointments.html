@@ -42,49 +42,49 @@
           </div>
         </div>
 
-        <!-- Therapist Selection Section -->
+        <!-- Psychiatrist Selection Section -->
         <div class="row">
           <div class="col-md-8">
             <div class="card mb-3">
               <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#psychiatrist"
                 aria-expanded="true">
-                Select Available Therapist
+                Select Available Psychiatrist
               </div>
               <div id="psychiatrist" class="collapse show">
                 <div class="card-body">
                   <div class="form-group d-flex align-items-center justify-content-between">
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="therapist" id="therapist1" value="Therapist 1">
-                      <label class="form-check-label" for="therapist1">
-                        Therapist 1
+                      <input class="form-check-input" type="radio" name="psychiatrist" id="psychiatrist1" value="Psychiatrist 1">
+                      <label class="form-check-label" for="psychiatrist1">
+                        Psychiatrist 1
                       </label>
                     </div>
-                    <button class="btn btn-info btn-sm select-button" data-therapist="Therapist 1">Select</button>
+                    <button class="btn btn-info btn-sm select-button" data-psychiatrist="Psychiatrist 1">Select</button>
                   </div>
                   <div class="form-group d-flex align-items-center justify-content-between">
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="therapist" id="therapist2" value="Therapist 2">
-                      <label class="form-check-label" for="therapist2">
-                        Therapist 2
+                      <input class="form-check-input" type="radio" name="psychiatrist" id="psychiatrist2" value="Psychiatrist 2">
+                      <label class="form-check-label" for="psychiatrist2">
+                        Psychiatrist 2
                       </label>
                     </div>
-                    <button class="btn btn-info btn-sm select-button" data-therapist="Therapist 2">Select</button>
+                    <button class="btn btn-info btn-sm select-button" data-psychiatrist="Psychiatrist 2">Select</button>
                   </div>
                   <div class="form-group d-flex align-items-center justify-content-between">
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="therapist" id="therapist3" value="Therapist 3">
-                      <label class="form-check-label" for="therapist3">
-                        Therapist 3
+                      <input class="form-check-input" type="radio" name="psychiatrist" id="psychiatrist3" value="Psychiatrist 3">
+                      <label class="form-check-label" for="psychiatrist3">
+                        Psychiatrist 3
                       </label>
                     </div>
-                    <button class="btn btn-info btn-sm select-button" data-therapist="Therapist 3">Select</button>
+                    <button class="btn btn-info btn-sm select-button" data-psychiatrist="Psychiatrist 3">Select</button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!--Psychiatrist Profile-->
+          <!-- Psychiatrist Profile -->
           <div class="col-md-4" id="psychiatrist-profile" style="display:none;">
             <div class="card mb-3">
               <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#psy-profile"
@@ -93,8 +93,8 @@
               </div>
               <div class="card-body text-center" id="psy-profile">
                 <img id="psy-Image" src="#" alt="Psychiatrist Image" style="width: 100px; height: 100px;">
-                <h5 id="psy-Name">Therapist Name</h5>
-                <p id="psy-details">Therapist Profile Details Here</p>
+                <h5 id="psy-Name">Psychiatrist Name</h5>
+                <p id="psy-details">Psychiatrist Profile Details Here</p>
               </div>
             </div>
           </div>
@@ -138,7 +138,7 @@
           <div id="reviewSelection" class="collapse show">
             <div class="card-body">
               <p><strong>Patient Name:</strong> John Doe</p> <!-- Replace with dynamic user data -->
-              <p><strong>Selected Therapist:</strong> <span id="selected-psy">Therapist 1</span></p>
+              <p><strong>Selected Psychiatrist:</strong> <span id="selected-psy">Psychiatrist 1</span></p>
               <p><strong>Session Date & Time:</strong> <span id="selectedDateTime"></span></p>
             </div>
           </div>
@@ -160,18 +160,18 @@
   <script>
     $(document).ready(function () {
       $('.select-button').on('click', function () {
-        var therapist = $(this).data('therapist');
-        $('#selected-psy').text(therapist);
+        var psychiatrist = $(this).data('psychiatrist');
+        $('#selected-psy').text(psychiatrist);
 
-        // Update therapist profile details
-        $('#psy-Name').text(therapist);
-        $('#psy-details').text(therapist + ' Profile Details Here');
+        // Update psychiatrist profile details
+        $('#psy-Name').text(psychiatrist);
+        $('#psy-details').text(psychiatrist + ' Profile Details Here');
         $('#psy-Image').attr('src', 'path/to/image.png'); // Update with correct path
 
-        // Show the therapist profile
+        // Show the psychiatrist profile
         $('#psychiatrist-profile').show();
 
-        // Shrink the therapist selection section
+        // Shrink the psychiatrist selection section
         $('.col-md-8').removeClass('col-md-8').addClass('col-md-4');
       });
     });
