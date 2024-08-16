@@ -64,6 +64,16 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+#cards {
+  font-weight: bold; /* Bold labels for better readability */
+  color: #4a5568;
+}
+
+.card-body {
+  font-weight: bold; /* Bold labels for better readability */
+  color: #4a5568;
+}
+
 #greeting,
 #upcoming-session {
   height: 34vh;

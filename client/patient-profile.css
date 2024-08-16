@@ -7,7 +7,6 @@
   }
   
   h2 {
-    color: #5a67d8; /* Soft blue for headings */
     margin-bottom: 20px;
   }
   
@@ -27,24 +26,3 @@
     box-shadow: 0 0 0 0.2rem rgba(90, 103, 216, 0.25); /* Soft blue glow on focus */
   }
   
-  .btn-primary {
-    background-color: #5a67d8; /* Soft blue background for buttons */
-    border-color: #5a67d8; /* Match border color */
-    border-radius: 5px; /* Rounded corners for buttons */
-    padding: 10px 20px; /* Padding for button size */
-  }
-  
-  .btn-primary:hover {
-    background-color: #4c51bf; /* Darker blue on hover */
-  }
-  
-  .btn-secondary {
-    background-color: #4a5568; /* Gray background for secondary buttons */
-    border-color: #4a5568; /* Match border color */
-    border-radius: 5px; /* Rounded corners for buttons */
-    padding: 10px 20px; /* Padding for button size */
-  }
-  
-  .btn-secondary:hover {
-    background-color: #2d3748; /* Darker gray on hover */
-  }
