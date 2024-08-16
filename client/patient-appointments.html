@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Patient Apppointments</title>
+  <title>Patient Appointments</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
   <link rel="stylesheet" href="patient-index.css" />
 </head>
@@ -44,7 +44,7 @@
 
         <!-- Therapist Selection Section -->
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-8">
             <div class="card mb-3">
               <div class="card-header bg-info text-white">
                 Select Available Therapist
@@ -77,6 +77,18 @@
                   </div>
                   <button class="btn btn-info btn-sm select-button" data-therapist="Therapist 3">Select</button>
                 </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4" id="therapistProfile" style="display:none;">
+            <div class="card mb-3">
+              <div class="card-header bg-info text-white">
+                Therapist Profile
+              </div>
+              <div class="card-body text-center">
+                <img id="therapistImage" src="#" alt="Therapist Image" style="width: 100px; height: 100px;">
+                <h5 id="therapistName">Therapist Name</h5>
+                <p id="therapistDetails">Therapist Profile Details Here</p>
               </div>
             </div>
           </div>
@@ -139,6 +151,25 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="patient-appointments.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('.select-button').on('click', function () {
+        var therapist = $(this).data('therapist');
+        $('#selectedTherapist').text(therapist);
+
+        // Update therapist profile details
+        $('#therapistName').text(therapist);
+        $('#therapistDetails').text(therapist + ' Profile Details Here');
+        $('#therapistImage').attr('src', 'path/to/image.png'); // Update with correct path
+
+        // Show the therapist profile
+        $('#therapistProfile').show();
+
+        // Shrink the therapist selection section
+        $('.col-md-8').removeClass('col-md-8').addClass('col-md-4');
+      });
+    });
+  </script>
 </body>
 
 </html>
