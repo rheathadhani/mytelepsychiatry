@@ -12,9 +12,9 @@
 <body>
   <div class="d-flex" id="wrapper">
     <!-- Sidebar -->
-    <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="bg-light border-right border-info" id="sidebar-wrapper">
       <div class="list-group list-group-flush">
-        <a href="patient-index.html" class="list-group-item list-group-item-action bg-light active">Dashboard</a>
+        <a href="patient-index.html" class="list-group-item list-group-item-action bg-light">Dashboard</a>
         <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-light">Appointments</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Symptom Tracker</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Wellness Activities</a>
@@ -44,7 +44,8 @@
 
         <!-- Therapist Selection Section -->
         <div class="card mb-3">
-          <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#therapistSelection" aria-expanded="true">
+          <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#therapistSelection"
+            aria-expanded="true">
             Select Available Therapist
           </div>
           <div id="therapistSelection" class="collapse show">
@@ -60,7 +61,8 @@
 
         <!-- Date and Time Picker Section -->
         <div class="card mb-3">
-          <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#dateTimePicker" aria-expanded="true">
+          <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#dateTimePicker"
+            aria-expanded="true">
             Select Date and Time
           </div>
           <div id="dateTimePicker" class="collapse show">
@@ -88,14 +90,15 @@
 
         <!-- Review and Confirm Section -->
         <div class="card mb-3">
-          <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#reviewSelection" aria-expanded="true">
+          <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#reviewSelection"
+            aria-expanded="true">
             Review Your Appointment
           </div>
           <div id="reviewSelection" class="collapse show">
             <div class="card-body">
               <p><strong>Patient Name:</strong> John Doe</p> <!-- Replace with dynamic user data -->
-              <p><strong>Selected Therapist:</strong>  <span id="selectedTherapist">Therapist 1</span></p>
-              <p><strong>Session Date & Time:</strong>  <span id="selectedDateTime"></span></p>
+              <p><strong>Selected Therapist:</strong> <span id="selectedTherapist">Therapist 1</span></p>
+              <p><strong>Session Date & Time:</strong> <span id="selectedDateTime"></span></p>
             </div>
           </div>
         </div>

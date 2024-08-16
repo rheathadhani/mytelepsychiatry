@@ -12,7 +12,7 @@
 <body>
   <div class="d-flex" id="wrapper">
     <!-- Sidebar -->
-    <div class="bg-light border-right border border-info" id="sidebar-wrapper">
+    <div class="bg-light border-right border-info" id="sidebar-wrapper">
       <div class="list-group list-group-flush">
         <a href="patient-index.html" class="list-group-item list-group-item-action bg-light">Dashboard</a>
         <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-light">Appointments</a>
@@ -40,7 +40,9 @@
                 <h1>Welcome back, [Patient Name]!</h1>
                 <br>
                 <p>You have <strong>[number]</strong> medications to take today.</p>
-                <a href="patient-profile.html" class="btn-info">View Profile </a>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <button class="btn btn-info"><a href="patient-profile.html" class="text-white text-decoration-none">View Profile </a></button>
+                </div>
               </div>
             </div>
           </div>
