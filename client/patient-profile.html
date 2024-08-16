@@ -1,26 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile Page</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="patient-style.css">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="patient-index.css" />
+  <link rel="stylesheet" href="patient-profile.css">
 </head>
-<body>
-    <div class="container">
-        <h2>Profile Details</h2>
-        <div class="profile-info">
-          <p><strong>Name:</strong> John Doe</p>
-          <p><strong>Email:</strong> john.doe@example.com</p>
-          <p><strong>Phone:</strong> +1234567890</p>
-          <p><strong>Address:</strong> 1234 Street, City, Country</p>
-        </div>
-    </div>
-      
 
+<body>
+  <div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="list-group list-group-flush">
+        <a href="patient-index.html" class="list-group-item list-group-item-action bg-light active">Dashboard</a>
+        <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-light">Appointments</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light">Symptom Tracker</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light">Wellness Activities</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light mt-auto">Sign Out</a>
+      </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" class="w-100">
+      <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <button class="btn btn-primary" id="menu-toggle">Menu</button>
+      </nav>
+
+      <!-- Form Heading -->
+      <h2 class="mb-4 text-primary">Personal Details</h2>
+
+      <!-- Personal Details Form -->
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="firstName">First Name</label>
+            <input type="text" class="form-control" id="firstName">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="lastName">Last Name</label>
+            <input type="text" class="form-control" id="lastName">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputEmail">Email</label>
+            <input type="email" class="form-control" id="inputEmail">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="inputDOB">Date of Birth</label>
+            <input type="date" class="form-control" id="inputDOB">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label for="inputAddress">Address Line 1</label>
+            <input type="text" class="form-control" id="inputAddress">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputGender">Gender</label>
+            <select id="inputGender" class="form-control">
+              <option>Female</option>
+              <option>Male</option>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="inputContact">Emergency Contact</label>
+            <input type="text" class="form-control" id="inputContact">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputPhone">Phone Number</label>
+            <input type="tel" class="form-control" id="inputPhone">
+          </div>
+        </div>
+
+        <!-- Update Profile Button -->
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+      </form>
+
+      <!-- Change Password Form -->
+      <h2 class="mt-5 mb-4 text-primary">Change Password</h2>
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputCurrentPassword">Current Password</label>
+            <input type="password" class="form-control" id="inputCurrentPassword">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputNewPassword">New Password</label>
+            <input type="password" class="form-control" id="inputNewPassword">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputConfirmPassword">Confirm New Password</label>
+            <input type="password" class="form-control" id="inputConfirmPassword">
+          </div>
+        </div>
+        <!-- Change Password Button -->
+        <button type="submit" class="btn btn-secondary">Change Password</button>
+      </form>
+    </div>
+  </div>
+  <!-- /#page-content-wrapper -->
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Bootstrap and jQuery scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

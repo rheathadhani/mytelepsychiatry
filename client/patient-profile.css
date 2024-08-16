@@ -1,7 +1,50 @@
-/*profile*/
-.profile-info p {
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 10px;
+
+#page-content-wrapper {
+    background-color: #ffffff; /* White background for content */
+    border-radius: 10px; /* Rounded corners for a softer look */
+    padding: 30px; /* Extra padding for spacious layout */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
   }
   
+  h2 {
+    color: #5a67d8; /* Soft blue for headings */
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-weight: bold; /* Bold labels for better readability */
+    color: #4a5568; /* Slightly darker text for labels */
+  }
+  
+  .form-control {
+    background-color: #ffffff; /* White background for input fields */
+    border: 1px solid #cbd5e0; /* Soft border color */
+    border-radius: 5px; /* Rounded corners for inputs */
+  }
+  
+  .form-control:focus {
+    border-color: #5a67d8; /* Match focus color to the heading color */
+    box-shadow: 0 0 0 0.2rem rgba(90, 103, 216, 0.25); /* Soft blue glow on focus */
+  }
+  
+  .btn-primary {
+    background-color: #5a67d8; /* Soft blue background for buttons */
+    border-color: #5a67d8; /* Match border color */
+    border-radius: 5px; /* Rounded corners for buttons */
+    padding: 10px 20px; /* Padding for button size */
+  }
+  
+  .btn-primary:hover {
+    background-color: #4c51bf; /* Darker blue on hover */
+  }
+  
+  .btn-secondary {
+    background-color: #4a5568; /* Gray background for secondary buttons */
+    border-color: #4a5568; /* Match border color */
+    border-radius: 5px; /* Rounded corners for buttons */
+    padding: 10px 20px; /* Padding for button size */
+  }
+  
+  .btn-secondary:hover {
+    background-color: #2d3748; /* Darker gray on hover */
+  }
