@@ -88,7 +88,7 @@
           <div class="col-md-4" id="psychiatrist-profile" style="display:none;">
             <div class="card mb-3">
               <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#psy-profile"
-              aria-expanded="true">
+                aria-expanded="true">
                 Psychiatrist Profile
               </div>
               <div class="card-body text-center" id="psy-profile">
@@ -138,7 +138,7 @@
           <div id="reviewSelection" class="collapse show">
             <div class="card-body">
               <p><strong>Patient Name:</strong> John Doe</p> <!-- Replace with dynamic user data -->
-              <p><strong>Selected Therapist:</strong> <span id="selectedTherapist">Therapist 1</span></p>
+              <p><strong>Selected Therapist:</strong> <span id="selected-psy">Therapist 1</span></p>
               <p><strong>Session Date & Time:</strong> <span id="selectedDateTime"></span></p>
             </div>
           </div>
@@ -161,20 +161,21 @@
     $(document).ready(function () {
       $('.select-button').on('click', function () {
         var therapist = $(this).data('therapist');
-        $('#selectedTherapist').text(therapist);
+        $('#selected-psy').text(therapist);
 
         // Update therapist profile details
-        $('#therapistName').text(therapist);
-        $('#therapistDetails').text(therapist + ' Profile Details Here');
-        $('#therapistImage').attr('src', 'path/to/image.png'); // Update with correct path
+        $('#psy-Name').text(therapist);
+        $('#psy-details').text(therapist + ' Profile Details Here');
+        $('#psy-Image').attr('src', 'path/to/image.png'); // Update with correct path
 
         // Show the therapist profile
-        $('#therapistProfile').show();
+        $('#psychiatrist-profile').show();
 
         // Shrink the therapist selection section
         $('.col-md-8').removeClass('col-md-8').addClass('col-md-4');
       });
     });
+
   </script>
 </body>
 
