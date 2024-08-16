@@ -34,6 +34,7 @@
         <div class="row">
           <div class="col-12">
             <div class="card mb-3">
+              <div class="card-header bg-info"></div>
               <div class="card-body text-center">
                 <h4>Book Your Appointment Now!</h4>
               </div>
@@ -43,7 +44,7 @@
 
         <!-- Therapist Selection Section -->
         <div class="card mb-3">
-          <div class="card-header" data-toggle="collapse" data-target="#therapistSelection" aria-expanded="true">
+          <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#therapistSelection" aria-expanded="true">
             Select Available Therapist
           </div>
           <div id="therapistSelection" class="collapse show">
@@ -59,7 +60,7 @@
 
         <!-- Date and Time Picker Section -->
         <div class="card mb-3">
-          <div class="card-header" data-toggle="collapse" data-target="#dateTimePicker" aria-expanded="true">
+          <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#dateTimePicker" aria-expanded="true">
             Select Date and Time
           </div>
           <div id="dateTimePicker" class="collapse show">
@@ -87,18 +88,18 @@
 
         <!-- Review and Confirm Section -->
         <div class="card mb-3">
-          <div class="card-header" data-toggle="collapse" data-target="#reviewSelection" aria-expanded="true">
+          <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#reviewSelection" aria-expanded="true">
             Review Your Appointment
           </div>
           <div id="reviewSelection" class="collapse show">
             <div class="card-body">
               <p><strong>Patient Name:</strong> John Doe</p> <!-- Replace with dynamic user data -->
-              <p><strong>Selected Therapist:</strong> <span id="selectedTherapist">Therapist 1</span></p>
-              <p><strong>Session Date & Time:</strong> <span id="selectedDateTime"></span></p>
-              <button class="btn btn-success" id="confirmAppointment">Confirm Appointment</button>
+              <p><strong>Selected Therapist:</strong>  <span id="selectedTherapist">Therapist 1</span></p>
+              <p><strong>Session Date & Time:</strong>  <span id="selectedDateTime"></span></p>
             </div>
           </div>
         </div>
+        <button class="btn btn-info" id="confirmAppointment">Confirm Appointment</button>
 
       </div>
     </div>
@@ -112,38 +113,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="patient-appointments.js"></script>
-  <script>
-    $(document).ready(function() {
-
-      // Handle therapist selection change
-      $('#therapistSelect').on('change', function() {
-          $('#selectedTherapist').text($(this).val());
-      });
-
-      // Handle date change
-      $('#date').on('change', function() {
-          updateReviewSection();
-      });
-
-      // Handle time change
-      $('#time').on('change', function() {
-          updateReviewSection();
-      });
-
-      // Function to update the review section
-      function updateReviewSection() {
-          const selectedDate = $('#date').val();
-          const selectedTime = $('#time').val();
-          $('#selectedDateTime').text(`${selectedDate} ${selectedTime}`);
-      }
-
-      // Handle confirm button click
-      $('#confirmAppointment').on('click', function() {
-          alert('Appointment Confirmed!');
-          // You can add more logic here, like submitting the data to the server
-      });
-    });
-  </script>
 </body>
 
 </html>

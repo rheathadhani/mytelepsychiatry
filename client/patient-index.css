@@ -76,11 +76,11 @@
 
 #greeting,
 #upcoming-session {
-  height: 34vh;
+  height: 39vh;
 }
 
 #greeting-body {
-  height: 30vh;
+  height: 35vh;
 }
 
 /* Hide sidebar and show toggle button at widths below 700px */
