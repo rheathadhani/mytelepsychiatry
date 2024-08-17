@@ -37,3 +37,4 @@ $(document).ready(function() {
         // You can add more logic here, like submitting the data to the server
     });
   });
+  
