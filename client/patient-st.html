@@ -4,9 +4,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Apppointments</title>
+    <title>Symptom Tracker</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.css">
     <link rel="stylesheet" href="patient-index.css" />
+    <style>
+        .symptom-button {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            background-color: #f0f0f0;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 100px;
+            font-size: 14px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .symptom-button.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .symptom-section, .chart-section, .tips-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,14 +40,10 @@
         <!-- Sidebar -->
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-                <a href="patient-index.html"
-                    class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-                <a href="patient-appointments.html"
-                    class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
-                <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom
-                    Tracker</a>
-                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness
-                    Content</a>
+                <a href="patient-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white">Symptom Tracker</a>
+                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
                 <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
         </div>
@@ -30,13 +52,40 @@
         <!-- Page Content -->
         <div id="page-content-wrapper" class="w-100">
             <nav class="navbar navbar-expand-lg navbar-light bg-white">
-                <button class="btn btn-dark" id="menu-toggle"> Menu </button>
+                <button class="btn btn-dark" id="menu-toggle">Menu</button>
             </nav>
 
-
+            <div class="container-fluid">
+                <h3 class="my-4">Track Your Symptoms</h3>
+                <div class="calendar-section">
+                    <input type="date" class="form-control" id="symptomDate" name="symptomDate">
+                </div>
+                <div class="symptom-section">
+                    <h5>Choose all the symptoms you are experiencing today</h5>
+                    <div>
+                        <div class="symptom-button">Headache</div>
+                        <div class="symptom-button">Fatigue</div>
+                        <div class="symptom-button">Anxiety</div>
+                        <div class="symptom-button">Mood Swings</div>
+                        <div class="symptom-button">Insomnia</div>
+                    </div>
+                    <button class="btn btn-primary mt-3">Apply the Symptoms</button>
+                </div>
+                <div class="chart-section">
+                    <canvas id="symptomHistoryChart"></canvas>
+                </div>
+                <div class="tips-section">
+                    <h4>Wellness Tips</h4>
+                    <p>Here are some daily tips to help you manage your symptoms:</p>
+                    <ul>
+                        <li>Stay hydrated and maintain a balanced diet.</li>
+                        <li>Try to exercise for at least 30 minutes a day.</li>
+                        <li>Practice mindfulness and relaxation techniques.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </div>
-    <!-- /#page-content-wrapper -->
+        <!-- /#page-content-wrapper -->
     </div>
     <!-- /#wrapper -->
 
@@ -44,6 +93,41 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.symptom-button').on('click', function () {
+                $(this).toggleClass('active');
+            });
+
+            $('#menu-toggle').click(function () {
+                $('#wrapper').toggleClass('toggled');
+            });
+
+            // Chart.js for Symptom History
+            var ctx = document.getElementById('symptomHistoryChart').getContext('2d');
+            var symptomHistoryChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                    datasets: [{
+                        label: 'Symptom Intensity',
+                        data: [3, 2, 5, 1, 4],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
