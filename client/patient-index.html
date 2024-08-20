@@ -12,13 +12,15 @@
 <body>
   <div class="d-flex" id="wrapper">
     <!-- Sidebar -->
-    <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="bg-dark border-right" id="sidebar-wrapper">
       <div class="list-group list-group-flush">
-        <a href="patient-index.html" class="list-group-item list-group-item-action bg-light">Dashboard</a>
-        <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-light">Appointments</a>
-        <a href="patient-st.html" class="list-group-item list-group-item-action bg-light">Symptom Tracker</a>
-        <a href="patient-wc.html" class="list-group-item list-group-item-action bg-light">Wellness Content</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light mt-auto">Sign Out</a>
+        <p class="bg-dark text-white mb-4 ml-5 mt-4"> <strong>Telepsychiatry <br> Platform <span> + </span></strong> </p>
+        <a href="patient-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+        <a href="patient-appointments.html"
+          class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
+        <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom Tracker</a>
+        <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
+        <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -35,18 +37,19 @@
         <div class="row">
           <div class="col-lg-8" id="greeting">
             <div class="card mb-4" id="greeting-body">
-              <div class='card-header bg-info'></div>
+              <div class='card-header bg-dark'></div>
               <div class="card-body">
                 <h1>Welcome back, [Patient Name]!</h1>
                 <br>
                 <p>You have <strong>[number]</strong> medications to take today.</p>
-                  <button class="btn btn-info"><a href="patient-profile.html" class="text-white text-decoration-none">View Profile </a></button>
+                <button class="btn btn-dark"><a href="patient-profile.html" class="text-white text-decoration-none">View
+                    Profile </a></button>
               </div>
             </div>
           </div>
           <div class="col-lg-4" id="upcoming-session">
             <div class="card mb-4">
-              <div class="card-header bg-info text-white"> Upcoming Session</div>
+              <div class="card-header bg-dark text-white"> Upcoming Session</div>
               <div class="card-body">
                 <!-- Embed calendar here -->
               </div>
@@ -86,7 +89,7 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="card mb-4">
-              <div class="card-header bg-info text-white"> List of Medications </div>
+              <div class="card-header bg-dark text-white"> List of Medications </div>
               <div class="card-body">
                 <!-- List of medications goes here -->
               </div>
@@ -98,7 +101,7 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="card mb-4">
-              <div class="card-header bg-info text-white">  History of Appointments  </div>
+              <div class="card-header bg-dark text-white"> History of Appointments </div>
               <div class="card-body">
                 <!-- List of past appointments -->
               </div>

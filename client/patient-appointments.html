@@ -8,22 +8,21 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="patient-index.css" />
     <style>
-        .select-button {
-            width: 100px; /* Adjust the width to make the button wider */
-        }
+
     </style>
 </head>
 
 <body>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
-        <div class="bg-light border-right" id="sidebar-wrapper">
+        <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-                <a href="patient-index.html" class="list-group-item list-group-item-action bg-light">Dashboard</a>
-                <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-light">Appointments</a>
-                <a href="patient-st.html" class="list-group-item list-group-item-action bg-light">Symptom Tracker</a>
-                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-light">Wellness Content</a>
-                <a href="#" class="list-group-item list-group-item-action bg-light mt-auto">Sign Out</a>
+                <p class="bg-dark text-white mb-4 ml-5 mt-3"> <strong>Telepsychiatry <br> Platform</strong></p>
+                <a href="patient-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
+                <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom Tracker</a>
+                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -31,7 +30,7 @@
         <!-- Page Content -->
         <div id="page-content-wrapper" class="w-100">
             <nav class="navbar navbar-expand-lg navbar-light bg-white">
-                <button class="btn btn-primary" id="menu-toggle"> Menu </button>
+                <button class="btn btn-dark" id="menu-toggle"> Menu </button>
             </nav>
 
             <div class="container-fluid">
@@ -39,7 +38,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card mb-3">
-                            <div class="card-header bg-info"></div>
+                            <div class="card-header bg-dark"></div>
                             <div class="card-body text-center">
                                 <h4>Book Your Appointment Now!</h4>
                             </div>
@@ -49,7 +48,7 @@
 
                 <!-- Date and Time Picker Section -->
                 <div class="card mb-3">
-                    <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#dateTimePicker"
+                    <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#dateTimePicker"
                         aria-expanded="true">
                         Select Date and Time
                     </div>
@@ -81,38 +80,44 @@
                     <!-- Psychiatrist Selection Section -->
                     <div class="col-md-12" id="psychiatrist-selection">
                         <div class="card mb-3">
-                            <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#psychiatrist"
-                                aria-expanded="true">
+                            <div class="card-header bg-dark text-white" data-toggle="collapse"
+                                data-target="#psychiatrist" aria-expanded="true">
                                 Select Available Psychiatrist
                             </div>
                             <div id="psychiatrist" class="collapse show">
                                 <div class="card-body">
                                     <div class="form-group d-flex align-items-center justify-content-between">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="psychiatrist" id="psychiatrist1" value="Psychiatrist 1">
+                                            <input class="form-check-input" type="radio" name="psychiatrist"
+                                                id="psychiatrist1" value="Psychiatrist 1">
                                             <label class="form-check-label" for="psychiatrist1">
                                                 Psychiatrist 1
                                             </label>
                                         </div>
-                                        <button class="btn btn-info btn-sm select-button" data-psychiatrist="Psychiatrist 1">Select</button>
+                                        <button class="btn btn-dark btn-sm select-button"
+                                            data-psychiatrist="Psychiatrist 1">Select</button>
                                     </div>
                                     <div class="form-group d-flex align-items-center justify-content-between">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="psychiatrist" id="psychiatrist2" value="Psychiatrist 2">
+                                            <input class="form-check-input" type="radio" name="psychiatrist"
+                                                id="psychiatrist2" value="Psychiatrist 2">
                                             <label class="form-check-label" for="psychiatrist2">
                                                 Psychiatrist 2
                                             </label>
                                         </div>
-                                        <button class="btn btn-info btn-sm select-button" data-psychiatrist="Psychiatrist 2">Select</button>
+                                        <button class="btn btn-dark btn-sm select-button"
+                                            data-psychiatrist="Psychiatrist 2">Select</button>
                                     </div>
                                     <div class="form-group d-flex align-items-center justify-content-between">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="psychiatrist" id="psychiatrist3" value="Psychiatrist 3">
+                                            <input class="form-check-input" type="radio" name="psychiatrist"
+                                                id="psychiatrist3" value="Psychiatrist 3">
                                             <label class="form-check-label" for="psychiatrist3">
                                                 Psychiatrist 3
                                             </label>
                                         </div>
-                                        <button class="btn btn-info btn-sm select-button" data-psychiatrist="Psychiatrist 3">Select</button>
+                                        <button class="btn btn-dark btn-sm select-button"
+                                            data-psychiatrist="Psychiatrist 3">Select</button>
                                     </div>
                                 </div>
                             </div>
@@ -122,12 +127,13 @@
                     <!-- Psychiatrist Profile -->
                     <div class="col-md-6" id="psychiatrist-profile" style="display:none;">
                         <div class="card mb-3">
-                            <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#psy-profile"
-                                aria-expanded="true">
+                            <div class="card-header bg-dark text-white" data-toggle="collapse"
+                                data-target="#psy-profile" aria-expanded="true">
                                 Psychiatrist Profile
                             </div>
                             <div class="card-body text-center" id="psy-profile">
-                                <img id="psy-Image" src="#" alt="Psychiatrist Image" style="width: 100px; height: 100px;">
+                                <img id="psy-Image" src="#" alt="Psychiatrist Image"
+                                    style="width: 100px; height: 100px;">
                                 <h5 id="psy-Name">Psychiatrist Name</h5>
                                 <p id="psy-details">Psychiatrist Profile Details Here</p>
                             </div>
@@ -137,7 +143,7 @@
 
                 <!-- Review and Confirm Section -->
                 <div class="card mb-3">
-                    <div class="card-header bg-info text-white" data-toggle="collapse" data-target="#reviewSelection"
+                    <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#reviewSelection"
                         aria-expanded="true">
                         Review Your Appointment
                     </div>
@@ -149,7 +155,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-info" id="confirmAppointment">Confirm Appointment</button>
+                <button class="btn btn-dark" id="confirmAppointment">Confirm Appointment</button>
 
             </div>
         </div>
@@ -162,29 +168,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('.select-button').on('click', function () {
-                var psychiatrist = $(this).data('psychiatrist');
-                $('#selected-psy').text(psychiatrist);
-
-                // Update psychiatrist profile details
-                $('#psy-Name').text(psychiatrist);
-                $('#psy-details').text(psychiatrist + ' Profile Details Here');
-                $('#psy-Image').attr('src', 'path/to/image.png'); // Update with correct path
-
-                // Show the psychiatrist profile
-                $('#psychiatrist-profile').show();
-
-                // Adjust the width of the psychiatrist selection and profile sections
-                $('#psychiatrist-selection').removeClass('col-md-12').addClass('col-md-6');
-                $('#psychiatrist-profile').removeClass('col-md-6').addClass('col-md-6');
-
-                // Select the corresponding radio button
-                $(this).closest('.form-group').find('input[type="radio"]').prop('checked', true);
-            });
-        });
-    </script>
+    <script src="patient-appointments.js"></script>
 </body>
 
 </html>

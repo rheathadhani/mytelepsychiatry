@@ -1,13 +1,9 @@
-
 $(document).ready(function() {
-    // Initialize the inline datepicker
+
     $("#datepicker").datepicker({
         altField: "#actualDate", // If you need to submit the date, use an altField
         altFormat: "dd-mm-yy", // Adjust date format as needed
     });
-});
-
-$(document).ready(function() {
 
     // Handle therapist selection change
     $('#therapistSelect').on('change', function() {
@@ -38,3 +34,24 @@ $(document).ready(function() {
     });
   });
   
+  $(document).ready(function() {
+    $('.select-button').on('click', function () {
+        var psychiatrist = $(this).data('psychiatrist');
+        $('#selected-psy').text(psychiatrist);
+
+        // Update psychiatrist profile details
+        $('#psy-Name').text(psychiatrist);
+        $('#psy-details').text(psychiatrist + ' Profile Details Here');
+        $('#psy-Image').attr('src', 'path/to/image.png'); // Update with correct path
+
+        // Show the psychiatrist profile
+        $('#psychiatrist-profile').show();
+
+        // Adjust the width of the psychiatrist selection and profile sections
+        $('#psychiatrist-selection').removeClass('col-md-12').addClass('col-md-6');
+        $('#psychiatrist-profile').removeClass('col-md-6').addClass('col-md-6');
+
+        // Select the corresponding radio button
+        $(this).closest('.form-group').find('input[type="radio"]').prop('checked', true);
+    });
+  });

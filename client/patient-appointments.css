@@ -1,27 +1,32 @@
 .card {
-    background-color: #fff;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #ddd;
-    color: #333;
-    font-size: 16px;
-    font-weight: bold;  
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.select-button {
+  width: 100px;
+  /* Adjust the width to make the button wider */
 }
 
 .card-body {
-    padding: 20px;
+  padding: 20px;
 }
 
 .list-group-item {
-    border: none; /* Removes border */
-    border-bottom: 1px solid #ddd; /* Only bottom border */
+  border: none; /* Removes border */
+  border-bottom: 1px solid #ddd; /* Only bottom border */
 }
 
 #datepicker .ui-datepicker-inline {
-    width: 100%; /* Ensures the calendar width matches the container */
+  width: 100%; /* Ensures the calendar width matches the container */
 }

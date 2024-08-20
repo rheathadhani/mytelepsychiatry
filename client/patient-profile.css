@@ -22,7 +22,7 @@
   }
   
   .form-control:focus {
-    border-color: #5a67d8; /* Match focus color to the heading color */
+    border-color: #747475; /* Match focus color to the heading color */
     box-shadow: 0 0 0 0.2rem rgba(90, 103, 216, 0.25); /* Soft blue glow on focus */
   }
   
