@@ -56,33 +56,48 @@
             margin-left: 20px;
         }
 
-        .history-tips-section {
+        .main-section {
             display: flex;
             justify-content: space-between;
             margin-top: 20px;
         }
 
+        .left-panel {
+            width: 60%;
+        }
+
+        .right-panel {
+            width: 35%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
         .card-history-tips {
-            width: 48%;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #343a40;
+            color: white;
         }
     </style>
 </head>
 
 <body>
     <div class="d-flex" id="wrapper">
-    <!-- Sidebar -->
-    <div class="bg-dark border-right" id="sidebar-wrapper">
-        <div class="list-group list-group-flush">
-          <p class="bg-dark text-white mb-4 ml-4 mt-4"> <strong>Telepsychiatry <br> Platform <span> + </span></strong> </p>
-          <a href="patient-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-          <a href="patient-appointments.html"
-            class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
-          <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom Tracker</a>
-          <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
-          <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+        <!-- Sidebar -->
+        <div class="bg-dark border-right" id="sidebar-wrapper">
+            <div class="list-group list-group-flush">
+                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> + </span></strong></p>
+                <a href="patient-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
+                <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom Tracker</a>
+                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+            </div>
         </div>
-      </div>
-      <!-- /#sidebar-wrapper -->
+        <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
         <div id="page-content-wrapper" class="w-100">
@@ -91,49 +106,60 @@
             </nav>
 
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12 text-center">
-                        <h3 class="my-4">Track Your Symptoms</h3>
-                    </div>
-                </div>
-                <div class="calendar-section">
-                    <!-- Calendar UI -->
-                    <div class="card">
-                        <div class="card-body">
-                            <input type="datetime-local" class="form-control" id="symptomDateTime" name="symptomDateTime">
-                        </div>
-                    </div>
-                </div>
-                <div class="symptom-section mt-4">
-                    <h5>Choose all the symptoms you are experiencing today</h5>
-                    <div>
-                        <div class="symptom-button">Headache</div>
-                        <div class="symptom-button">Fatigue</div>
-                        <div class="symptom-button">Anxiety</div>
-                        <div class="symptom-button">Mood Swings</div>
-                        <div class="symptom-button">Insomnia</div>
-                    </div>
-                    <div class="mt-3">
-                        <button class="btn btn-primary" id="applySymptoms">Apply the Symptoms</button>
+                <!-- Top Header Section -->
+                <div class="card mb-3">
+                    <div class="card-header bg-dark"></div>
+                    <div class="card-body text-center">
+                        <h4>Track your symptoms now!</h4>
                     </div>
                 </div>
 
-                <div class="history-tips-section">
-                    <div class="card card-history-tips">
-                        <div class="card-header bg-dark text-white">
-                            Tracked Symptoms History
-                        </div>
-                        <div class="card-body" id="symptomsHistory">
-                            <!-- History will be dynamically added here -->
+                <!-- Main Section -->
+                <div class="main-section">
+                    <!-- Left Panel -->
+                    <div class="left-panel">
+                        <!-- Choose Your Symptom Section -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white">Choose Your Symptom</div>
+                            <div class="card-body">
+                                <!-- Date and Time Picker Section -->
+                                <div class="form-group">
+                                    <label for="symptomDateTime">Select Date and Time:</label>
+                                    <input type="datetime-local" class="form-control" id="symptomDateTime" name="symptomDateTime">
+                                </div>
+
+                                <!-- Symptom Selection Section -->
+                                <div class="symptom-section mt-4">
+                                    <h5>Choose all the symptoms you are experiencing today</h5>
+                                    <div>
+                                        <div class="symptom-button">Headache</div>
+                                        <div class="symptom-button">Fatigue</div>
+                                        <div class="symptom-button">Anxiety</div>
+                                        <div class="symptom-button">Mood Swings</div>
+                                        <div class="symptom-button">Insomnia</div>
+                                    </div>
+                                    <div class="mt-3 text-center">
+                                        <button class="btn btn-primary" id="applySymptoms">Apply the Symptoms</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="card card-history-tips">
-                        <div class="card-header bg-dark text-white">
-                            Daily Wellness Tips
+                    <!-- Right Panel -->
+                    <div class="right-panel">
+                        <div class="card card-history-tips">
+                            <div class="card-header">Tracked Symptoms History</div>
+                            <div class="card-body" id="symptomsHistory">
+                                <!-- History will be dynamically added here -->
+                            </div>
                         </div>
-                        <div class="card-body">
-                            Remember to drink plenty of water and take short breaks to stretch if you've been sitting for an extended period!
+
+                        <div class="card card-history-tips">
+                            <div class="card-header">Daily Wellness Tips</div>
+                            <div class="card-body">
+                                Remember to drink plenty of water and take short breaks to stretch if you've been sitting for an extended period!
+                            </div>
                         </div>
                     </div>
                 </div>
