@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Prescription</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="patient-index.css" />
+</head>
+
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="bg-dark border-right" id="sidebar-wrapper">
+            <div class="list-group list-group-flush">
+                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> + </span></strong></p>
+                <a href="patient-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
+                <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom Tracker</a>
+                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
+                <a href="patient-prescription.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+            </div>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper" class="w-100">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white">
+                <button class="btn btn-dark" id="menu-toggle"> Menu </button>
+            </nav>
+
+            <div class="container-fluid">
+                <!-- Header Section -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark"></div>
+                            <div class="card-body text-center">
+                                <h4>Prescribe Medication</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prescription Form Section -->
+                <form action="submit-prescription.php" method="POST">
+                    <div class="card mb-3">
+                        <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#prescriptionForm" aria-expanded="true">
+                            Enter Prescription Details
+                        </div>
+                        <div id="prescriptionForm" class="collapse show">
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Patient Selection -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="patient">Select Patient:</label>
+                                            <select id="patient" name="patient" class="form-control" required>
+                                                <option value="">Select a patient</option>
+                                                <option value="patient1">Patient 1</option>
+                                                <option value="patient2">Patient 2</option>
+                                                <option value="patient3">Patient 3</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Medication Name -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="medication">Medication Name:</label>
+                                            <input type="text" id="medication" name="medication" class="form-control" placeholder="Enter medication name" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!-- Dosage Instructions -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="dosage">Dosage (mg):</label>
+                                            <input type="number" id="dosage" name="dosage" class="form-control" placeholder="Dosage in mg" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Frequency per Day -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="frequencyDay">Frequency per Day:</label>
+                                            <input type="number" id="frequencyDay" name="frequencyDay" class="form-control" placeholder="Times per day" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Duration -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="duration">Duration (days):</label>
+                                            <input type="number" id="duration" name="duration" class="form-control" placeholder="Number of days" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-dark mt-3">Prescribe</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Prescription History Section -->
+                <div class="card mb-3">
+                    <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#prescriptionHistory" aria-expanded="true">
+                        Prescription History
+                    </div>
+                    <div id="prescriptionHistory" class="collapse show">
+                        <div class="card-body">
+                            <ul class="list-group">
+                                <li class="list-group-item">Patient 1 - Paracetamol 500mg, 3 times a day for 7 days</li>
+                                <li class="list-group-item">Patient 2 - Ibuprofen 200mg, 2 times a day for 5 days</li>
+                                <!-- Additional prescriptions will be added here dynamically -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Bootstrap and jQuery scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // JavaScript to manage prescription data (if needed)
+        $(document).ready(function() {
+            $('#menu-toggle').click(function() {
+                $('#wrapper').toggleClass('toggled');
+            });
+        });
+    </script>
+</body>
+
+</html>
