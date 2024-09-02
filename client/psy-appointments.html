@@ -110,7 +110,7 @@
                                     <td>
                                         <button class="btn btn-info btn-sm view-details">View Details</button>
                                         <button class="btn btn-warning btn-sm reschedule">Reschedule</button>
-                                        <button class="btn btn-danger btn-sm">Cancel</button>
+                                        <button class="btn btn-danger btn-sm cancel-appointment">Cancel</button>
                                     </td>
                                 </tr>
                                 <tr data-status="Pending">
@@ -121,7 +121,7 @@
                                     <td>
                                         <button class="btn btn-info btn-sm view-details">View Details</button>
                                         <button class="btn btn-warning btn-sm reschedule">Reschedule</button>
-                                        <button class="btn btn-danger btn-sm">Cancel</button>
+                                        <button class="btn btn-danger btn-sm cancel-appointment">Cancel</button>
                                     </td>
                                 </tr>
                                 <!-- More rows can be added here -->
@@ -157,6 +157,24 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <!-- Reschedule Section -->
+                <div class="card mb-3 dynamic-content" id="rescheduleContent">
+                    <div class="card-header bg-dark text-white">Reschedule Appointment</div>
+                    <div class="card-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="newDate">New Date:</label>
+                                <input type="date" class="form-control" id="newDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="newTime">New Time:</label>
+                                <input type="time" class="form-control" id="newTime">
+                            </div>
+                            <button type="button" class="btn btn-dark mt-2" id="confirmReschedule">Confirm Reschedule</button>
+                        </form>
                     </div>
                 </div>
 
@@ -213,8 +231,8 @@
 
             // View Details action
             $('.view-details').on('click', function () {
-                var patientName = $(this).closest('tr').find('td:first').text();
                 $('#dynamicContent').show();
+                $('#rescheduleContent').hide();
             });
 
             // Add new clinical note functionality
@@ -248,27 +266,22 @@
 
             // Reschedule action
             $('.reschedule').on('click', function () {
-                $('#dynamicHeader').text('Reschedule Appointment');
-                $('#dynamicBody').html(`
-                    <form>
-                        <div class="form-group">
-                            <label for="oldDate">Old Date and Time:</label>
-                            <input type="datetime-local" class="form-control" id="oldDate">
-                        </div>
-                        <div class="form-group">
-                            <label for="newDate">New Date and Time:</label>
-                            <input type="datetime-local" class="form-control" id="newDate">
-                        </div>
-                        <button type="button" class="btn btn-dark mt-2" id="confirmReschedule">Confirm Reschedule</button>
-                    </form>
-                `);
-                $('#dynamicContent').show();
+                $('#dynamicContent').hide();
+                $('#rescheduleContent').show();
+            });
 
-                // Confirm reschedule functionality
-                $('#confirmReschedule').on('click', function () {
-                    $('#successToast').toast('show'); // Show toast notification
-                    $('#dynamicContent').hide();
-                });
+            // Confirm reschedule functionality
+            $('#confirmReschedule').on('click', function () {
+                var newDate = $('#newDate').val();
+                var newTime = $('#newTime').val();
+                
+                if (newDate && newTime) {
+                    $('#successToast .toast-body').text('Appointment rescheduled successfully.');
+                    $('#successToast').toast('show');
+                    $('#rescheduleContent').hide();
+                } else {
+                    alert("Please select both date and time.");
+                }
             });
 
             // Initialize toast
