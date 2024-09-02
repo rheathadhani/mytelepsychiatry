@@ -14,15 +14,15 @@
         <!-- Sidebar -->
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> + </span></strong></p>
-                <a href="patient-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-                <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
-                <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom Tracker</a>
-                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
-                <a href="patient-prescription.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
-                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+              <p class="bg-dark text-white mb-4 ml-4 mt-4"> <strong>Telepsychiatry <br> Platform <span> + </span></strong> </p>
+              <a href="psy-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+              <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
+              <a href="psy-med-pre.html"
+                class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
+              <a href="psy-cn.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical Notes</a>
+              <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
-        </div>
+          </div>
         <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
@@ -38,7 +38,7 @@
                         <div class="card mb-3">
                             <div class="card-header bg-dark"></div>
                             <div class="card-body text-center">
-                                <h4>Prescribe Medication</h4>
+                                <h4>Prescribe Patient's Medications</h4>
                             </div>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                                     <!-- Patient Selection -->
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="patient">Select Patient:</label>
+                                            <label for="patient">Patient Name:</label>
                                             <select id="patient" name="patient" class="form-control" required>
                                                 <option value="">Select a patient</option>
                                                 <option value="patient1">Patient 1</option>
@@ -109,7 +109,7 @@
                     </div>
                 </form>
 
-                <!-- Prescription History Section -->
+                <!-- Prescription History Section --> <!--Need to ADD DATE -->
                 <div class="card mb-3">
                     <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#prescriptionHistory" aria-expanded="true">
                         Prescription History
