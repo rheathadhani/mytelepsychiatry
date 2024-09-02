@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telepsychiatry Platform</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="login.css" />
+</head>
+
+<body>
+    <div class="container-fluid d-flex align-items-center vh-100">
+        <!-- Left Section -->
+        <div class="d-none d-md-flex flex-column justify-content-center align-items-start bg-dark text-white p-5 col-md-5 h-100">
+            <h2 class="mb-4">Telepsychiatry Platform +</h2>
+            <ul class="list-unstyled">
+                <li class="mb-1 ml-4 font-italic">Appointment Bookings</li>
+                <li class="mb-1 ml-4 font-italic">Symptom Tracking</li>
+                <li class="mb-1 ml-4 font-italic">Wellness Content</li>
+                <li class="mb-1 ml-4 font-italic">Medicine Prescription</li>
+                <li class="mb-1 ml-4 font-italic">Report Generation</li>
+            </ul>
+        </div>
+        <!-- Right Section -->
+        <div class="d-flex flex-column justify-content-center align-items-center bg-white p-5 col-12 col-md-7 h-100">
+            <div class="card w-100 shadow-sm">
+                <div class="card-header bg-dark text-white text-center">
+                    <h4 class="mb-0">Login Account</h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Centered nav-pills div without changing width -->
+                    <div class="d-flex justify-content-center">
+                        <div class="border pt-3 pl-3 pr-3 d-inline-block">
+                            <ul class="nav nav-pills mb-0" id="pills-tab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="patient-tab" data-toggle="pill" href="#patient"
+                                        role="tab" aria-controls="patient" aria-selected="true">Patient</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="psychiatrist-tab" data-toggle="pill" href="#psychiatrist"
+                                        role="tab" aria-controls="psychiatrist" aria-selected="false">Psychiatrist</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="admin-tab" data-toggle="pill" href="#admin" role="tab"
+                                        aria-controls="admin" aria-selected="false">Admin</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form class="w-75 mx-auto mt-3" id="loginForm">
+                        <div class="tab-content" id="pills-tabContent">
+                            <!-- Patient Tab -->
+                            <div class="tab-pane fade show active" id="patient" role="tabpanel" aria-labelledby="patient-tab">
+                                <div class="form-group">
+                                    <label for="patientEmail" class="ml-3">Email Address</label>
+                                    <input type="email" class="form-control form-control-lg rounded-pill mb-3" id="patientEmail" placeholder="Patient Email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="patientPassword" class="ml-3">Password</label>
+                                    <input type="password" class="form-control form-control-lg rounded-pill mb-3" id="patientPassword" placeholder="Patient Password" required>
+                                </div>
+                            </div>
+                            <!-- Psychiatrist Tab -->
+                            <div class="tab-pane fade" id="psychiatrist" role="tabpanel" aria-labelledby="psychiatrist-tab">
+                                <div class="form-group">
+                                    <label for="psychiatristEmail" class="ml-3">Email Address</label>
+                                    <input type="email" class="form-control form-control-lg rounded-pill mb-3" id="psychiatristEmail" placeholder="Psychiatrist Email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="psychiatristPassword" class="ml-3">Password</label>
+                                    <input type="password" class="form-control form-control-lg rounded-pill mb-3" id="psychiatristPassword" placeholder="Psychiatrist Password" required>
+                                </div>
+                            </div>
+                            <!-- Admin Tab -->
+                            <div class="tab-pane fade" id="admin" role="tabpanel" aria-labelledby="admin-tab">
+                                <div class="form-group">
+                                    <label for="adminEmail" class="ml-3">Email Address</label>
+                                    <input type="email" class="form-control form-control-lg rounded-pill mb-3" id="adminEmail" placeholder="Admin Email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="adminPassword" class="ml-3">Password</label>
+                                    <input type="password" class="form-control form-control-lg rounded-pill mb-3" id="adminPassword" placeholder="Admin Password" required>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-dark rounded-pill px-4 py-2 w-100">Login</button>
+                        <!-- Register Link -->
+                        <p class="text-center mt-3 mb-0" id="registerLink">
+                            <a href="register.html" class="text-dark">New to Telepsychiatry? Register Now</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="login.js"></script>
+</body>
+
+</html>

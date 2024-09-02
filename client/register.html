@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telepsychiatry Platform</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="login.css" />
+</head>
+
+<body>
+    <div class="container-fluid d-flex align-items-center vh-100">
+        <!-- Left Section -->
+        <div class="d-none d-md-flex flex-column justify-content-center align-items-start bg-dark text-white p-5 col-md-5 h-100">
+            <h2 class="mb-4">Telepsychiatry Platform +</h2>
+            <ul class="list-unstyled">
+                <li class="mb-1 ml-4 font-italic">Appointment Bookings</li>
+                <li class="mb-1 ml-4 font-italic">Symptom Tracking</li>
+                <li class="mb-1 ml-4 font-italic">Wellness Content</li>
+                <li class="mb-1 ml-4 font-italic">Medicine Prescription</li>
+                <li class="mb-1 ml-4 font-italic">Report Generation</li>
+            </ul>
+        </div>
+        <!-- Right Section -->
+        <div class="d-flex flex-column justify-content-center align-items-center bg-white p-5 col-12 col-md-7 h-100">
+            <div class="card w-100 shadow-sm">
+                <div class="card-header bg-dark text-white text-center">
+                    <h4 class="mb-0">Register Account</h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Registration Form -->
+                    <form class="w-75 mx-auto mt-3" id="registerForm">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="firstName" class="ml-3">First Name</label>
+                                <input type="text" class="form-control form-control-lg rounded-pill mb-0" id="firstName" placeholder="First Name" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="lastName" class="ml-3">Last Name</label>
+                                <input type="text" class="form-control form-control-lg rounded-pill mb-0" id="lastName" placeholder="Last Name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="ml-3">Email Address</label>
+                            <input type="email" class="form-control form-control-lg rounded-pill mb-3" id="email" placeholder="Email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="ml-3">Password</label>
+                            <input type="password" class="form-control form-control-lg rounded-pill mb-3" id="password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="btn btn-dark rounded-pill px-4 py-2 w-100">Register</button>
+                    </form>
+                    <p class="text-center mt-3 mb-0">
+                        <a href="login.html" class="text-dark">Have an account? Login Now</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
