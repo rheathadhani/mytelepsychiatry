@@ -9,18 +9,32 @@
     <link rel="stylesheet" href="patient-index.css" />
     <style>
         .search-box {
-            width: 200px;
+            width: 300px;
         }
 
-        .calendar {
-            width: 100%;
-            height: 300px;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2em;
-            border-radius: 10px;
+        .status-box {
+            width: 150px;
+        }
+
+        .dynamic-content {
+            display: none;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 200px;
+            z-index: 1050;
+        }
+
+        .toast-header {
+            background-color: #333;
+            color: white;
+        }
+
+        .toast-body {
+            background-color: white;
         }
     </style>
 </head>
@@ -68,7 +82,7 @@
                                 <input type="text" class="form-control search-box" placeholder="Search by patient name" id="searchBox">
                             </div>
                             <div class="col-md-6">
-                                <select class="form-control" id="statusFilter">
+                                <select class="form-control status-box" id="statusFilter">
                                     <option value="All">All Status</option>
                                     <option value="Pending">Pending</option>
                                     <option value="Confirmed">Confirmed</option>
@@ -93,8 +107,8 @@
                                     <td>10:00 AM</td>
                                     <td><span class="badge bg-success">Confirmed</span></td>
                                     <td>
-                                        <button class="btn btn-info btn-sm">View Details</button>
-                                        <button class="btn btn-warning btn-sm">Reschedule</button>
+                                        <button class="btn btn-info btn-sm view-details">View Details</button>
+                                        <button class="btn btn-warning btn-sm reschedule">Reschedule</button>
                                         <button class="btn btn-danger btn-sm">Cancel</button>
                                     </td>
                                 </tr>
@@ -104,8 +118,8 @@
                                     <td>02:00 PM</td>
                                     <td><span class="badge bg-warning">Pending</span></td>
                                     <td>
-                                        <button class="btn btn-info btn-sm">View Details</button>
-                                        <button class="btn btn-warning btn-sm">Reschedule</button>
+                                        <button class="btn btn-info btn-sm view-details">View Details</button>
+                                        <button class="btn btn-warning btn-sm reschedule">Reschedule</button>
                                         <button class="btn btn-danger btn-sm">Cancel</button>
                                     </td>
                                 </tr>
@@ -115,17 +129,27 @@
                     </div>
                 </div>
 
-                <!-- Calendar View Section -->
-                <div class="card mb-3">
-                    <div class="card-header bg-dark text-white">Calendar View</div>
-                    <div class="card-body calendar">
-                        <!-- Placeholder for Calendar -->
-                        <div>
-                            <img src="calendar-placeholder.png" alt="Calendar View" style="max-width: 100%; height: auto;">
-                            <!-- Or you can use a Calendar Plugin here -->
-                        </div>
+                <!-- Dynamic Content Section -->
+                <div class="card mb-3 dynamic-content" id="dynamicContent">
+                    <div class="card-header bg-dark text-white" id="dynamicHeader">Dynamic Content</div>
+                    <div class="card-body" id="dynamicBody">
+                        <!-- Content will be dynamically loaded here -->
                     </div>
                 </div>
+
+                <!-- Toast Notification -->
+                <div class="toast" id="successToast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="mr-auto">Success!</strong>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                        Action completed successfully.
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -163,6 +187,70 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
+
+            // View Details action
+            $('.view-details').on('click', function () {
+                var patientName = $(this).closest('tr').find('td:first').text();
+                $('#dynamicHeader').text('Patient Details');
+                $('#dynamicBody').html(`
+                    <p><strong>Patient Name:</strong> ${patientName}</p>
+                    <p><strong>Previous Sessions:</strong> Details of previous sessions go here.</p>
+                    <p><strong>Previous Clinical Notes:</strong> Details of clinical notes go here.</p>
+                    <p><strong>Medication Prescribed:</strong> Medication details go here.</p>
+                    <button class="btn btn-dark float-right" id="addClinicalNote">Add New Clinical Notes</button>
+                `);
+                $('#dynamicContent').show();
+
+                // Add new clinical note functionality
+                $('#addClinicalNote').on('click', function () {
+                    $('#dynamicBody').append(`
+                        <div class="mt-3">
+                            <textarea class="form-control new-note" rows="3" placeholder="Write new clinical notes..."></textarea>
+                            <button class="btn btn-dark mt-2 save-note">Save Note</button>
+                        </div>
+                    `);
+
+                    // Save note functionality
+                    $('.save-note').on('click', function () {
+                        var newNote = $('.new-note').val();
+                        if (newNote) {
+                            $('#dynamicBody').prepend(`<p><strong>New Clinical Note:</strong> ${newNote}</p>`);
+                            $('.new-note').closest('div').remove(); // Remove input field after saving
+                            $('#successToast .toast-body').text('Clinical note has been successfully saved.');
+                            $('#successToast').toast('show');
+                        }
+                    });
+                });
+            });
+
+            // Reschedule action
+            $('.reschedule').on('click', function () {
+                $('#dynamicHeader').text('Reschedule Appointment');
+                $('#dynamicBody').html(`
+                    <form>
+                        <div class="form-group">
+                            <label for="oldDate">Old Date and Time:</label>
+                            <input type="datetime-local" class="form-control" id="oldDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="newDate">New Date and Time:</label>
+                            <input type="datetime-local" class="form-control" id="newDate">
+                        </div>
+                        <button type="button" class="btn btn-dark mt-2" id="confirmReschedule">Confirm Reschedule</button>
+                    </form>
+                `);
+                $('#dynamicContent').show();
+
+                // Confirm reschedule functionality
+                $('#confirmReschedule').on('click', function () {
+                    $('#successToast .toast-body').text('Rescheduled successfully!');
+                    $('#successToast').toast('show'); // Show toast notification
+                    $('#dynamicContent').hide();
+                });
+            });
+
+            // Initialize toast
+            $('.toast').toast({ autohide: true, delay: 3000 });
         });
     </script>
 </body>
