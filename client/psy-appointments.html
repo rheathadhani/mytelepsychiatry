@@ -7,6 +7,22 @@
     <title>Patient Appointment</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="patient-index.css" />
+    <style>
+        .search-box {
+            width: 200px;
+        }
+
+        .calendar {
+            width: 100%;
+            height: 300px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,15 +30,14 @@
         <!-- Sidebar -->
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-              <p class="bg-dark text-white mb-4 ml-4 mt-4"> <strong>Telepsychiatry <br> Platform <span> + </span></strong> </p>
-              <a href="psy-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-              <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
-              <a href="psy-med-pre.html"
-                class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
-              <a href="psy-cn.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical Notes</a>
-              <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> + </span></strong></p>
+                <a href="psy-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
+                <a href="psy-med-pre.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
+                <a href="psy-cn.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical Notes</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
-          </div>
+        </div>
         <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
@@ -44,9 +59,73 @@
                     </div>
                 </div>
 
+                <!-- Upcoming Appointments Section -->
+                <div class="card mb-3">
+                    <div class="card-header bg-dark text-white">Upcoming Appointments</div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control search-box" placeholder="Search by patient name" id="searchBox">
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" id="statusFilter">
+                                    <option value="All">All Status</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Confirmed">Confirmed</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Patient Name</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appointmentTable">
+                                <tr data-status="Confirmed">
+                                    <td>John Doe</td>
+                                    <td>09/10/2024</td>
+                                    <td>10:00 AM</td>
+                                    <td><span class="badge bg-success">Confirmed</span></td>
+                                    <td>
+                                        <button class="btn btn-info btn-sm">View Details</button>
+                                        <button class="btn btn-warning btn-sm">Reschedule</button>
+                                        <button class="btn btn-danger btn-sm">Cancel</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="Pending">
+                                    <td>Jane Smith</td>
+                                    <td>09/12/2024</td>
+                                    <td>02:00 PM</td>
+                                    <td><span class="badge bg-warning">Pending</span></td>
+                                    <td>
+                                        <button class="btn btn-info btn-sm">View Details</button>
+                                        <button class="btn btn-warning btn-sm">Reschedule</button>
+                                        <button class="btn btn-danger btn-sm">Cancel</button>
+                                    </td>
+                                </tr>
+                                <!-- More rows can be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-
-
+                <!-- Calendar View Section -->
+                <div class="card mb-3">
+                    <div class="card-header bg-dark text-white">Calendar View</div>
+                    <div class="card-body calendar">
+                        <!-- Placeholder for Calendar -->
+                        <div>
+                            <img src="calendar-placeholder.png" alt="Calendar View" style="max-width: 100%; height: auto;">
+                            <!-- Or you can use a Calendar Plugin here -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -59,10 +138,30 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // JavaScript to manage prescription data (if needed)
-        $(document).ready(function() {
-            $('#menu-toggle').click(function() {
+        $(document).ready(function () {
+            $('#menu-toggle').click(function () {
                 $('#wrapper').toggleClass('toggled');
+            });
+
+            // Filter appointments by status
+            $('#statusFilter').on('change', function () {
+                var selectedStatus = $(this).val();
+                $('#appointmentTable tr').each(function () {
+                    var rowStatus = $(this).data('status');
+                    if (selectedStatus === "All" || rowStatus === selectedStatus) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+            // Search by patient name
+            $('#searchBox').on('keyup', function () {
+                var value = $(this).val().toLowerCase();
+                $('#appointmentTable tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
             });
         });
     </script>
