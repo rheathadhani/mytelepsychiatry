@@ -14,6 +14,7 @@
 
         .status-box {
             width: 150px;
+            float: right;
         }
 
         .dynamic-content {
@@ -105,7 +106,7 @@
                                     <td>John Doe</td>
                                     <td>09/10/2024</td>
                                     <td>10:00 AM</td>
-                                    <td><span class="badge bg-success">Confirmed</span></td>
+                                    <td><span class="badge bg-success p-2 text-white">Confirmed</span></td>
                                     <td>
                                         <button class="btn btn-info btn-sm view-details">View Details</button>
                                         <button class="btn btn-warning btn-sm reschedule">Reschedule</button>
@@ -116,7 +117,7 @@
                                     <td>Jane Smith</td>
                                     <td>09/12/2024</td>
                                     <td>02:00 PM</td>
-                                    <td><span class="badge bg-warning">Pending</span></td>
+                                    <td><span class="badge bg-warning p-2 text-white">Pending</span></td>
                                     <td>
                                         <button class="btn btn-info btn-sm view-details">View Details</button>
                                         <button class="btn btn-warning btn-sm reschedule">Reschedule</button>
@@ -129,11 +130,33 @@
                     </div>
                 </div>
 
-                <!-- Dynamic Content Section -->
+                <!-- Patient Details Section -->
                 <div class="card mb-3 dynamic-content" id="dynamicContent">
-                    <div class="card-header bg-dark text-white" id="dynamicHeader">Dynamic Content</div>
-                    <div class="card-body" id="dynamicBody">
-                        <!-- Content will be dynamically loaded here -->
+                    <div class="card-header bg-dark text-white">Patient Details</div>
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Patient Name</th>
+                                    <th>Previous Sessions</th>
+                                    <th>Medication Prescribed</th>
+                                    <th>Previous Clinical Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patientDetailsTable">
+                                <tr>
+                                    <td>John Doe</td>
+                                    <td>Details of previous sessions go here.</td>
+                                    <td>Medication details go here.</td>
+                                    <td id="clinicalNotes">Details of clinical notes go here.</td>
+                                    <td>
+                                        <button class="btn btn-dark btn-sm add-note">Add New Clinical Notes</button>
+                                        <button class="btn btn-danger btn-sm delete-note">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -191,36 +214,36 @@
             // View Details action
             $('.view-details').on('click', function () {
                 var patientName = $(this).closest('tr').find('td:first').text();
-                $('#dynamicHeader').text('Patient Details');
-                $('#dynamicBody').html(`
-                    <p><strong>Patient Name:</strong> ${patientName}</p>
-                    <p><strong>Previous Sessions:</strong> Details of previous sessions go here.</p>
-                    <p><strong>Previous Clinical Notes:</strong> Details of clinical notes go here.</p>
-                    <p><strong>Medication Prescribed:</strong> Medication details go here.</p>
-                    <button class="btn btn-dark float-right" id="addClinicalNote">Add New Clinical Notes</button>
-                `);
                 $('#dynamicContent').show();
+            });
 
-                // Add new clinical note functionality
-                $('#addClinicalNote').on('click', function () {
-                    $('#dynamicBody').append(`
-                        <div class="mt-3">
-                            <textarea class="form-control new-note" rows="3" placeholder="Write new clinical notes..."></textarea>
-                            <button class="btn btn-dark mt-2 save-note">Save Note</button>
-                        </div>
-                    `);
+            // Add new clinical note functionality
+            $(document).on('click', '.add-note', function () {
+                var row = $(this).closest('tr');
+                row.find('#clinicalNotes').append(`
+                    <div class="mt-3">
+                        <textarea class="form-control" rows="2" placeholder="Write new clinical notes..."></textarea>
+                        <button class="btn btn-dark mt-2 save-note">Save Note</button>
+                    </div>
+                `);
+            });
 
-                    // Save note functionality
-                    $('.save-note').on('click', function () {
-                        var newNote = $('.new-note').val();
-                        if (newNote) {
-                            $('#dynamicBody').prepend(`<p><strong>New Clinical Note:</strong> ${newNote}</p>`);
-                            $('.new-note').closest('div').remove(); // Remove input field after saving
-                            $('#successToast .toast-body').text('Clinical note has been successfully saved.');
-                            $('#successToast').toast('show');
-                        }
-                    });
-                });
+            // Save note functionality
+            $(document).on('click', '.save-note', function () {
+                var noteContent = $(this).siblings('textarea').val();
+                if (noteContent.trim()) {
+                    $(this).closest('td').prepend(`<p>${noteContent}</p>`);
+                    $(this).closest('.mt-3').remove();
+                    $('#successToast .toast-body').text('Clinical note has been successfully saved.');
+                    $('#successToast').toast('show');
+                }
+            });
+
+            // Delete note functionality
+            $(document).on('click', '.delete-note', function () {
+                $(this).closest('tr').remove();
+                $('#successToast .toast-body').text('Clinical note has been successfully deleted.');
+                $('#successToast').toast('show');
             });
 
             // Reschedule action
@@ -243,7 +266,6 @@
 
                 // Confirm reschedule functionality
                 $('#confirmReschedule').on('click', function () {
-                    $('#successToast .toast-body').text('Rescheduled successfully!');
                     $('#successToast').toast('show'); // Show toast notification
                     $('#dynamicContent').hide();
                 });
