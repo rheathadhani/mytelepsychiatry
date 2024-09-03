@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Appointment</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="patient-index.css" />
     <style>
         .search-box {
             width: 300px;
@@ -102,10 +101,10 @@
                                 </tr>
                             </thead>
                             <tbody id="appointmentTable">
-                                <tr data-status="Confirmed">
+                                <tr data-status="Confirmed" data-name="John Doe" data-sessions="Details of previous sessions go here." data-medication="Medication details go here." data-notes='["Details of clinical notes go here."]'>
                                     <td>John Doe</td>
-                                    <td>09/10/2024</td>
-                                    <td>10:00 AM</td>
+                                    <td class="appointment-date">09/11/2024</td>
+                                    <td class="appointment-time">07:37 AM</td>
                                     <td><span class="badge bg-success p-2 text-white">Confirmed</span></td>
                                     <td>
                                         <button class="btn btn-info btn-sm view-details">View Details</button>
@@ -113,10 +112,10 @@
                                         <button class="btn btn-danger btn-sm cancel-appointment">Cancel</button>
                                     </td>
                                 </tr>
-                                <tr data-status="Pending">
+                                <tr data-status="Pending" data-name="Jane Smith" data-sessions="Details of previous sessions go here." data-medication="Medication details go here." data-notes='["Details of clinical notes go here."]'>
                                     <td>Jane Smith</td>
-                                    <td>09/12/2024</td>
-                                    <td>02:00 PM</td>
+                                    <td class="appointment-date">09/19/2024</td>
+                                    <td class="appointment-time">03:41 AM</td>
                                     <td><span class="badge bg-warning p-2 text-white">Pending</span></td>
                                     <td>
                                         <button class="btn btn-info btn-sm view-details">View Details</button>
@@ -124,7 +123,6 @@
                                         <button class="btn btn-danger btn-sm cancel-appointment">Cancel</button>
                                     </td>
                                 </tr>
-                                <!-- More rows can be added here -->
                             </tbody>
                         </table>
                     </div>
@@ -139,20 +137,25 @@
                                 <tr>
                                     <th>Patient Name</th>
                                     <th>Previous Sessions</th>
-                                    <th>Medication Prescribed</th>
-                                    <th>Previous Clinical Notes</th>
+                                    <th>Medication</th>
+                                    <th>Clinical Notes</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="patientDetailsTable">
                                 <tr>
-                                    <td>John Doe</td>
-                                    <td>Details of previous sessions go here.</td>
-                                    <td>Medication details go here.</td>
-                                    <td id="clinicalNotes">Details of clinical notes go here.</td>
+                                    <td id="patientName"></td>
+                                    <td id="previousSessions"></td>
+                                    <td id="medicationPrescribed"></td>
+                                    <td id="clinicalNotes">
+                                        <ul class="list-group" id="notesList">
+                                            <!-- Clinical notes will be added here -->
+                                        </ul>
+                                        <textarea class="form-control mt-3" rows="2" placeholder="Write new clinical notes..."></textarea>
+                                    </td>
                                     <td>
                                         <button class="btn btn-dark btn-sm add-note">Add New Clinical Notes</button>
-                                        <button class="btn btn-danger btn-sm delete-note">Delete</button>
+                                        <button class="btn btn-danger btn-sm delete-selected-notes">Delete Selected Notes</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -231,36 +234,53 @@
 
             // View Details action
             $('.view-details').on('click', function () {
+                var row = $(this).closest('tr');
+                var patientName = row.data('name');
+                var previousSessions = row.data('sessions');
+                var medicationPrescribed = row.data('medication');
+                var clinicalNotes = JSON.parse(row.attr('data-notes'));
+
+                $('#patientName').text(patientName);
+                $('#previousSessions').text(previousSessions);
+                $('#medicationPrescribed').text(medicationPrescribed);
+
+                // Populate clinical notes
+                $('#notesList').empty();
+                clinicalNotes.forEach((note, index) => {
+                    $('#notesList').append(`
+                        <li class="list-group-item">
+                            <input type="checkbox" class="note-checkbox" data-index="${index}">
+                            ${note}
+                        </li>
+                    `);
+                });
+
                 $('#dynamicContent').show();
                 $('#rescheduleContent').hide();
             });
 
             // Add new clinical note functionality
-            $(document).on('click', '.add-note', function () {
-                var row = $(this).closest('tr');
-                row.find('#clinicalNotes').append(`
-                    <div class="mt-3">
-                        <textarea class="form-control" rows="2" placeholder="Write new clinical notes..."></textarea>
-                        <button class="btn btn-dark mt-2 save-note">Save Note</button>
-                    </div>
-                `);
-            });
-
-            // Save note functionality
-            $(document).on('click', '.save-note', function () {
-                var noteContent = $(this).siblings('textarea').val();
+            $('.add-note').on('click', function () {
+                var noteContent = $(this).closest('tr').find('textarea').val();
                 if (noteContent.trim()) {
-                    $(this).closest('td').prepend(`<p>${noteContent}</p>`);
-                    $(this).closest('.mt-3').remove();
+                    $('#notesList').append(`
+                        <li class="list-group-item">
+                            <input type="checkbox" class="note-checkbox">
+                            ${noteContent}
+                        </li>
+                    `);
+                    $(this).closest('tr').find('textarea').val(''); // Clear textarea
                     $('#successToast .toast-body').text('Clinical note has been successfully saved.');
                     $('#successToast').toast('show');
                 }
             });
 
-            // Delete note functionality
-            $(document).on('click', '.delete-note', function () {
-                $(this).closest('tr').remove();
-                $('#successToast .toast-body').text('Clinical note has been successfully deleted.');
+            // Delete selected notes functionality
+            $(document).on('click', '.delete-selected-notes', function () {
+                $('#notesList .note-checkbox:checked').each(function () {
+                    $(this).closest('li').remove();
+                });
+                $('#successToast .toast-body').text('Selected clinical notes have been successfully deleted.');
                 $('#successToast').toast('show');
             });
 
@@ -274,8 +294,12 @@
             $('#confirmReschedule').on('click', function () {
                 var newDate = $('#newDate').val();
                 var newTime = $('#newTime').val();
-                
+
                 if (newDate && newTime) {
+                    var selectedRow = $('#appointmentTable').find('.reschedule').closest('tr');
+                    selectedRow.find('.appointment-date').text(new Date(newDate).toLocaleDateString());
+                    selectedRow.find('.appointment-time').text(new Date('1970-01-01T' + newTime + 'Z').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+
                     $('#successToast .toast-body').text('Appointment rescheduled successfully.');
                     $('#successToast').toast('show');
                     $('#rescheduleContent').hide();
