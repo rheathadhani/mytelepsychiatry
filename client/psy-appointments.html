@@ -37,18 +37,28 @@
             background-color: white;
         }
 
-        /* Ensure sidebar is always extended */
-        #wrapper {
-            padding-left: 250px; /* Ensure padding for the sidebar */
-        }
-
         #sidebar-wrapper {
             width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
         }
 
-        /* Ensure full height of sidebar */
-        #sidebar-wrapper {
-            height: 100vh;
+        #page-content-wrapper {
+            width: calc(100% - 250px);
+            margin-left: 250px;
+        }
+
+        .container-fluid {
+            min-height: 100vh; /* Ensure the container stretches to the full height of the viewport */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex-grow: 1; /* Make the content area grow to fill available space */
         }
     </style>
 </head>
@@ -69,12 +79,12 @@
         <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
-        <div id="page-content-wrapper" class="w-100">
+        <div id="page-content-wrapper">
             <nav class="navbar navbar-expand-lg navbar-light bg-white">
-                <button class="btn btn-dark" id="menu-toggle"> Menu </button>
+                <button class="btn btn-dark d-lg-none" id="menu-toggle">Menu</button>
             </nav>
 
-            <div class="container-fluid">
+            <div class="container-fluid content">
                 <!-- Header Section -->
                 <div class="row">
                     <div class="col-12">
@@ -221,7 +231,10 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
-            // Remove the menu toggle function to ensure sidebar is always extended
+            // Sidebar toggle functionality for smaller screens
+            $('#menu-toggle').click(function () {
+                $('#wrapper').toggleClass('toggled');
+            });
 
             // Filter appointments by status
             $('#statusFilter').on('change', function () {
