@@ -36,6 +36,20 @@
         .toast-body {
             background-color: white;
         }
+
+        /* Ensure sidebar is always extended */
+        #wrapper {
+            padding-left: 250px; /* Ensure padding for the sidebar */
+        }
+
+        #sidebar-wrapper {
+            width: 250px;
+        }
+
+        /* Ensure full height of sidebar */
+        #sidebar-wrapper {
+            height: 100vh;
+        }
     </style>
 </head>
 
@@ -207,9 +221,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#menu-toggle').click(function () {
-                $('#wrapper').toggleClass('toggled');
-            });
+            // Remove the menu toggle function to ensure sidebar is always extended
 
             // Filter appointments by status
             $('#statusFilter').on('change', function () {
