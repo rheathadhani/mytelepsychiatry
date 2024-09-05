@@ -60,6 +60,16 @@
         .content {
             flex-grow: 1;
         }
+
+        table td {
+            vertical-align: middle; /* Align content in the middle vertically */
+        }
+
+        .table-actions {
+            display: flex;
+            justify-content: center; /* Center align buttons horizontally */
+            gap: 5px; /* Add some space between buttons */
+        }
     </style>
 </head>
 
@@ -123,29 +133,32 @@
                                     <th>Patient Name</th>
                                     <th>Date</th>
                                     <th>Time</th>
+                                    <th>Payment Status</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="appointmentTable">
-                                <tr data-status="Confirmed" data-name="John Doe" data-sessions="Details of previous sessions go here." data-medication="Medication details go here." data-notes='[]'>
+                                <tr data-status="Confirmed" data-name="John Doe" data-sessions="Details of previous sessions go here." data-medication="Medication details go here." data-notes='[]' data-payment="Paid">
                                     <td>John Doe</td>
                                     <td class="appointment-date">09/11/2024</td>
                                     <td class="appointment-time">07:37 AM</td>
+                                    <td><span class="badge bg-success p-2 text-white">Paid</span></td>
                                     <td><span class="badge bg-success p-2 text-white">Confirmed</span></td>
-                                    <td>
+                                    <td class="table-actions">
                                         <button class="btn btn-info btn-sm view-details">View Details</button>
                                         <button class="btn btn-warning btn-sm reschedule">Reschedule</button>
                                         <button class="btn btn-secondary btn-sm change-status">Change Status</button>
                                         <button class="btn btn-danger btn-sm cancel-appointment">Delete Record</button>
                                     </td>
                                 </tr>
-                                <tr data-status="Pending" data-name="Jane Smith" data-sessions="Details of previous sessions go here." data-medication="Medication details go here." data-notes='[]'>
+                                <tr data-status="Pending" data-name="Jane Smith" data-sessions="Details of previous sessions go here." data-medication="Medication details go here." data-notes='[]' data-payment="Unpaid">
                                     <td>Jane Smith</td>
                                     <td class="appointment-date">09/19/2024</td>
                                     <td class="appointment-time">03:41 AM</td>
+                                    <td><span class="badge bg-danger p-2 text-white">Unpaid</span></td>
                                     <td><span class="badge bg-warning p-2 text-white">Pending</span></td>
-                                    <td>
+                                    <td class="table-actions">
                                         <button class="btn btn-info btn-sm view-details">View Details</button>
                                         <button class="btn btn-warning btn-sm reschedule">Reschedule</button>
                                         <button class="btn btn-secondary btn-sm change-status">Change Status</button>
@@ -393,7 +406,7 @@
 
                     // Update status to Rescheduled
                     selectedRow.data('status', 'Rescheduled');
-                    selectedRow.find('td:nth-child(4)').html('<span class="badge bg-primary p-2 text-white">Rescheduled</span>');
+                    selectedRow.find('td:nth-child(5)').html('<span class="badge bg-primary p-2 text-white">Rescheduled</span>');
 
                     $('#successToast .toast-body').text('Appointment rescheduled successfully.');
                     $('#successToast').toast('show');
@@ -402,7 +415,7 @@
                     // Automatically update to "Ongoing" at the exact date and time
                     setTimeout(function () {
                         selectedRow.data('status', 'Ongoing');
-                        selectedRow.find('td:nth-child(4)').html('<span class="badge bg-info p-2 text-white">Ongoing</span>');
+                        selectedRow.find('td:nth-child(5)').html('<span class="badge bg-info p-2 text-white">Ongoing</span>');
                     }, new Date(newDate + 'T' + newTime).getTime() - new Date().getTime());
                 } else {
                     alert("Please select both date and time.");
@@ -458,7 +471,7 @@
                         break;
                 }
 
-                selectedRowToChangeStatus.find('td:nth-child(4)').html(`<span class="badge ${badgeClass} p-2 text-white">${newStatus}</span>`);
+                selectedRowToChangeStatus.find('td:nth-child(5)').html(`<span class="badge ${badgeClass} p-2 text-white">${newStatus}</span>`);
 
                 $('#successToast .toast-body').text('Status changed successfully.');
                 $('#successToast').toast('show');
