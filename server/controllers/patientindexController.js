@@ -97,9 +97,46 @@ const getPastAppointments = (req, res) => {
     });
 };
 
+const trackSymptoms = (req, res) => {
+    const patientId = req.params.patientId;  
+    const { dateLogged, symptomDetails } = req.body; 
+    const query = `
+        INSERT INTO Symptoms (patient_id, date_logged, symptom_details)
+        VALUES (?, ?, ?);
+    `;
+    
+    db.query(query, [patientId, dateLogged, symptomDetails], (err, result) => {
+        if (err) {
+            console.error('Error inserting symptoms:', err);
+            return res.status(500).send(err);
+        }
+        res.status(201).json({ message: 'Symptoms tracked successfully.' });
+    });
+};
+
+const getSymptomsHistory = (req, res) => {
+    const patientId = req.params.patientId;
+    const query = `
+        SELECT date_logged, symptom_details
+        FROM Symptoms
+        WHERE patient_id = ?
+        ORDER BY date_logged DESC;
+    `;
+    
+    db.query(query, [patientId], (err, results) => {
+        if (err) {
+            console.error('Error fetching symptoms history:', err);
+            return res.status(500).send(err);
+        }
+        res.status(200).json(results);
+    });
+};
+
 module.exports = {
     getPatientName,
     getUpcomingSessions,
     getMedicationsList,
-    getPastAppointments
+    getPastAppointments,
+    trackSymptoms,
+    getSymptomsHistory
 };
