@@ -146,8 +146,18 @@
                     <div class="col-md-6">
                         <div class="card mb-3">
                             <div class="card-header bg-dark text-white">Tracked Symptoms History</div>
-                            <div class="card-body" id="symptomsHistory">
-                                <!-- History will be dynamically added here -->
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date and Time</th>
+                                            <th>Symptoms</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="symptomsHistoryTable">
+                                        <!-- History will be dynamically added here -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         <div class="card mb-3">
@@ -226,11 +236,11 @@
                 // Get the selected date and time
                 let dateTime = $('#symptomDateTime').val();
 
-                // If symptoms are selected, update the history and show the toast
+                // If symptoms are selected, update the history table and show the toast
                 if (selectedSymptoms.length > 0 && dateTime) {
                     let formattedDateTime = formatDateTime(dateTime);
-                    let newEntry = `<div>${formattedDateTime}: ${selectedSymptoms.join(', ')}</div>`;
-                    $('#symptomsHistory').prepend(newEntry);
+                    let newRow = `<tr><td>${formattedDateTime}</td><td>${selectedSymptoms.join(', ')}</td></tr>`;
+                    $('#symptomsHistoryTable').prepend(newRow);
 
                     // Show toast notification
                     $('#successToast').toast('show');
