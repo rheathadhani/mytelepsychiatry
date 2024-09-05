@@ -112,6 +112,8 @@
                                     <option value="Confirmed">Confirmed</option>
                                     <option value="Completed">Completed</option>
                                     <option value="Cancelled">Cancelled</option>
+                                    <option value="Rescheduled">Rescheduled</option>
+                                    <option value="Ongoing">Ongoing</option>
                                 </select>
                             </div>
                         </div>
@@ -230,6 +232,8 @@
                                     <option value="Confirmed">Confirmed</option>
                                     <option value="Completed">Completed</option>
                                     <option value="Cancelled">Cancelled</option>
+                                    <option value="Rescheduled">Rescheduled</option>
+                                    <option value="Ongoing">Ongoing</option>
                                 </select>
                             </div>
                             <div class="modal-footer">
@@ -387,9 +391,19 @@
 
                     selectedRow.find('.appointment-time').text(formattedTime);
 
+                    // Update status to Rescheduled
+                    selectedRow.data('status', 'Rescheduled');
+                    selectedRow.find('td:nth-child(4)').html('<span class="badge bg-primary p-2 text-white">Rescheduled</span>');
+
                     $('#successToast .toast-body').text('Appointment rescheduled successfully.');
                     $('#successToast').toast('show');
                     $('#rescheduleContent').hide();
+
+                    // Automatically update to "Ongoing" at the exact date and time
+                    setTimeout(function () {
+                        selectedRow.data('status', 'Ongoing');
+                        selectedRow.find('td:nth-child(4)').html('<span class="badge bg-info p-2 text-white">Ongoing</span>');
+                    }, new Date(newDate + 'T' + newTime).getTime() - new Date().getTime());
                 } else {
                     alert("Please select both date and time.");
                 }
@@ -422,7 +436,7 @@
                 var newStatus = $('#newStatus').val();
                 selectedRowToChangeStatus.data('status', newStatus);
                 var badgeClass;
-                
+
                 switch (newStatus) {
                     case 'Confirmed':
                         badgeClass = 'bg-success';
@@ -434,10 +448,16 @@
                         badgeClass = 'bg-secondary';
                         break;
                     case 'Cancelled':
-                        badgeClass = 'bg-danger'; // Change to red color for cancelled status
+                        badgeClass = 'bg-danger';
+                        break;
+                    case 'Rescheduled':
+                        badgeClass = 'bg-primary';
+                        break;
+                    case 'Ongoing':
+                        badgeClass = 'bg-info';
                         break;
                 }
-                
+
                 selectedRowToChangeStatus.find('td:nth-child(4)').html(`<span class="badge ${badgeClass} p-2 text-white">${newStatus}</span>`);
 
                 $('#successToast .toast-body').text('Status changed successfully.');
