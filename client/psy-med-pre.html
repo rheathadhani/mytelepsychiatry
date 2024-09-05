@@ -4,9 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medicine Prescription</title>
+    <title>Manage Clinical Notes</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="patient-index.css" />
+    <style>
+        .note-table th,
+        .note-table td {
+            padding: 15px;
+            text-align: left;
+        }
+        .note-table th {
+            background-color: #f8f9fa;
+        }
+        .note-actions {
+            text-align: right;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,7 +27,7 @@
         <!-- Sidebar -->
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-                <p class="bg-dark text-white mb-4 ml-4 mt-4"> <strong>Telepsychiatry <br> Platform <span> + </span></strong> </p>
+                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> + </span></strong></p>
                 <a href="psy-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
                 <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
                 <a href="psy-med-pre.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
@@ -35,124 +48,82 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card mb-3">
-                            <div class="card-header bg-dark"></div>
+                            <div class="card-header bg-dark text-white">
+                                Manage Clinical Notes
+                            </div>
                             <div class="card-body text-center">
-                                <h4>Prescribe Patient's Medications</h4>
+                                <h4>Write and Manage Clinical Notes</h4>
+                                <p>Select a patient to view or write notes</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Prescription Form Section -->
-                <form id="prescriptionForm" action="submit-prescription.php" method="POST">
-                    <div class="card mb-3">
-                        <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#prescriptionFormDetails" aria-expanded="true">
-                            Enter Prescription Details
-                        </div>
-                        <div id="prescriptionFormDetails" class="collapse show">
+                <!-- Patient List and Notes Section -->
+                <div class="row">
+                    <!-- Patient List Section -->
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white">Patient List</div>
                             <div class="card-body">
-                                <div class="row">
-                                    <!-- Patient Selection -->
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="patient">Patient Name:</label>
-                                            <select id="patient" name="patient" class="form-control" required>
-                                                <option value="">Select a patient</option>
-                                                <option value="patient1">Patient 1</option>
-                                                <option value="patient2">Patient 2</option>
-                                                <option value="patient3">Patient 3</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!-- Medication Name -->
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="medication">Medication Name:</label>
-                                            <input type="text" id="medication" name="medication" class="form-control" placeholder="Enter medication name" required>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <!-- Dosage Instructions -->
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="dosage">Dosage (mg):</label>
-                                            <input type="number" id="dosage" name="dosage" class="form-control" placeholder="Dosage in mg" required>
-                                        </div>
-                                    </div>
-
-                                    <!-- Frequency per Day -->
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="frequencyDay">Frequency per Day:</label>
-                                            <input type="number" id="frequencyDay" name="frequencyDay" class="form-control" placeholder="Times per day" required>
-                                        </div>
-                                    </div>
-
-                                    <!-- Duration -->
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="duration">Duration (days):</label>
-                                            <input type="number" id="duration" name="duration" class="form-control" placeholder="Number of days" required>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-dark mt-3 btn-lg">Prescribe</button>
-                                </div>
+                                <table class="table note-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Patient Name</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>John Doe</td>
+                                            <td><button class="btn btn-dark btn-sm write-notes" data-patient="John Doe">Write Notes</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jane Smith</td>
+                                            <td><button class="btn btn-dark btn-sm write-notes" data-patient="Jane Smith">Write Notes</button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Michael Johnson</td>
+                                            <td><button class="btn btn-dark btn-sm write-notes" data-patient="Michael Johnson">Write Notes</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                </form>
 
-                <!-- Prescription History Section -->
-                <div class="card mb-3">
-                    <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#prescriptionHistory" aria-expanded="true">
-                        Prescription History
-                    </div>
-                    <div id="prescriptionHistory" class="collapse show">
-                        <div class="card-body">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Patient</th>
-                                        <th>Medication</th>
-                                        <th>Dosage</th>
-                                        <th>Frequency</th>
-                                        <th>Duration</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="historyTable">
-                                    <!-- History entries will be dynamically added here -->
-                                    <tr>
-                                        <td>09/06/2024</td>
-                                        <td>Patient 1</td>
-                                        <td>Paracetamol</td>
-                                        <td>500mg</td>
-                                        <td>3 times a day</td>
-                                        <td>7 days</td>
-                                    </tr>
-                                    <tr>
-                                        <td>09/06/2024</td>
-                                        <td>Patient 2</td>
-                                        <td>Ibuprofen</td>
-                                        <td>200mg</td>
-                                        <td>2 times a day</td>
-                                        <td>5 days</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <!-- Notes Writing Section -->
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white">Write Clinical Notes</div>
+                            <div class="card-body">
+                                <form id="notesForm">
+                                    <div class="form-group">
+                                        <label for="selectedPatient">Selected Patient:</label>
+                                        <input type="text" id="selectedPatient" class="form-control" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="clinicalNotes">Clinical Notes:</label>
+                                        <textarea id="clinicalNotes" class="form-control" rows="5" placeholder="Write clinical notes here..."></textarea>
+                                    </div>
+                                    <button type="button" class="btn btn-dark" id="saveNotes">Save Notes</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Saved Notes Section -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white">Saved Clinical Notes</div>
+                            <div class="card-body" id="savedNotesSection">
+                                <p>No clinical notes available.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
+
     <!-- /#page-content-wrapper -->
     </div>
     <!-- /#wrapper -->
@@ -163,39 +134,31 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
+            // Sidebar toggle functionality for smaller screens
             $('#menu-toggle').click(function () {
                 $('#wrapper').toggleClass('toggled');
             });
 
-            $('form#prescriptionForm').on('submit', function (e) {
-                e.preventDefault();
+            // Write notes for a selected patient
+            $('.write-notes').on('click', function () {
+                const patient = $(this).data('patient');
+                $('#selectedPatient').val(patient);
+                $('#clinicalNotes').val(''); // Clear the textarea
+            });
 
-                const patient = $('#patient').val();
-                const medication = $('#medication').val();
-                const dosage = $('#dosage').val();
-                const frequency = $('#frequencyDay').val();
-                const duration = $('#duration').val();
+            // Save clinical notes
+            $('#saveNotes').on('click', function () {
+                const patient = $('#selectedPatient').val();
+                const notes = $('#clinicalNotes').val();
+                const date = new Date().toLocaleString();
 
-                // Validate for negative values
-                if (dosage < 0 || frequency < 0 || duration < 0) {
-                    alert("Please enter 0 or positive values.");
-                    return;
+                if (patient && notes.trim()) {
+                    const newNote = `<p><strong>${patient}:</strong> ${notes} <br><small>Written on ${date}</small></p>`;
+                    $('#savedNotesSection').prepend(newNote);
+                    $('#clinicalNotes').val(''); // Clear the textarea
+                } else {
+                    alert('Please select a patient and write some notes.');
                 }
-
-                const date = new Date();
-                const formattedDate = ("0" + (date.getMonth() + 1)).slice(-2) + "/" + ("0" + date.getDate()).slice(-2) + "/" + date.getFullYear();
-
-                const newRow = `<tr>
-                    <td>${formattedDate}</td>
-                    <td>${patient}</td>
-                    <td>${medication}</td>
-                    <td>${dosage}mg</td>
-                    <td>${frequency} times a day</td>
-                    <td>${duration} days</td>
-                </tr>`;
-
-                $('#historyTable').append(newRow);
-                this.reset();
             });
         });
     </script>
