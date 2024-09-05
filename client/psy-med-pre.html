@@ -14,15 +14,14 @@
         <!-- Sidebar -->
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-              <p class="bg-dark text-white mb-4 ml-4 mt-4"> <strong>Telepsychiatry <br> Platform <span> + </span></strong> </p>
-              <a href="psy-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-              <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
-              <a href="psy-med-pre.html"
-                class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
-              <a href="psy-cn.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical Notes</a>
-              <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+                <p class="bg-dark text-white mb-4 ml-4 mt-4"> <strong>Telepsychiatry <br> Platform <span> + </span></strong> </p>
+                <a href="psy-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
+                <a href="psy-med-pre.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
+                <a href="psy-cn.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical Notes</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
-          </div>
+        </div>
         <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
@@ -45,12 +44,12 @@
                 </div>
 
                 <!-- Prescription Form Section -->
-                <form action="submit-prescription.php" method="POST">
+                <form id="prescriptionForm" action="submit-prescription.php" method="POST">
                     <div class="card mb-3">
-                        <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#prescriptionForm" aria-expanded="true">
+                        <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#prescriptionFormDetails" aria-expanded="true">
                             Enter Prescription Details
                         </div>
-                        <div id="prescriptionForm" class="collapse show">
+                        <div id="prescriptionFormDetails" class="collapse show">
                             <div class="card-body">
                                 <div class="row">
                                     <!-- Patient Selection -->
@@ -102,25 +101,51 @@
                                 </div>
 
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-dark mt-3">Prescribe</button>
+                                    <button type="submit" class="btn btn-dark mt-3 btn-lg">Prescribe</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </form>
 
-                <!-- Prescription History Section --> <!--Need to ADD DATE -->
+                <!-- Prescription History Section -->
                 <div class="card mb-3">
                     <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#prescriptionHistory" aria-expanded="true">
                         Prescription History
                     </div>
                     <div id="prescriptionHistory" class="collapse show">
                         <div class="card-body">
-                            <ul class="list-group">
-                                <li class="list-group-item">Patient 1 - Paracetamol 500mg, 3 times a day for 7 days</li>
-                                <li class="list-group-item">Patient 2 - Ibuprofen 200mg, 2 times a day for 5 days</li>
-                                <!-- Additional prescriptions will be added here dynamically -->
-                            </ul>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Patient</th>
+                                        <th>Medication</th>
+                                        <th>Dosage</th>
+                                        <th>Frequency</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTable">
+                                    <!-- History entries will be dynamically added here -->
+                                    <tr>
+                                        <td>09/06/2024</td>
+                                        <td>Patient 1</td>
+                                        <td>Paracetamol</td>
+                                        <td>500mg</td>
+                                        <td>3 times a day</td>
+                                        <td>7 days</td>
+                                    </tr>
+                                    <tr>
+                                        <td>09/06/2024</td>
+                                        <td>Patient 2</td>
+                                        <td>Ibuprofen</td>
+                                        <td>200mg</td>
+                                        <td>2 times a day</td>
+                                        <td>5 days</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -137,10 +162,40 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // JavaScript to manage prescription data (if needed)
-        $(document).ready(function() {
-            $('#menu-toggle').click(function() {
+        $(document).ready(function () {
+            $('#menu-toggle').click(function () {
                 $('#wrapper').toggleClass('toggled');
+            });
+
+            $('form#prescriptionForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const patient = $('#patient').val();
+                const medication = $('#medication').val();
+                const dosage = $('#dosage').val();
+                const frequency = $('#frequencyDay').val();
+                const duration = $('#duration').val();
+
+                // Validate for negative values
+                if (dosage < 0 || frequency < 0 || duration < 0) {
+                    alert("Please enter 0 or positive values.");
+                    return;
+                }
+
+                const date = new Date();
+                const formattedDate = ("0" + (date.getMonth() + 1)).slice(-2) + "/" + ("0" + date.getDate()).slice(-2) + "/" + date.getFullYear();
+
+                const newRow = `<tr>
+                    <td>${formattedDate}</td>
+                    <td>${patient}</td>
+                    <td>${medication}</td>
+                    <td>${dosage}mg</td>
+                    <td>${frequency} times a day</td>
+                    <td>${duration} days</td>
+                </tr>`;
+
+                $('#historyTable').append(newRow);
+                this.reset();
             });
         });
     </script>
