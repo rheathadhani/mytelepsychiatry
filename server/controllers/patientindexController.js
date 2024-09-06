@@ -1,4 +1,3 @@
-// controllers/patientindexController.js
 const db = require('../db');
 
 const getPatientName = (req, res) => {
@@ -111,6 +110,7 @@ const trackSymptoms = (req, res) => {
             return res.status(500).send(err);
         }
         res.status(201).json({ message: 'Symptoms tracked successfully.' });
+
     });
 };
 

@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const patientRoutes = require('./routes/patientIndexRoutes'); // Use the correct case
+
 require('dotenv').config();
 const db = require('./db'); // Ensure the database is connected
 
