@@ -1,22 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Appointments</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="patient-index.css" />
+    <style>
+        /* Ensure all cards are of equal height */
+        .card {
+            height: 100%;
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .btn-dark {
+            margin-top: auto;
+        }
+    </style>
 </head>
+
 <body>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span>+</span></strong></p>
-                <a href="patient-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-                <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
-                <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom Tracker</a>
-                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
+                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform
+                        <span>+</span></strong></p>
+                <a href="patient-index.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="patient-appointments.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
+                <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom
+                    Tracker</a>
+                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness
+                    Content</a>
                 <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
         </div>
@@ -43,47 +65,57 @@
                     <h2 class="text-dark mt-4">Mindfulness</h2>
                     <div class="row">
                         <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Mindfulness Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
+                            <div class="card h-100">
+                                <img src="https://img.youtube.com/vi/ZToicYcHIOU/hqdefault.jpg" class="card-img-top"
+                                    alt="Mindfulness Image">
+                                <div class="card-body">
+                                    <p class="card-text">This daily meditation video focuses on helping viewers be
+                                        present and grounded in the moment.</p>
+                                    <a href="https://www.youtube.com/watch?v=ZToicYcHIOU"
+                                        class="btn btn-dark w-100">Video
+                                        Link</a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Mindfulness Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
+                            <div class="card h-100">
+                                <img src="https://img.youtube.com/vi/1dbYduxIpwE/hqdefault.jpg" class="card-img-top"
+                                    alt="Mindfulness Image">
+                                <div class="card-body">
+                                    <p class="card-text">This 10-minute guided meditation session helps in managing
+                                        symptoms of depression, anxiety, and stress through mindfulness and relaxation
+                                        techniques.</p>
+                                    <a href="https://www.youtube.com/watch?v=1dbYduxIpwE"
+                                        class="btn btn-dark w-100">Video
+                                        Link</a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Mindfulness Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
+                            <div class="card h-100">
+                                <img src="https://img.youtube.com/vi/vzKryaN44ss/hqdefault.jpg" class="card-img-top"
+                                    alt="Mindfulness Image">
+                                <div class="card-body">
+                                    <p class="card-text">This video explains the concept of everyday mindfulness and how
+                                        awareness of your surroundings and inner experiences can enhance life's
+                                        enjoyment.</p>
+                                    <a href="https://www.youtube.com/watch?v=vzKryaN44ss"
+                                        class="btn btn-dark w-100">Video
+                                        Link</a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Mindfulness Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Mindfulness Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
+                            <div class="card h-100">
+                                <img src="https://img.youtube.com/vi/inpok4MKVLM/hqdefault.jpg" class="card-img-top"
+                                    alt="Mindfulness Image">
+                                <div class="card-body">
+                                    <p class="card-text">Ideal for those short on time, this video provides a quick
+                                        5-minute guided mindfulness meditation to help center your mind during busy
+                                        days.</p>
+                                    <a href="https://www.youtube.com/watch?v=inpok4MKVLM"
+                                        class="btn btn-dark w-100">Video
+                                        Link</a>
                                 </div>
                             </div>
                         </div>
@@ -95,47 +127,56 @@
                     <h2 class="text-dark mt-4">Exercise</h2>
                     <div class="row">
                         <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Exercise Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
+                            <div class="card h-100">
+                                <img src="https://img.youtube.com/vi/hnlAPBbxNko/hqdefault.jpg" class="card-img-top"
+                                    alt="Exercise Image">
+                                <div class="card-body">
+                                    <p class="card-text">This video explores what's considered the best exercise for
+                                        combatting depression, emphasizing the psychological benefits of physical
+                                        activity.</p>
+                                    <a href="https://www.youtube.com/watch?v=hnlAPBbxNko"
+                                        class="btn btn-dark w-100">Video
+                                        Link</a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Exercise Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
+                            <div class="card h-100">
+                                <img src="https://img.youtube.com/vi/RNZv9RYOXk0/hqdefault.jpg" class="card-img-top"
+                                    alt="Exercise Image">
+                                <div class="card-body">
+                                    <p class="card-text">Dr. Rami Nader discusses strategies on how regular exercise can
+                                        significantly improve mood and alleviate symptoms of depression.</p>
+                                    <a href="https://www.youtube.com/watch?v=RNZv9RYOXk0"
+                                        class="btn btn-dark w-100">Video
+                                        Link</a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Exercise Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
+                            <div class="card h-100">
+                                <img src="https://img.youtube.com/vi/mF6weGWSMBU/hqdefault.jpg" class="card-img-top"
+                                    alt="Exercise Image">
+                                <div class="card-body">
+                                    <p class="card-text">Dr. Arash Javanbakht from Wayne State University talks about
+                                        the impact of exercise on reducing anxiety and depression, supported by recent
+                                        research findings.</p>
+                                    <a href="https://www.youtube.com/watch?v=mF6weGWSMBU"
+                                        class="btn btn-dark w-100">Video
+                                        Link</a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Exercise Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Exercise Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
+                            <div class="card h-100">
+                                <img src="https://img.youtube.com/vi/S3_-u05Rz08/hqdefault.jpg" class="card-img-top"
+                                    alt="Exercise Image">
+                                <div class="card-body">
+                                    <p class="card-text">This video delves into scientific studies that outline the most
+                                        effective exercise routines for alleviating depression.</p>
+                                    <a href="https://www.youtube.com/watch?v=S3_-u05Rz08"
+                                        class="btn btn-dark w-100">Video
+                                        Link</a>
                                 </div>
                             </div>
                         </div>
@@ -147,47 +188,55 @@
                     <h2 class="text-dark mt-4">Nutrition</h2>
                     <div class="row">
                         <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Nutrition Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
+                            <div class="card h-100">
+                                <img src="https://img.youtube.com/vi/8cREJudpHL8/hqdefault.jpg" class="card-img-top"
+                                    alt="Nutrition Image">
+                                <div class="card-body">
+                                    <p class="card-text">This video explores the results of the SMILES trial, which
+                                        investigates the connection between diet and mood, illustrating how certain
+                                        dietary choices can impact mental health.</p>
+                                    <a href="https://www.youtube.com/watch?v=8cREJudpHL8"
+                                        class="btn btn-dark w-100">Video Link</a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Nutrition Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
+                            <div class="card h-100">
+                                <img src="https://img.youtube.com/vi/HS_4CCZU1x8/hqdefault.jpg" class="card-img-top"
+                                    alt="Nutrition Image">
+                                <div class="card-body">
+                                    <p class="card-text">Dr. Drew Ramsey discusses how dietary changes can help manage
+                                        symptoms of depression and anxiety, highlighting specific nutrients and foods
+                                        that can aid mental health.</p>
+                                    <a href="https://www.youtube.com/watch?v=HS_4CCZU1x8"
+                                        class="btn btn-dark w-100">Video Link</a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Nutrition Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
+                            <div class="card h-100">
+                                <img src="https://img.youtube.com/vi/h6ly7uEgci4/hqdefault.jpg" class="card-img-top"
+                                    alt="Nutrition Image">
+                                <div class="card-body">
+                                    <p class="card-text">This playlist offers a series of videos focusing on how
+                                        different aspects of nutrition can influence symptoms of depression, providing
+                                        practical advice on dietary changes that may offer benefits.</p>
+                                    <a href="https://www.youtube.com/playlist?list=PL5TLzNi5fYd_gQY6cV42FZ4V4-16W8B_E"
+                                        class="btn btn-dark w-100">Video Link</a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Nutrition Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-4">
-                            <div class="card">
-                                <img src="/assets/images.png" class="card-img-top" alt="Nutrition Image">
-                                <div class="card-body" style="min-height: 200px;">
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                    <a href="#" class="btn btn-dark">Go somewhere</a>
+                            <div class="card h-100">
+                                <img src="https://img.youtube.com/vi/VPnbxEyDzTg/hqdefault.jpg" class="card-img-top"
+                                    alt="Nutrition Image">
+                                <div class="card-body">
+                                    <p class="card-text">This video discusses the role that nutrition plays in managing
+                                        depression. It highlights the importance of a balanced diet, emphasizing foods
+                                        rich in nutrients that support brain health, such as omega-3 fatty acids,
+                                        antioxidants, and fiber. </p>
+                                    <a href="https://www.youtube.com/watch?v=VPnbxEyDzTg"
+                                        class="btn btn-dark w-100">Video Link</a>
                                 </div>
                             </div>
                         </div>
@@ -202,4 +251,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

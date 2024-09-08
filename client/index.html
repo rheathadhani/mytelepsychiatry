@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,8 @@
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body, html {
+        body,
+        html {
             height: 100%;
             margin: 0;
         }
@@ -25,32 +27,53 @@
         }
 
         .card-img-top {
-            height: 160px; /* Fixed height for consistency */
-            object-fit: cover; /* Ensures images cover the card area */
+            height: 160px;
+            /* Fixed height for consistency */
+            object-fit: cover;
+            /* Ensures images cover the card area */
         }
 
         .card {
-            height: 100%; /* Makes all cards the same height */
-            display: flex; /* Added to ensure consistent card heights */
-            flex-direction: column; /* Stacks the content vertically */
+            height: 100%;
+            /* Makes all cards the same height */
+            display: flex;
+            /* Added to ensure consistent card heights */
+            flex-direction: column;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.15);
+            /* White box shadow with subtle transparency */
+            transition: box-shadow 0.3s ease-in-out;
+            transition: tansform 0.3s all;
+
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(255, 255, 255, 0.25);
+            transform: scale(1.1);
         }
 
         .card-body {
-            flex-grow: 1; /* Allows the card body to expand and fill available space */
+            flex-grow: 1;
+            /* Allows the card body to expand and fill available space */
         }
 
         .position-relative {
             position: relative;
-            text-align: left; /* Align text to the left */
-            color: #FFFFFF; /* Ensures text is white */
+            text-align: left;
+            /* Align text to the left */
+            color: #FFFFFF;
+            /* Ensures text is white */
         }
 
         .position-absolute {
             position: absolute;
-            top: 50%; /* Centers vertically */
-            left: 3%; /* Align text to the left within the image area */
-            transform: translate(0%, -50%); /* Adjusts the vertical positioning */
-            padding: 20px; /* Adds spacing inside the text box */
+            top: 50%;
+            /* Centers vertically */
+            left: 3%;
+            /* Align text to the left within the image area */
+            transform: translate(0%, -50%);
+            /* Adjusts the vertical positioning */
+            padding: 20px;
+            /* Adds spacing inside the text box */
         }
 
         .full-width-image {
@@ -58,36 +81,105 @@
             height: 60vh;
         }
 
+        .list-unstyled {
+            list-style-type: square;
+            text-align: left;
+        }
+
+        h2 {
+            text-align: left;
+        }
+
+        .carousel {
+            background-color: #343a40;
+            color: #ffffff;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.15);
+            /* White box shadow with subtle transparency */
+            transition: box-shadow 0.3s ease-in-out;
+        }
+
+        .carousel:hover {
+            box-shadow: 0 8px 16px rgba(255, 255, 255, 0.25);
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            filter: invert(1);
+        }
+
+        .carousel-item {
+            color: #000;
+            background-color: #fff;
+            /* Light grey text for readability */
+        }
+
+        .rating {
+            color: gold;
+            font-size: 1.5em;
+            margin: 1px 0;
+
+            /* Add a little space above and below the rating */
+        }
+
+        .carousel-item .lead {
+            font-size: 1.2rem;
+            /* Adjust the font size if necessary */
+            margin: 0 auto;
+            /* Center the text horizontally */
+            max-width: 80%;
+            /* Max width to avoid touching the carousel controls */
+        }
+
         footer {
-            width: 100%; /* Ensures the footer stretches across the full width */
             display: flex;
-            justify-content: space-between; /* Aligns child elements per your alignment requests */
-            padding: 0 50px; /* Adjusts padding */
-            box-sizing: border-box; /* Adjusts box-sizing */
+            justify-content: space-between;
+            padding: 0 30px;
+            align-items: center;
+            background: #f8f9fa;
+            /* Assuming a light background for visibility */
+            color: #333;
+            /* Dark text for contrast */
+            box-sizing: border-box;
+            width: 100%;
+            height: 11.5vh;
+        }
+
+        .footer-left,
+        .footer-center,
+        .footer-right {
+            flex: 1;
+            /* Equal flex basis for all three sections */
+            padding: 15px;
+            /* Optional padding for spacing */
+        }
+
+        .footer-center {
+            text-align: center;
+            order: 2;
+            /* Keeps the center always in the middle */
+        }
+
+        .footer-right {
+            text-align: right;
+            order: 3;
+            /* Ensures this content is always on the right */
+        }
+
+        .footer-left {
+            text-align: left;
+            /* Aligns text to the left */
+            order: 1;
+            /* Ensures this content is always on the left */
+        }
+
+        footer p {
+            font-size: 0.7rem;
         }
 
         .footer-text {
             text-align: left;
             flex-grow: 1;
         }
-
-        .footer-center {
-            text-align: center;
-            flex-grow: 1;
-        }
-
-        .footer-right {
-            text-align: right;
-            flex-grow: 1;
-        }
-        footer {
-            height: 11.5vh;
-        }
-        
-        footer p {
-            font-size: 0.7rem;
-        }
-
     </style>
 </head>
 
@@ -140,7 +232,7 @@
             <!-- Dynamic content cards for different services -->
             <div class="col-md-3 mb-4 d-flex align-items-stretch">
                 <div class="card">
-                    <img src="symptom_tracking.jpg" class="card-img-top" alt="Appointment Bookings">
+                    <img src="../assets/appointments.webp" class="card-img-top" alt="Appointment Bookings">
                     <div class="card-body">
                         <h5 class="card-title">Appointment Bookings</h5>
                         <p class="card-text">Schedule and manage your appointments easily with our platform.</p>
@@ -149,7 +241,7 @@
             </div>
             <div class="col-md-3 mb-4 d-flex align-items-stretch">
                 <div class="card">
-                    <img src="wellness_content.jpg" class="card-img-top" alt="Wellness Content">
+                    <img src="../assets/welness.webp" class="card-img-top" alt="Wellness Content">
                     <div class="card-body">
                         <h5 class="card-title">Wellness Content</h5>
                         <p class="card-text">Access a wide range of mental health and wellness resources.</p>
@@ -158,7 +250,7 @@
             </div>
             <div class="col-md-3 mb-4 d-flex align-items-stretch">
                 <div class="card">
-                    <img src="medicine_prescriptions.jpg" class="card-img-top" alt="Medicine Prescription">
+                    <img src="../assets/medicine.webp" class="card-img-top" alt="Medicine Prescription">
                     <div class="card-body">
                         <h5 class="card-title">Medicine Prescription</h5>
                         <p class="card-text">Get prescriptions easily after your consultations.</p>
@@ -167,7 +259,7 @@
             </div>
             <div class="col-md-3 mb-4 d-flex align-items-stretch">
                 <div class="card">
-                    <img src="symptom_tracking.jpg" class="card-img-top" alt="Symptom Tracking">
+                    <img src="../assets/symptoms.webp" class="card-img-top" alt="Symptom Tracking">
                     <div class="card-body">
                         <h5 class="card-title">Symptom Tracking</h5>
                         <p class="card-text">Continuously monitor and manage your health symptoms effectively.</p>
@@ -177,18 +269,50 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="container-fluid p-4 pt-2 bg-light text-dark">
-        <div class="row">
-            <div class="col-md-4 text-left">
-                <p class="pt-0">If you are in a life-threatening situation, Call 988 or use these resources to get immediate help.</p>
+    <!-- Client Review Carousel -->
+    <section class="container mt-2 mb-5"> <!-- Reduced margin-top here -->
+        <div id="clientReviewCarousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active text-center p-4 ">
+                    <div class="rating">★★★★☆</div> <!-- Example rating -->
+                    <p class="lead">The appointment booking service was seamless and efficient. It made finding the
+                        right psychiatrist so much easier!"</p>
+                    <em>- John Doe, Kuantan</em>
+                </div>
+                <div class="carousel-item text-center p-4">
+                    <div class="rating">★★★★★</div> <!-- Example rating -->
+                    <p class="lead">"Using the symptom tracker helped me understand my patterns better and communicate
+                        more effectively with my psychiatrist."</p>
+                    <em>- Jane Smith, Kuala Lumpur</em>
+                </div>
+                <div class="carousel-item text-center p-4">
+                    <div class="rating">★★★★★</div> <!-- Example rating -->
+                    <p class="lead">"The wellness content is a great resource that complements my therapy sessions and
+                        supports my journey to better mental health."</p>
+                    <em>- Emily Johnson, Penang</em>
+                </div>
             </div>
-            <div class="col-md-4 text-right">
-                <p class="pt-2 pl-6">2024 MYTelepsychiatry. All Rights Reserved.</p>
-            </div>
-            <div class="col-md-4 text-center">
-                <p class="pt-2 pl-5">Contact us: info@telepsychiatry.com</p>
-            </div>
+            <a class="carousel-control-prev" href="#clientReviewCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#clientReviewCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </section>
+
+
+    <footer class="container-fluid">
+        <div class="footer-left">
+            <p class="mt-3">If you are in a life-threatening situation, <br>Call 988 or use these resources to get immediate help.</p>
+        </div>
+        <div class="footer-center">
+            <p class="mt-3">2024 MYTelepsychiatry. All Rights Reserved.</p>
+        </div>
+        <div class="footer-right">
+            <p class="mt-3">Contact us: info@telepsychiatry.com</p>
         </div>
     </footer>
 
@@ -197,4 +321,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
