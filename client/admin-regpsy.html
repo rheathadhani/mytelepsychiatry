@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Psychiatrist</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="patient-index.css" />
+    <style>
+        .card-header {
+            background-color: #343a40;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="bg-dark border-right" id="sidebar-wrapper">
+            <div class="list-group list-group-flush">
+                <p class="bg-dark text-white mb-1 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> +
+                        </span></strong></p>
+                <p class="text-white font-italic ml-4 mt-0 mb-3">Admin's Space</p>
+                <a href="admin-index.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="admin-psy.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Psychiatrists</a>
+                <a href="admin-patient.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Patients</a>
+                <a href="admin-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness
+                    Content</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+            </div>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper" class="w-100">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white">
+                <button class="btn btn-primary" id="menu-toggle"> Menu </button>
+            </nav>
+
+            <!-- Content starts after nav -->
+            <div class="container">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4>Psychiatrist Management</h4>
+                    </div>
+                    <!-- Registration Form (admin-regpsy.html) -->
+                    <div class="card-body">
+                        <form id="registerPsychiatristForm">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <input type="text" id="fullName" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" id="password" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="specialization">Specialization</label>
+                                <select id="specialization" class="form-control" required>
+                                    <option value="General Psychiatry">General Psychiatry</option>
+                                    <option value="Child and Adolescent Psychiatry">Child and Adolescent Psychiatry
+                                    </option>
+                                    <option value="Geriatric Psychiatry">Geriatric Psychiatry</option>
+                                </select>
+                            </div>
+                            <button type="button" id="savePsychiatrist" class="btn btn-success">Save</button>
+                            <button type="button" id="cancelRegistration" class="btn btn-secondary">Cancel</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <!-- End of Content -->
+
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Bootstrap and jQuery scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="patient-index.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Auto-increment ID counter
+            var nextId = localStorage.getItem('nextId') ? parseInt(localStorage.getItem('nextId')) : 3; // Start from 3 if no ID is stored
+
+            // Save button functionality
+            $('#savePsychiatrist').click(function () {
+                var fullName = $('#fullName').val();
+                var email = $('#email').val();
+                var password = $('#password').val();
+                var specialization = $('#specialization').val();
+                var createdDate = new Date().toLocaleString('en-US', {
+                    month: 'numeric',
+                    day: 'numeric',
+                    year: '2-digit',
+                    hour: 'numeric',
+                    minute: 'numeric'
+                }); // Get the current date & time
+
+                // Save the new psychiatrist data to localStorage
+                var newPsychiatrist = {
+                    id: nextId,
+                    fullName: fullName,
+                    email: email,
+                    password: password,
+                    specialization: specialization,
+                    createdDate: createdDate
+                };
+
+                // Store the data in localStorage
+                localStorage.setItem('newPsychiatrist', JSON.stringify(newPsychiatrist));
+                localStorage.setItem('nextId', nextId + 1); // Increment the ID for the next psychiatrist
+
+                // Redirect back to the table page
+                window.location.href = "admin-psy.html";
+            });
+
+            // Cancel button functionality
+            $('#cancelRegistration').click(function () {
+                window.location.href = "admin-psy.html";
+            });
+        });
+    </script>
+</body>
+
+</html>

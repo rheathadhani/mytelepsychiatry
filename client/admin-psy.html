@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="patient-index.css" />
+    <style>
+        .table-actions button {
+            margin-right: 5px;
+            display: flex;
+            /* Ensure buttons are in a horizontal row */
+            gap: 10px;
+        }
+
+        .card-header {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            border-radius: 0;
+        }
+
+        .btn-primary,
+        .btn-danger,
+        .btn-warning,
+        .btn-info {
+            border-radius: 0;
+        }
+
+        .d-flex.justify-content-end button {
+            margin-left: 10px;
+        }
+
+        #search,
+        #resetFilters {
+            width: 100%;
+        }
+
+        #admin-regpsy {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .edit-mode input {
+            width: 100%;
+            padding: 5px;
+        }
+
+        .btn-actions {
+            width: 80px;
+            /* Set uniform width for all action buttons */
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="bg-dark border-right" id="sidebar-wrapper">
+            <div class="list-group list-group-flush">
+                <p class="bg-dark text-white mb-1 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> +
+                        </span></strong></p>
+                <p class="text-white font-italic ml-4 mt-0 mb-3">Admin's Space</p>
+                <a href="admin-index.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="admin-psy.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Psychiatrists</a>
+                <a href="admin-patient.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Patients</a>
+                <a href="admin-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness
+                    Content</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+            </div>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper" class="w-100">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white">
+                <button class="btn btn-primary" id="menu-toggle"> Menu </button>
+            </nav>
+
+            <!-- Content starts after nav -->
+            <div class="container">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4>Psychiatrist Management</h4>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-success text-white"><a href="admin-regpsy.html"
+                                    id="admin-regpsy">Register New Psychiatrist</a></button>
+                            <!-- Give Generate Report button a unique ID -->
+                            <button class="btn btn-success" id="generateReportBtn">Generate Report</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Search and Filter Inputs in the same row with labels -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <label for="search">Search</label>
+                                <input type="text" id="search" class="form-control"
+                                    placeholder="Search by ID or Full Name">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filterByDateTime">Created Date & Time</label>
+                                <input type="datetime-local" id="filterByDateTime" class="form-control"
+                                    placeholder="Filter by Date">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filterSpecialization">Specialization</label>
+                                <select id="filterSpecialization" class="form-select form-control">
+                                    <option value="">Filter by Specialization</option>
+                                    <option value="General Psychiatry">General Psychiatry</option>
+                                    <option value="Child and Adolescent Psychiatry">Child and Adolescent Psychiatry
+                                    </option>
+                                    <option value="Geriatric Psychiatry">Geriatric Psychiatry</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label>&nbsp;</label> <!-- Empty label for alignment -->
+                                <button class="btn btn-secondary" id="resetFilters">Reset Filters</button>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <table class="table table-striped table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Password</th>
+                                    <th>Specialization</th>
+                                    <th>Created Date & Time</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="psychiatristTableBody">
+                                <!-- Example Row in Normal Mode -->
+                                <tr>
+                                    <td>1</td>
+                                    <td class="fullName">Dr. John Doe</td>
+                                    <td class="email">john@example.com</td>
+                                    <td class="password">root</td>
+                                    <td class="specialization">General Psychiatry</td>
+                                    <td>9/1/24, 10:00 AM</td>
+                                    <td class="table-actions">
+                                        <button class="btn btn-secondary btn-sm btn-actions">View</button>
+                                        <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
+                                        <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
+                                    </td>
+                                </tr>
+
+                                <!-- Example Row in Normal Mode -->
+                                <tr>
+                                    <td>2</td>
+                                    <td class="fullName">Dr. Mary Doe</td>
+                                    <td class="email">mary@example.com</td>
+                                    <td class="password">test</td>
+                                    <td class="specialization">Geriatric Psychiatry</td>
+                                    <td>9/1/24, 10:00 AM</td>
+                                    <td class="table-actions">
+                                        <button class="btn btn-secondary btn-sm btn-actions">View</button>
+                                        <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
+                                        <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
+                                    </td>
+                                </tr>
+
+                                <!-- Add more rows as needed -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Content -->
+
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Bootstrap and jQuery scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        //Fetch data from admin-regpsy.html for register new psychiatrist
+        $(document).ready(function () {
+            // Load new psychiatrist from localStorage
+            var newPsychiatrist = localStorage.getItem('newPsychiatrist');
+            if (newPsychiatrist) {
+                newPsychiatrist = JSON.parse(newPsychiatrist);
+
+                // Append the new record to the table
+                $('#psychiatristTableBody').append(`
+                <tr>
+                    <td>${newPsychiatrist.id}</td>
+                    <td class="fullName">${newPsychiatrist.fullName}</td>
+                    <td class="email">${newPsychiatrist.email}</td>
+                    <td class="password">${newPsychiatrist.password}</td>
+                    <td class="specialization">${newPsychiatrist.specialization}</td>
+                    <td class="createdDate">${newPsychiatrist.createdDate}</td>
+                    <td class="table-actions">
+                        <button class="btn btn-secondary btn-sm btn-actions">View</button>
+                        <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
+                        <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
+                    </td>
+                </tr>
+            `);
+
+                // Clear the stored data after it has been appended
+                localStorage.removeItem('newPsychiatrist');
+            }
+        });
+
+        //Generate Report
+        $(document).ready(function () {
+            // Add event listener to the "Generate Report" button
+            $('#generateReportBtn').on('click', function () {
+                generatePDFReport();
+            });
+
+            function generatePDFReport() {
+                // Get the visible rows after filtering
+                var rows = $('#psychiatristTableBody tr:visible');
+
+                if (rows.length === 0) {
+                    alert('No data to generate the report.');
+                    return;
+                }
+
+                // Initialize jsPDF
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Set title
+                doc.setFontSize(18);
+                doc.text("Psychiatrist Report", 10, 10);
+
+                // Set column headers (excluding Password)
+                const headers = ["ID", "Full Name", "Email", "Specialization", "Created Date & Time"];
+                const tableRows = [];
+
+                // Loop through each visible row and extract data (skipping the Password column)
+                rows.each(function () {
+                    const rowData = [];
+                    $(this).find('td').each(function (index) {
+                        // Skip the password column (index 3)
+                        if (index !== 3 && index < headers.length + 1) {
+                            rowData.push($(this).text().trim());
+                        }
+                    });
+                    tableRows.push(rowData);
+                });
+
+                // Add the table to the PDF (excluding Password)
+                doc.autoTable({
+                    head: [headers],
+                    body: tableRows,
+                    startY: 20,  // Adjust this based on your title's position
+                    theme: 'grid',
+                    margin: { top: 10 },
+                });
+
+                // Save the generated PDF
+                doc.save('psychiatrist-report.pdf');
+            }
+        });
+
+        $(document).ready(function () {
+            // Search by ID or Name
+            $('#search').on('keyup', function () {
+                var value = $(this).val().toLowerCase();
+                $('#psychiatristTableBody tr').filter(function () {
+                    // Only search by the full name (second column, index 1)
+                    $(this).toggle($(this).find('td:eq(1)').text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+
+        });
+
+        // Filter by Specialization
+        $('#filterSpecialization').on('change', function () {
+            var value = $(this).val().toLowerCase();
+            $('#psychiatristTableBody tr').filter(function () {
+                $(this).toggle($(this).find('td:eq(4)').text().toLowerCase().indexOf(value) > -1 || value == "");
+            });
+        });
+
+        // Filter by Date & Time
+        $('#filterByDateTime').on('change', function () {
+            var value = new Date($(this).val()).getTime();
+            $('#psychiatristTableBody tr').filter(function () {
+                var rowDate = new Date($(this).find('td:eq(5)').text()).getTime();
+                $(this).toggle(rowDate >= value || isNaN(value));
+            });
+        });
+
+        // Reset Filters
+        $('#resetFilters').on('click', function () {
+            $('#search').val('');
+            $('#filterByDateTime').val('');
+            $('#filterSpecialization').val('');
+            $('#psychiatristTableBody tr').show();
+        });
+
+        // Edit functionality
+        $(document).on('click', '.edit-btn', function () {
+            var row = $(this).closest('tr');
+            var fullName = row.find('.fullName').text();
+            var email = row.find('.email').text();
+            var password = row.find('.password').text();
+            var specialization = row.find('.specialization').text();
+
+            row.find('.fullName').html('<input type="text" value="' + fullName + '">');
+            row.find('.email').html('<input type="email" value="' + email + '">');
+            row.find('.password').html('<input type="password" value="' + password + '">');
+
+            var specializationOptions = `
+        <select class="form-control">
+            <option value="General Psychiatry" ${specialization === 'General Psychiatry' ? 'selected' : ''}>General Psychiatry</option>
+            <option value="Child and Adolescent Psychiatry" ${specialization === 'Child and Adolescent Psychiatry' ? 'selected' : ''}>Child and Adolescent Psychiatry</option>
+            <option value="Geriatric Psychiatry" ${specialization === 'Geriatric Psychiatry' ? 'selected' : ''}>Geriatric Psychiatry</option>
+        </select>
+    `;
+            row.find('.specialization').html(specializationOptions);
+
+            // Hide the "Created Date & Time" column
+            row.find('.createdDate').hide(); // Hides the created date column in this row
+
+            row.find('.table-actions').html(`
+        <button id="saveBtn" class="btn btn-success btn-actions">Save</button>
+        <button id="cancelBtn" class="btn btn-secondary btn-actions">Cancel</button>
+    `);
+        });
+
+        // Save functionality
+        $(document).on('click', '#saveBtn', function () {
+            var row = $(this).closest('tr');
+            var fullName = row.find('.fullName input').val();
+            var email = row.find('.email input').val();
+            var password = row.find('.password input').val();
+            var specialization = row.find('.specialization select').val();
+
+            row.find('.fullName').text(fullName);
+            row.find('.email').text(email);
+            row.find('.password').text(password);
+            row.find('.specialization').text(specialization);
+
+            // Show the "Created Date & Time" column again
+            row.find('.createdDate').show(); // Restores the created date column
+
+            row.find('.table-actions').html(`
+        <button class="btn btn-secondary btn-sm btn-actions">View</button>
+        <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
+        <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
+    `);
+        });
+
+        // Cancel functionality
+        $(document).on('click', '#cancelBtn', function () {
+            var row = $(this).closest('tr');
+            var fullName = row.find('.fullName input').attr('value');
+            var email = row.find('.email input').attr('value');
+            var password = row.find('.password input').attr('value');
+            var specialization = row.find('.specialization select').attr('value');
+
+            row.find('.fullName').text(fullName);
+            row.find('.email').text(email);
+            row.find('.password').text(password);
+            row.find('.specialization').text(specialization);
+
+            // Show the "Created Date & Time" column again
+            row.find('.createdDate').show(); // Restores the created date column
+
+            row.find('.table-actions').html(`
+        <button class="btn btn-secondary btn-sm btn-actions">View</button>
+        <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
+        <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
+    `);
+        });
+
+        // Delete functionality
+        $(document).on('click', '.delete-btn', function () {
+            $(this).closest('tr').remove();
+        });
+
+    </script>
+</body>
+
+</html>
