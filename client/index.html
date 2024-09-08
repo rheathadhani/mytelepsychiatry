@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telepsychiatry Platform</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+
+        nav {
+            background-color: #fff;
+        }
+
+        .full-height {
+            height: 100%;
+        }
+
+        .text-white-custom {
+            color: #ffffff;
+        }
+
+        .card-img-top {
+            height: 160px; /* Fixed height for consistency */
+            object-fit: cover; /* Ensures images cover the card area */
+        }
+
+        .card {
+            height: 100%; /* Makes all cards the same height */
+            display: flex; /* Added to ensure consistent card heights */
+            flex-direction: column; /* Stacks the content vertically */
+        }
+
+        .card-body {
+            flex-grow: 1; /* Allows the card body to expand and fill available space */
+        }
+
+        .position-relative {
+            position: relative;
+            text-align: left; /* Align text to the left */
+            color: #FFFFFF; /* Ensures text is white */
+        }
+
+        .position-absolute {
+            position: absolute;
+            top: 50%; /* Centers vertically */
+            left: 3%; /* Align text to the left within the image area */
+            transform: translate(0%, -50%); /* Adjusts the vertical positioning */
+            padding: 20px; /* Adds spacing inside the text box */
+        }
+
+        .full-width-image {
+            width: 100%;
+            height: 60vh;
+        }
+
+        footer {
+            width: 100%; /* Ensures the footer stretches across the full width */
+            display: flex;
+            justify-content: space-between; /* Aligns child elements per your alignment requests */
+            padding: 0 50px; /* Adjusts padding */
+            box-sizing: border-box; /* Adjusts box-sizing */
+        }
+
+        .footer-text {
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .footer-center {
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .footer-right {
+            text-align: right;
+            flex-grow: 1;
+        }
+        footer {
+            height: 11.5vh;
+        }
+        
+        footer p {
+            font-size: 0.7rem;
+        }
+
+    </style>
+</head>
+
+<body class="bg-dark">
+
+    <!-- Navigation Button -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">MYTelepsychiatry</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="register.html">Get Started</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="container text-center text-white-custom p-4">
+        <h1>Welcome to MYTelepsychiatry</h1>
+        <p>Providing accessible mental health support from anywhere.</p>
+    </header>
+
+    <!-- Full-width Landing Image with Text Overlay -->
+    <div class="position-relative text-center mb-4">
+        <img src="../assets/imagelanding.jpg" class="full-width-image" alt="Telepsychiatry Landing Image">
+        <div class="position-absolute">
+            <h2 class="text-dark mb-4">Transforming Mental Health <br>Services</h2>
+            <ul class="list-unstyled pl-4">
+                <li class="text-dark mb-2 font-italic">Easy Online Bookings</li>
+                <li class="text-dark mb-2 font-italic">Comprehensive Symptom Tracking</li>
+                <li class="text-dark mb-2 font-italic">Rich Wellness Content</li>
+                <li class="text-dark mb-2 font-italic">Instant Medicine Prescriptions</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container p-4">
+        <div class="row">
+            <!-- Dynamic content cards for different services -->
+            <div class="col-md-3 mb-4 d-flex align-items-stretch">
+                <div class="card">
+                    <img src="symptom_tracking.jpg" class="card-img-top" alt="Appointment Bookings">
+                    <div class="card-body">
+                        <h5 class="card-title">Appointment Bookings</h5>
+                        <p class="card-text">Schedule and manage your appointments easily with our platform.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4 d-flex align-items-stretch">
+                <div class="card">
+                    <img src="wellness_content.jpg" class="card-img-top" alt="Wellness Content">
+                    <div class="card-body">
+                        <h5 class="card-title">Wellness Content</h5>
+                        <p class="card-text">Access a wide range of mental health and wellness resources.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4 d-flex align-items-stretch">
+                <div class="card">
+                    <img src="medicine_prescriptions.jpg" class="card-img-top" alt="Medicine Prescription">
+                    <div class="card-body">
+                        <h5 class="card-title">Medicine Prescription</h5>
+                        <p class="card-text">Get prescriptions easily after your consultations.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4 d-flex align-items-stretch">
+                <div class="card">
+                    <img src="symptom_tracking.jpg" class="card-img-top" alt="Symptom Tracking">
+                    <div class="card-body">
+                        <h5 class="card-title">Symptom Tracking</h5>
+                        <p class="card-text">Continuously monitor and manage your health symptoms effectively.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="container-fluid p-4 pt-2 bg-light text-dark">
+        <div class="row">
+            <div class="col-md-4 text-left">
+                <p class="pt-0">If you are in a life-threatening situation, Call 988 or use these resources to get immediate help.</p>
+            </div>
+            <div class="col-md-4 text-right">
+                <p class="pt-2 pl-6">2024 MYTelepsychiatry. All Rights Reserved.</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <p class="pt-2 pl-5">Contact us: info@telepsychiatry.com</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
