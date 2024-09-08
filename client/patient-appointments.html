@@ -66,6 +66,7 @@
                                 <div class="form-group">
                                     <label for="psychiatrist">Select Psychiatrist:</label>
                                     <select id="psychiatrist" class="form-control" required>
+                                        <option value="" disabled selected>Select Psychiatrist</option>
                                         <option value="Psychiatrist 1">Psychiatrist 1</option>
                                         <option value="Psychiatrist 2">Psychiatrist 2</option>
                                         <option value="Psychiatrist 3">Psychiatrist 3</option>
@@ -82,11 +83,8 @@
                     <div class="card-body text-center">
                         <img id="psy-Image" src="#" alt="Psychiatrist Image" style="width: 100px; height: 100px;">
                         <h5 id="psy-Name">Psychiatrist Name</h5>
-                        <p>Age: <span id="psy-Age">45</span></p>
-                        <p>Review: ★★★★★</p>
                         <p>Payment: RM<span id="psy-Payment">50</span></p>
-                        <p>Degree: <span id="psy-Degree">Medical Degree (MD)</span></p>
-                        <p>Position: <span id="psy-Position">Full-time Psychiatrist</span></p>
+                        <p>Specialization: <span id="psy-Degree"></span></p>
                     </div>
                 </div>
 
@@ -113,6 +111,12 @@
         document.getElementById('proceedPayment').addEventListener('click', function () {
             const selectedDateTime = document.getElementById('date').value;
             const selectedPsychiatrist = document.getElementById('psychiatrist').value;
+
+            // Validate that both fields are filled
+            if (!selectedDateTime || !selectedPsychiatrist) {
+                alert('Please select both a date and time and a psychiatrist before proceeding.');
+                return;
+            }
 
             // Save appointment details to localStorage
             localStorage.setItem('appointmentDateTime', selectedDateTime);

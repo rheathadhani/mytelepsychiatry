@@ -50,8 +50,8 @@
             <div class="card mb-4">
               <div class="card-header bg-dark text-white"> Upcoming Session</div>
               <div class="card-body">
-                <p><strong>Psychiatrist:</strong> Psychiatrist 1</p>
-                <p><strong>Date & Time:</strong> 09/06/2024, 10:00 AM</p>
+                <p><strong>Psychiatrist:</strong> <span id="upcomingPsychiatrist">Psychiatrist 1</span></p>
+                <p><strong>Date & Time:</strong> <span id="upcomingDateTime">09/06/2024, 10:00 AM</span></p>
                 <p><strong>Location:</strong> Online Consultation</p>
               </div>
             </div>
@@ -165,7 +165,20 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="patient-index.js"></script>
+  <script>
+    // Update upcoming session details from localStorage
+    document.addEventListener('DOMContentLoaded', function () {
+      const appointmentDateTime = localStorage.getItem('appointmentDateTime');
+      const selectedPsychiatrist = localStorage.getItem('selectedPsychiatrist');
+      
+      const date = new Date(appointmentDateTime);
+      const formattedDate = date.toLocaleDateString();
+      const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      document.getElementById('upcomingDateTime').innerText = `${formattedDate}, ${formattedTime}`;
+      document.getElementById('upcomingPsychiatrist').innerText = selectedPsychiatrist;
+    });
+  </script>
 </body>
 
 </html>

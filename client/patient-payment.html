@@ -7,6 +7,13 @@
     <title>Patient Payment</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="patient-index.css" />
+    <style>
+        /* Custom CSS for inactive tabs */
+        .nav-link.inactive-tab {
+            color: black !important;
+            background-color: #f8f9fa !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -20,7 +27,7 @@
                 <p><strong>Patient Name:</strong> John Doe</p>
                 <p><strong>Psychiatrist Name:</strong> <span id="selectedPsychiatrist">Psychiatrist 1</span></p>
                 <p><strong>Appointment Date & Time:</strong> <span id="appointmentDateTime">09/06/2024, 10:00 AM</span></p>
-                <p><strong>Payment Amount:</strong> <span id="paymentAmount">50</span></p>
+                <p><strong>Payment Amount:</strong> <span id="paymentAmount">RM50</span></p>
             </div>
         </div>
 
@@ -30,18 +37,18 @@
             <div class="card-body">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#bankTransfer">Bank Transfer</a>
+                        <a class="nav-link active" data-toggle="tab" href="#bankTransfer" id="bankTransferTab">Bank Transfer</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#qrPayment">QR Payment</a>
+                        <a class="nav-link inactive-tab" data-toggle="tab" href="#qrPayment" id="qrPaymentTab">QR Payment</a>
                     </li>
                 </ul>
                 <div class="tab-content">
                     <!-- Bank Transfer Option -->
                     <div id="bankTransfer" class="container tab-pane active">
                         <p>Transfer the payment to the account number below and attach payment proof:</p>
-                        <p><strong>Bank Account:</strong> 1101 6115 0079, Maybank</p>
-                        <p><strong>Account Name:</strong> Lim Sin Mei Sashi</p>
+                        <p><strong>Bank Account:</strong> 1231 7362 0909, Maybank</p>
+                        <p><strong>Account Name:</strong> MYTelepsychiatry Sdn. Bhd.</p>
                         <div class="form-group">
                             <label for="paymentProof">Attach Payment Proof:</label>
                             <input type="file" class="form-control" id="paymentProof" required>
@@ -71,21 +78,50 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         // Retrieve appointment details from localStorage
-        document.getElementById('appointmentDateTime').innerText = localStorage.getItem('appointmentDateTime');
-        document.getElementById('selectedPsychiatrist').innerText = localStorage.getItem('selectedPsychiatrist');
-        document.getElementById('paymentAmount').innerText = `RM${localStorage.getItem('paymentAmount')}`;
-
+        $(document).ready(function () {
+            const appointmentDateTime = localStorage.getItem('appointmentDateTime');
+            const selectedPsychiatrist = localStorage.getItem('selectedPsychiatrist');
+            const paymentAmount = localStorage.getItem('paymentAmount');
+    
+            // Reformat the date and time to a more readable format
+            const date = new Date(appointmentDateTime);
+            const formattedDate = date.toLocaleDateString();
+            const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+            // Update the appointment details on the page
+            $('#appointmentDateTime').text(`${formattedDate}, ${formattedTime}`);
+            $('#selectedPsychiatrist').text(selectedPsychiatrist);
+            $('#paymentAmount').text(`RM${paymentAmount}`);
+        });
+    
+        // Change tab styles when switching between payment methods
+        $('#bankTransferTab').on('click', function () {
+            $(this).addClass('active').removeClass('inactive-tab');
+            $('#qrPaymentTab').addClass('inactive-tab').removeClass('active');
+            // Show Bank Transfer, hide QR Payment
+            $('#bankTransfer').addClass('active show');
+            $('#qrPayment').removeClass('active show');
+        });
+    
+        $('#qrPaymentTab').on('click', function () {
+            $(this).addClass('active').removeClass('inactive-tab');
+            $('#bankTransferTab').addClass('inactive-tab').removeClass('active');
+            // Show QR Payment, hide Bank Transfer
+            $('#qrPayment').addClass('active show');
+            $('#bankTransfer').removeClass('active show');
+        });
+    
         // Ensure payment proof is uploaded before confirming payment
-        document.getElementById('confirmPayment').addEventListener('click', function () {
-            const paymentProof = document.getElementById('paymentProof').value || document.getElementById('paymentProofQR').value;
-
+        $('#confirmPayment').on('click', function () {
+            const paymentProof = $('#paymentProof').val() || $('#paymentProofQR').val();
+    
             if (!paymentProof) {
                 alert('Please attach the payment proof before confirming.');
             } else {
                 window.location.href = 'patient-index.html'; // Redirect to the dashboard after payment confirmation
             }
         });
-    </script>
+    </script>    
 </body>
 
 </html>
