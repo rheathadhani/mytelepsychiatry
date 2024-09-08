@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Payment</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="patient-index.css" />
 </head>
-<body>
-    <div class="container mt-5">
-        <h3>Review Your Appointment and Make Payment</h3>
-        <hr>
 
-        <!-- Appointment Review -->
+<body>
+    <div class="container mt-2"> <!-- Reduced margin-top from mt-5 to mt-2 -->
+        <h4>Review Your Appointment and Make Payment</h4>
+
+        <!-- Appointment Details -->
         <div class="card mb-3">
             <div class="card-header bg-dark text-white">Appointment Details</div>
             <div class="card-body">
                 <p><strong>Patient Name:</strong> John Doe</p>
-                <p><strong>Psychiatrist Name:</strong> Psychiatrist 1</p>
-                <p><strong>Appointment Date & Time:</strong> 09/06/2024, 10:00 AM</p>
-                <p><strong>Payment Amount:</strong> $50</p>
+                <p><strong>Psychiatrist Name:</strong> <span id="selectedPsychiatrist">Psychiatrist 1</span></p>
+                <p><strong>Appointment Date & Time:</strong> <span id="appointmentDateTime">09/06/2024, 10:00 AM</span></p>
+                <p><strong>Payment Amount:</strong> <span id="paymentAmount">50</span></p>
             </div>
         </div>
 
         <!-- Payment Options -->
         <div class="card mb-3">
-            <div class="card-header bg-dark text-white">
-                Payment Options
-            </div>
+            <div class="card-header bg-dark text-white">Payment Options</div>
             <div class="card-body">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
@@ -36,43 +36,56 @@
                         <a class="nav-link" data-toggle="tab" href="#qrPayment">QR Payment</a>
                     </li>
                 </ul>
-
                 <div class="tab-content">
-                    <div id="bankTransfer" class="tab-pane fade show active mt-3">
-                        <p><strong>Transfer the payment to the account below and attach payment proof:</strong></p>
+                    <!-- Bank Transfer Option -->
+                    <div id="bankTransfer" class="container tab-pane active">
+                        <p>Transfer the payment to the account number below and attach payment proof:</p>
                         <p><strong>Bank Account:</strong> 1101 6115 0079, Maybank</p>
                         <p><strong>Account Name:</strong> Lim Sin Mei Sashi</p>
                         <div class="form-group">
-                            <label for="payment-proof">Attach Payment Proof:</label>
-                            <input type="file" class="form-control" id="payment-proof">
+                            <label for="paymentProof">Attach Payment Proof:</label>
+                            <input type="file" class="form-control" id="paymentProof" required>
                         </div>
-                        
                     </div>
 
-                    <div id="qrPayment" class="tab-pane fade mt-3">
-                        <p><strong>Scan the QR code to make payment and attach payment proof:</strong></p>
-                        <img src="qr-code.png" alt="QR Code" width="150" height="150">
+                    <!-- QR Payment Option -->
+                    <div id="qrPayment" class="container tab-pane fade">
+                        <p>Scan the QR code to make payment and attach payment proof:</p>
+                        <img src="../assets/QR Pic.png" alt="QR Code" style="width:150px;" />
                         <div class="form-group">
-                            <label for="qr-payment-proof">Attach Payment Proof:</label>
-                            <input type="file" class="form-control" id="qr-payment-proof">
+                            <label for="paymentProofQR">Attach Payment Proof:</label>
+                            <input type="file" class="form-control" id="paymentProofQR" required>
                         </div>
-                        
                     </div>
                 </div>
             </div>
         </div>
 
-        <button class="btn btn-dark" onclick="redirectToDashboard()">Confirm Payment</button>
+        <!-- Confirm Payment Button -->
+        <button type="button" class="btn btn-dark float-right" id="confirmPayment">Confirm Payment</button>
     </div>
 
-    <!-- Bootstrap and jQuery scripts -->
+    <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        function redirectToDashboard() {
-            window.location.href = 'patient-index.html';
-        }
+        // Retrieve appointment details from localStorage
+        document.getElementById('appointmentDateTime').innerText = localStorage.getItem('appointmentDateTime');
+        document.getElementById('selectedPsychiatrist').innerText = localStorage.getItem('selectedPsychiatrist');
+        document.getElementById('paymentAmount').innerText = `RM${localStorage.getItem('paymentAmount')}`;
+
+        // Ensure payment proof is uploaded before confirming payment
+        document.getElementById('confirmPayment').addEventListener('click', function () {
+            const paymentProof = document.getElementById('paymentProof').value || document.getElementById('paymentProofQR').value;
+
+            if (!paymentProof) {
+                alert('Please attach the payment proof before confirming.');
+            } else {
+                window.location.href = 'patient-index.html'; // Redirect to the dashboard after payment confirmation
+            }
+        });
     </script>
 </body>
+
 </html>

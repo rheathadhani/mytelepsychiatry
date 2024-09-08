@@ -2,18 +2,11 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Appointments</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="patient-index.css" />
-    <style>
-        /* Align the button to the right */
-        #proceedToPayment {
-            display: inline-block;
-            float: right;
-        }
-    </style>
 </head>
 
 <body>
@@ -38,120 +31,97 @@
             </nav>
 
             <div class="container-fluid">
-                <!-- Form starts here -->
-                <form action="submit-appointment.php" method="POST">
-                    <!-- Header Section -->
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card mb-3">
-                                <div class="card-header bg-dark"></div>
-                                <div class="card-body text-center">
-                                    <h4>Book Your Appointment Now!</h4>
+                <!-- Header Section -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark"></div>
+                            <div class="card-body text-center">
+                                <h4>Book Your Appointment Now!</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date and Time Picker & Psychiatrist Selection Section -->
+                <div class="row">
+                    <!-- Date and Time Picker -->
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white">Select Date and Time</div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="date">Select Date and Time:</label>
+                                    <input type="datetime-local" id="date" name="date" class="form-control" required>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Date and Psychiatrist Selection Row -->
-                    <div class="row">
-                        <!-- Date and Time Picker Section -->
-                        <div class="col-md-6">
-                            <div class="card mb-3">
-                                <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#dateTimePicker" aria-expanded="true">
-                                    Select Date and Time
-                                </div>
-                                <div id="dateTimePicker" class="collapse show">
-                                    <div class="card-body">
-                                        <div class="form-group">
-                                            <label for="dateTime">Select Date and Time:</label>
-                                            <input type="datetime-local" id="dateTime" name="dateTime" class="form-control" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Psychiatrist Selection Section -->
-                        <div class="col-md-6">
-                            <div class="card mb-3">
-                                <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#psychiatrist" aria-expanded="true">
-                                    Select Available Psychiatrist
-                                </div>
-                                <div id="psychiatrist" class="collapse show">
-                                    <div class="card-body">
-                                        <div class="form-group">
-                                            <label for="psychiatristSelect">Select Psychiatrist:</label>
-                                            <select id="psychiatristSelect" name="psychiatrist" class="form-control">
-                                                <option value="">Select a Psychiatrist</option>
-                                                <option value="Psychiatrist 1">Psychiatrist 1</option>
-                                                <option value="Psychiatrist 2">Psychiatrist 2</option>
-                                                <option value="Psychiatrist 3">Psychiatrist 3</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                    <!-- Psychiatrist Selection -->
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white">Select Available Psychiatrist</div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="psychiatrist">Select Psychiatrist:</label>
+                                    <select id="psychiatrist" class="form-control" required>
+                                        <option value="Psychiatrist 1">Psychiatrist 1</option>
+                                        <option value="Psychiatrist 2">Psychiatrist 2</option>
+                                        <option value="Psychiatrist 3">Psychiatrist 3</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Psychiatrist Profile Section -->
-                    <div class="row" id="psychiatristProfileRow" style="display: none;">
-                        <div class="col-md-12">
-                            <div class="card mb-3">
-                                <div class="card-header bg-dark text-white" data-toggle="collapse" data-target="#psyProfile" aria-expanded="true">
-                                    Psychiatrist Profile
-                                </div>
-                                <div id="psyProfile" class="collapse show">
-                                    <div class="card-body text-center">
-                                        <img id="psyImage" src="#" alt="Psychiatrist Image" style="width: 100px; height: 100px;">
-                                        <h5 id="psyName">Psychiatrist Name</h5>
-                                        <p><strong>Age:</strong> 45</p>
-                                        <p><strong>Review:</strong> ★★★★★</p>
-                                        <p><strong>Payment:</strong> $50</p>
-                                        <p><strong>Degree:</strong> Medical Degree (MD)</p>
-                                        <p><strong>Position:</strong> Full-time Psychiatrist</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <!-- Psychiatrist Profile Section -->
+                <div class="card mb-3" id="psychiatrist-profile" style="display: none;">
+                    <div class="card-header bg-dark text-white">Psychiatrist Profile</div>
+                    <div class="card-body text-center">
+                        <img id="psy-Image" src="#" alt="Psychiatrist Image" style="width: 100px; height: 100px;">
+                        <h5 id="psy-Name">Psychiatrist Name</h5>
+                        <p>Age: <span id="psy-Age">45</span></p>
+                        <p>Review: ★★★★★</p>
+                        <p>Payment: RM<span id="psy-Payment">50</span></p>
+                        <p>Degree: <span id="psy-Degree">Medical Degree (MD)</span></p>
+                        <p>Position: <span id="psy-Position">Full-time Psychiatrist</span></p>
                     </div>
+                </div>
 
-                    <!-- Proceed to Payment Button -->
-                    <a href="patient-payment.html" class="btn btn-dark" id="proceedToPayment" style="float: right;">Proceed to Payment Page</a>
-                </form>
-                <!-- Form ends here -->
-
+                <!-- Proceed to Payment Button -->
+                <button type="button" class="btn btn-dark float-right" id="proceedPayment">Proceed to Payment Page</button>
             </div>
         </div>
     </div>
-    <!-- /#page-content-wrapper -->
-    </div>
     <!-- /#wrapper -->
 
-    <!-- Bootstrap and jQuery scripts -->
+    <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="patient-appointments.js"></script>
-    
     <script>
-        $(document).ready(function () {
-            // Hide psychiatrist profile by default
-            $('#psychiatristProfileRow').hide();
-            
-            // Show profile when psychiatrist is selected
-            $('#psychiatristSelect').on('change', function () {
-                if ($(this).val()) {
-                    $('#psychiatristProfileRow').show();
-                    $('#psyName').text($(this).val());
-                    // Add more dynamic data if necessary
-                } else {
-                    $('#psychiatristProfileRow').hide();
-                }
-            });
+        // Handle Psychiatrist Selection and Profile Display
+        document.getElementById('psychiatrist').addEventListener('change', function () {
+            document.getElementById('psychiatrist-profile').style.display = 'block';
+            const selectedPsychiatrist = this.value;
+            document.getElementById('psy-Name').textContent = selectedPsychiatrist;
+        });
+
+        // Proceed to Payment Page
+        document.getElementById('proceedPayment').addEventListener('click', function () {
+            const selectedDateTime = document.getElementById('date').value;
+            const selectedPsychiatrist = document.getElementById('psychiatrist').value;
+
+            // Save appointment details to localStorage
+            localStorage.setItem('appointmentDateTime', selectedDateTime);
+            localStorage.setItem('selectedPsychiatrist', selectedPsychiatrist);
+            localStorage.setItem('paymentAmount', '50'); // Fixed amount for now
+
+            window.location.href = 'patient-payment.html'; // Redirect to payment page
         });
     </script>
-
 </body>
 
 </html>
