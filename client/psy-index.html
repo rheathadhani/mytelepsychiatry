@@ -25,7 +25,6 @@
     </div>
     <!-- /#sidebar-wrapper -->
 
-
     <!-- Page Content -->
     <div id="page-content-wrapper" class="w-100">
       <nav class="navbar navbar-expand-lg navbar-light bg-white">
@@ -42,7 +41,7 @@
                 <h1>Welcome back, [Psychiatrist Name]!</h1>
                 <br>
                 <p>You have <strong>[number]</strong> patient prescriptions to review today.</p>
-                <button class="btn btn-dark"><a href="patient-profile.html" class="text-white text-decoration-none">View
+                <button class="btn btn-dark"><a href="psy-profile.html" class="text-white text-decoration-none">View
                     Profile </a></button>
               </div>
             </div>
@@ -91,7 +90,31 @@
             <div class="card mb-4">
               <div class="card-header bg-dark text-white"> History of Appointments </div>
               <div class="card-body">
-                <!-- List of past appointments -->
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Time</th>
+                      <th>Patient</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>09/02/2024</td>
+                      <td>10:00 AM</td>
+                      <td>Patient 1</td>
+                      <td>Completed</td>
+                    </tr>
+                    <tr>
+                      <td>08/28/2024</td>
+                      <td>03:00 PM</td>
+                      <td>Patient 2</td>
+                      <td>Cancelled</td>
+                    </tr>
+                    <!-- Add more rows as needed -->
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

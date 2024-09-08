@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychiatrist Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="patient-index.css" />
+    <link rel="stylesheet" href="psychiatrist-profile.css">
+</head>
+
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="bg-dark border-right" id="sidebar-wrapper">
+            <div class="list-group list-group-flush">
+                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> + </span></strong></p>
+                <a href="psy-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
+                <a href="psy-med-pre.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
+                <a href="psy-clinical.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical Notes</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+            </div>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper" class="w-100">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white">
+                <button class="btn btn-dark" id="menu-toggle"> Menu </button>
+            </nav>
+
+            <!-- Form Heading -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="text-dark mb-0">Personal Details</h2>
+                <button type="submit" class="btn btn-dark">Delete Account</button>
+            </div>
+            <br>
+
+            <!-- Personal Details Form -->
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" class="form-control" id="fullName">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputEmail">Email</label>
+                        <input type="email" class="form-control" id="inputEmail">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputSpecialization">Specialization</label>
+                        <input type="text" class="form-control" id="inputSpecialization" placeholder="Psychiatrist, Therapist, etc.">
+                    </div>
+                </div>
+
+                <!-- Update Profile Button -->
+                <button type="submit" class="btn btn-dark">Update Profile</button>
+            </form>
+
+            <!-- Change Password Form -->
+            <h2 class="mt-5 mb-4 text-dark">Change Password</h2>
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputCurrentPassword">Current Password</label>
+                        <input type="password" class="form-control" id="inputCurrentPassword">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputNewPassword">New Password</label>
+                        <input type="password" class="form-control" id="inputNewPassword">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputConfirmPassword">Confirm New Password</label>
+                        <input type="password" class="form-control" id="inputConfirmPassword">
+                    </div>
+                </div>
+                <!-- Change Password Button -->
+                <button type="submit" class="btn btn-dark">Change Password</button>
+            </form>
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Bootstrap and jQuery scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

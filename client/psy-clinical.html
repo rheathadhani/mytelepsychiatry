@@ -13,11 +13,28 @@
             padding: 15px;
             text-align: left;
         }
+
         .note-table th {
             background-color: #f8f9fa;
         }
+
         .note-actions {
             text-align: right;
+        }
+
+        /* Ensure equal height columns for Patient List and Write Clinical Notes */
+        .equal-height {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .equal-height > .col-md-6 {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .equal-height .card {
+            flex: 1;
         }
     </style>
 </head>
@@ -31,7 +48,7 @@
                 <a href="psy-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
                 <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
                 <a href="psy-med-pre.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
-                <a href="psy-cn.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical Notes</a>
+                <a href="psy-clinical.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical Notes</a>
                 <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
         </div>
@@ -59,8 +76,8 @@
                     </div>
                 </div>
 
-                <!-- Patient List and Notes Section -->
-                <div class="row">
+                <!-- Patient List and Notes Section with Equal Height -->
+                <div class="row equal-height">
                     <!-- Patient List Section -->
                     <div class="col-md-6">
                         <div class="card mb-3">
@@ -110,6 +127,8 @@
                                 </form>
                             </div>
                         </div>
+                    </div>
+                </div>
 
                 <!-- Clinical Notes Table -->
                 <div class="row">
@@ -151,8 +170,6 @@
                         </div>
                     </div>
                 </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -183,15 +200,49 @@
             $('#saveNotes').on('click', function () {
                 const patient = $('#selectedPatient').val();
                 const notes = $('#clinicalNotes').val();
-                const date = new Date().toLocaleString();
+                const date = new Date().toLocaleDateString();
 
                 if (patient && notes.trim()) {
-                    const newNote = `<p><strong>${patient}:</strong> ${notes} <br><small>Written on ${date}</small></p>`;
-                    $('#savedNotesSection').prepend(newNote);
+                    const existingRow = $(`#clinicalNotesTable tr:contains(${patient})`);
+
+                    if (existingRow.length > 0) {
+                        // If a row for the patient already exists, append the new note in the same cell
+                        existingRow.find('td:eq(1)').append(`<br>${notes}`);
+                    } else {
+                        // If no row exists for the patient, create a new row
+                        const newNote = `<tr>
+                                            <td>${patient}</td>
+                                            <td>${notes}</td>
+                                            <td>${date}</td>
+                                            <td>
+                                                <button class="btn btn-info btn-sm edit-note">Edit</button>
+                                                <button class="btn btn-danger btn-sm delete-note">Delete</button>
+                                            </td>
+                                        </tr>`;
+                        $('#clinicalNotesTable').append(newNote);
+                    }
+
                     $('#clinicalNotes').val(''); // Clear the textarea
                 } else {
                     alert('Please select a patient and write some notes.');
                 }
+            });
+
+            // Delete clinical notes
+            $(document).on('click', '.delete-note', function () {
+                if (confirm('Are you sure you want to delete this note?')) {
+                    $(this).closest('tr').remove();
+                }
+            });
+
+            // Edit clinical notes
+            $(document).on('click', '.edit-note', function () {
+                const row = $(this).closest('tr');
+                const patient = row.find('td:eq(0)').text();
+                const notes = row.find('td:eq(1)').text().split('<br>')[0]; // Get the first note to edit
+                $('#selectedPatient').val(patient);
+                $('#clinicalNotes').val(notes);
+                row.remove(); // Remove the row being edited
             });
         });
     </script>
