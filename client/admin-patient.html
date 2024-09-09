@@ -8,10 +8,33 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="patient-index.css" />
     <style>
-        .table-actions button {
-            margin-right: 5px;
-            display: inline-block;
-            vertical-align: middle;
+        .table-actions {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .btn-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
         }
 
         .card-header {
@@ -48,32 +71,12 @@
             text-decoration: none;
         }
 
-        .edit-mode input {
-            width: 100%;
-            padding: 5px;
-        }
-
-        .btn-actions {
-            width: 80px;
-            text-align: center;
-        }
-
-        input.form-control {
-            width: 100%;
-            box-sizing: border-box;
-        }
-
         td {
             vertical-align: middle;
         }
 
-        .table-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        td, th {
+        td,
+        th {
             padding: 8px;
             white-space: nowrap;
         }
@@ -114,7 +117,9 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h4>Patient Management</h4>
                         <div class="d-flex justify-content-end">
-                            <button class="btn btn-success text-white"><a href="admin-regpatient.html" id="admin-regpatient">Register New Patient</a></button>
+                            <button class="btn btn-success text-white">
+                                <a href="admin-regpatient.html" id="admin-regpatient">Register New Patient</a>
+                            </button>
                             <button class="btn btn-success" id="generateReportBtn">Generate Report</button>
                         </div>
                     </div>
@@ -170,9 +175,9 @@
                                     <td class="emergencyContactName">Jane Doe</td>
                                     <td class="contactNumber">123-456-7890</td>
                                     <td class="table-actions">
-                                        <button class="btn btn-secondary btn-sm btn-actions">View</button>
-                                        <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
-                                        <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
+                                        <button class="btn btn-secondary btn-block btn-sm view-btn">View</button>
+                                        <button class="btn btn-warning btn-block btn-sm edit-btn">Edit</button>
+                                        <button class="btn btn-danger btn-block btn-sm delete-btn">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -295,9 +300,9 @@
                 
                 // Replace action buttons back to View/Edit/Delete
                 row.find('.table-actions').html(`
-                    <button class="btn btn-secondary btn-sm btn-actions">View</button>
-                    <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
-                    <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
+                    <button class="btn btn-secondary btn-sm btn-block view-btn">View</button>
+                    <button class="btn btn-warning btn-sm btn-block edit-btn">Edit</button>
+                    <button class="btn btn-danger btn-sm btn-block delete-btn">Delete</button>
                 `);
             });
 
@@ -309,6 +314,33 @@
             // Delete functionality
             $(document).on('click', '.delete-btn', function () {
                 $(this).closest('tr').remove();
+            });
+
+            // View functionality - Connect to admin-viewpatient.html
+            $(document).on('click', '.view-btn', function () {
+                // Get the row data
+                var row = $(this).closest('tr');
+                var patientData = {
+                    id: row.find('td:nth-child(1)').text(),
+                    fullName: row.find('.fullName').text(),
+                    email: row.find('.email').text(),
+                    dob: row.find('.dob').text(),
+                    emergencyContactName: row.find('.emergencyContactName').text(),
+                    contactNumber: row.find('.contactNumber').text(),
+                    createdDate: new Date().toLocaleString('en-US', {
+                        month: 'numeric',
+                        day: 'numeric',
+                        year: '2-digit',
+                        hour: 'numeric',
+                        minute: 'numeric'
+                    })
+                };
+
+                // Save the patient data to localStorage
+                localStorage.setItem('viewPatient', JSON.stringify(patientData));
+
+                // Redirect to the view page
+                window.location.href = 'admin-viewpatient.html';
             });
         });
     </script>

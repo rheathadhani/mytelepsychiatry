@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Psychiatrist</title>
+    <title>Register Patient</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="patient-index.css" />
     <style>
@@ -46,11 +46,11 @@
             <div class="container">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4>Psychiatrist Management</h4>
+                        <h4>Patient Registration</h4>
                     </div>
-                    <!-- Registration Form (admin-regpsy.html) -->
+                    <!-- Registration Form -->
                     <div class="card-body">
-                        <form id="registerPsychiatristForm">
+                        <form id="registerPatientForm">
                             <div class="form-group">
                                 <label for="fullName">Full Name</label>
                                 <input type="text" id="fullName" class="form-control" placeholder="Enter full name" required>
@@ -60,19 +60,27 @@
                                 <input type="email" id="email" class="form-control" placeholder="Enter email address" required>
                             </div>
                             <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+                                <label for="dob">Date of Birth</label>
+                                <input type="date" id="dob" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <label for="specialization">Specialization</label>
-                                <select id="specialization" class="form-control" required>
-                                    <option value="" disabled selected>Select specialization</option>
-                                    <option value="General Psychiatry">General Psychiatry</option>
-                                    <option value="Child and Adolescent Psychiatry">Child and Adolescent Psychiatry</option>
-                                    <option value="Geriatric Psychiatry">Geriatric Psychiatry</option>
+                                <label for="gender">Gender</label>
+                                <select id="gender" class="form-control" required>
+                                    <option value="" disabled selected>Select gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
                                 </select>
                             </div>
-                            <button type="button" id="savePsychiatrist" class="btn btn-success">Save</button>
+                            <div class="form-group">
+                                <label for="emergencyContactName">Emergency Contact Name</label>
+                                <input type="text" id="emergencyContactName" class="form-control" placeholder="Enter emergency contact name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="emergencyPhoneNumber">Emergency Phone Number</label>
+                                <input type="tel" id="emergencyPhoneNumber" class="form-control" placeholder="Enter emergency phone number" required>
+                            </div>
+                            <button type="button" id="savePatient" class="btn btn-success">Save</button>
                             <button type="button" id="cancelRegistration" class="btn btn-secondary">Cancel</button>
                         </form>
                     </div>
@@ -94,14 +102,16 @@
     <script>
         $(document).ready(function () {
             // Auto-increment ID counter
-            var nextId = localStorage.getItem('nextId') ? parseInt(localStorage.getItem('nextId')) : 3; // Start from 3 if no ID is stored
+            var nextId = localStorage.getItem('nextPatientId') ? parseInt(localStorage.getItem('nextPatientId')) : 1; // Start from 1 if no ID is stored
 
             // Save button functionality
-            $('#savePsychiatrist').click(function () {
+            $('#savePatient').click(function () {
                 var fullName = $('#fullName').val();
                 var email = $('#email').val();
-                var password = $('#password').val();
-                var specialization = $('#specialization').val();
+                var dob = $('#dob').val();
+                var gender = $('#gender').val();
+                var emergencyContactName = $('#emergencyContactName').val();
+                var emergencyPhoneNumber = $('#emergencyPhoneNumber').val();
                 var createdDate = new Date().toLocaleString('en-US', {
                     month: 'numeric',
                     day: 'numeric',
@@ -110,33 +120,35 @@
                     minute: 'numeric'
                 }); // Get the current date & time
 
-                // Check if the specialization is selected
-                if (!specialization) {
-                    alert("Please select a specialization.");
+                // Check if gender is selected
+                if (!gender) {
+                    alert("Please select a gender.");
                     return;
                 }
 
-                // Save the new psychiatrist data to localStorage
-                var newPsychiatrist = {
+                // Save the new patient data to localStorage
+                var newPatient = {
                     id: nextId,
                     fullName: fullName,
                     email: email,
-                    password: password,
-                    specialization: specialization,
+                    dob: dob,
+                    gender: gender,
+                    emergencyContactName: emergencyContactName,
+                    emergencyPhoneNumber: emergencyPhoneNumber,
                     createdDate: createdDate
                 };
 
                 // Store the data in localStorage
-                localStorage.setItem('newPsychiatrist', JSON.stringify(newPsychiatrist));
-                localStorage.setItem('nextId', nextId + 1); // Increment the ID for the next psychiatrist
+                localStorage.setItem('newPatient', JSON.stringify(newPatient));
+                localStorage.setItem('nextPatientId', nextId + 1); // Increment the ID for the next patient
 
                 // Redirect back to the table page
-                window.location.href = "admin-psy.html";
+                window.location.href = "admin-patient.html";
             });
 
             // Cancel button functionality
             $('#cancelRegistration').click(function () {
-                window.location.href = "admin-psy.html";
+                window.location.href = "admin-patient.html";
             });
         });
     </script>
