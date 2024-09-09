@@ -10,9 +10,8 @@
     <style>
         .table-actions button {
             margin-right: 5px;
-            display: flex;
-            /* Ensure buttons are in a horizontal row */
-            gap: 10px;
+            display: inline-block;
+            vertical-align: middle;
         }
 
         .card-header {
@@ -56,8 +55,32 @@
 
         .btn-actions {
             width: 80px;
-            /* Set uniform width for all action buttons */
             text-align: center;
+        }
+
+        input.form-control {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        td {
+            vertical-align: middle;
+        }
+
+        .table-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        td, th {
+            padding: 8px;
+            white-space: nowrap;
+        }
+
+        input {
+            border: 1px solid #ced4da;
+            padding: 6px;
         }
     </style>
 </head>
@@ -71,6 +94,7 @@
                         </span></strong></p>
                 <p class="text-white font-italic ml-4 mt-0 mb-3">Admin's Space</p>
                 <a href="admin-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="admin-psy.html" class="list-group-item list-group-item-action bg-dark text-white">Psychiatrists</a>
                 <a href="admin-patient.html" class="list-group-item list-group-item-action bg-dark text-white">Patients</a>
                 <a href="admin-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
                 <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
@@ -95,23 +119,31 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <!-- Search and Filter Inputs in the same row with labels -->
+                        <!-- Search and Filter Inputs -->
                         <div class="row mb-4">
-                            <div class="col-md-3">
-                                <label for="searchName">Search by Full Name</label>
-                                <input type="text" id="searchName" class="form-control" placeholder="Search by Full Name">
+                            <div class="col-md-2">
+                                <label for="searchByName">Full Name</label>
+                                <input type="text" id="searchByName" class="form-control" placeholder="Search by Full Name">
                             </div>
-                            <div class="col-md-3">
-                                <label for="searchEmail">Search by Email</label>
-                                <input type="text" id="searchEmail" class="form-control" placeholder="Search by Email">
+                            <div class="col-md-2">
+                                <label for="searchByEmail">Email</label>
+                                <input type="text" id="searchByEmail" class="form-control" placeholder="Search by Email">
                             </div>
-                            <div class="col-md-3">
-                                <label for="searchAddress">Search by Address</label>
-                                <input type="text" id="searchAddress" class="form-control" placeholder="Search by Address">
+                            <div class="col-md-2">
+                                <label for="searchByAddress">Address</label>
+                                <input type="text" id="searchByAddress" class="form-control" placeholder="Search by Address">
                             </div>
-                            <div class="col-md-3">
-                                <label for="searchContact">Search by Emergency Contact Name</label>
-                                <input type="text" id="searchContact" class="form-control" placeholder="Search by Emergency Contact Name">
+                            <div class="col-md-2">
+                                <label for="searchByContactName">Emergency Contact</label>
+                                <input type="text" id="searchByContactName" class="form-control" placeholder="Search by Name">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="searchByPhone">Contact Number</label>
+                                <input type="text" id="searchByPhone" class="form-control" placeholder="Search by Contact Number">
+                            </div>
+                            <div class="col-md-2">
+                                <label>&nbsp;</label> <!-- Empty label for alignment -->
+                                <button class="btn btn-secondary" id="resetFilters">Reset Filters</button>
                             </div>
                         </div>
 
@@ -122,7 +154,7 @@
                                     <th>ID</th>
                                     <th>Full Name</th>
                                     <th>Email</th>
-                                    <th>Address</th>
+                                    <th>Date of Birth</th>
                                     <th>Emergency Contact Name</th>
                                     <th>Contact Number</th>
                                     <th>Actions</th>
@@ -134,7 +166,7 @@
                                     <td>1</td>
                                     <td class="fullName">John Doe</td>
                                     <td class="email">john@example.com</td>
-                                    <td class="address">123 Main St</td>
+                                    <td class="dob">01/01/1980</td>
                                     <td class="emergencyContactName">Jane Doe</td>
                                     <td class="contactNumber">123-456-7890</td>
                                     <td class="table-actions">
@@ -154,7 +186,7 @@
     </div>
     <!-- /#wrapper -->
 
-    <!-- Bootstrap and jQuery scripts -->
+    <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -163,62 +195,57 @@
 
     <script>
         $(document).ready(function () {
-            // Search by Full Name, Email, Address, or Emergency Contact Name
-            $('#searchName, #searchEmail, #searchAddress, #searchContact').on('keyup', function () {
-                var searchName = $('#searchName').val().toLowerCase();
-                var searchEmail = $('#searchEmail').val().toLowerCase();
-                var searchAddress = $('#searchAddress').val().toLowerCase();
-                var searchContact = $('#searchContact').val().toLowerCase();
+            // Search functionality for each field
+            function filterTable() {
+                var nameValue = $('#searchByName').val().toLowerCase();
+                var emailValue = $('#searchByEmail').val().toLowerCase();
+                var addressValue = $('#searchByAddress').val().toLowerCase();
+                var contactNameValue = $('#searchByContactName').val().toLowerCase();
+                var phoneValue = $('#searchByPhone').val().toLowerCase();
 
                 $('#patientTableBody tr').filter(function () {
-                    $(this).toggle(
-                        $(this).find('.fullName').text().toLowerCase().indexOf(searchName) > -1 &&
-                        $(this).find('.email').text().toLowerCase().indexOf(searchEmail) > -1 &&
-                        $(this).find('.address').text().toLowerCase().indexOf(searchAddress) > -1 &&
-                        $(this).find('.emergencyContactName').text().toLowerCase().indexOf(searchContact) > -1
-                    );
+                    var row = $(this);
+                    var nameMatch = row.find('.fullName').text().toLowerCase().indexOf(nameValue) > -1;
+                    var emailMatch = row.find('.email').text().toLowerCase().indexOf(emailValue) > -1;
+                    var addressMatch = row.find('.address').text().toLowerCase().indexOf(addressValue) > -1;
+                    var contactNameMatch = row.find('.emergencyContactName').text().toLowerCase().indexOf(contactNameValue) > -1;
+                    var phoneMatch = row.find('.contactNumber').text().toLowerCase().indexOf(phoneValue) > -1;
+
+                    row.toggle(nameMatch && emailMatch && addressMatch && contactNameMatch && phoneMatch);
                 });
-            });
+            }
+
+            $('#searchByName, #searchByEmail, #searchByAddress, #searchByContactName, #searchByPhone').on('keyup', filterTable);
 
             // Reset Filters
             $('#resetFilters').on('click', function () {
-                $('#searchName').val('');
-                $('#searchEmail').val('');
-                $('#searchAddress').val('');
-                $('#searchContact').val('');
-                $('#patientTableBody tr').show();
+                $('#searchByName').val('');
+                $('#searchByEmail').val('');
+                $('#searchByAddress').val('');
+                $('#searchByContactName').val('');
+                $('#searchByPhone').val('');
+                filterTable();
             });
 
-            // Generate Report functionality
+            // Generate Report
             $('#generateReportBtn').on('click', function () {
-                generatePDFReport();
-            });
-
-            function generatePDFReport() {
-                var rows = $('#patientTableBody tr:visible');
-
-                if (rows.length === 0) {
-                    alert('No data to generate the report.');
-                    return;
-                }
-
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
-
-                doc.setFontSize(18);
-                doc.text("Patient Report", 10, 10);
-
-                const headers = ["ID", "Full Name", "Email", "Address", "Emergency Contact Name", "Contact Number"];
+                const headers = ["ID", "Full Name", "Email", "Date of Birth", "Emergency Contact Name", "Contact Number"];
                 const tableRows = [];
 
-                rows.each(function () {
+                $('#patientTableBody tr:visible').each(function () {
                     const rowData = [];
-                    $(this).find('td').each(function () {
-                        rowData.push($(this).text().trim());
+                    $(this).find('td').each(function (index) {
+                        if (index < headers.length) {
+                            rowData.push($(this).text().trim());
+                        }
                     });
                     tableRows.push(rowData);
                 });
 
+                doc.setFontSize(18);
+                doc.text("Patient Report", 10, 10);
                 doc.autoTable({
                     head: [headers],
                     body: tableRows,
@@ -228,44 +255,45 @@
                 });
 
                 doc.save('patient-report.pdf');
-            }
+            });
 
             // Edit functionality
             $(document).on('click', '.edit-btn', function () {
                 var row = $(this).closest('tr');
-                var fullName = row.find('.fullName').text();
-                var email = row.find('.email').text();
-                var address = row.find('.address').text();
-                var contactName = row.find('.emergencyContactName').text();
-                var contactNumber = row.find('.contactNumber').text();
-
-                row.find('.fullName').html('<input type="text" value="' + fullName + '">');
-                row.find('.email').html('<input type="email" value="' + email + '">');
-                row.find('.address').html('<input type="text" value="' + address + '">');
-                row.find('.emergencyContactName').html('<input type="text" value="' + contactName + '">');
-                row.find('.contactNumber').html('<input type="text" value="' + contactNumber + '">');
-
+                
+                // Replace table cell content with input fields
+                row.find('.fullName').html('<input type="text" class="form-control" value="' + row.find('.fullName').text() + '">');
+                row.find('.email').html('<input type="email" class="form-control" value="' + row.find('.email').text() + '">');
+                row.find('.dob').html('<input type="date" class="form-control" value="' + row.find('.dob').text() + '">');
+                row.find('.emergencyContactName').html('<input type="text" class="form-control" value="' + row.find('.emergencyContactName').text() + '">');
+                row.find('.contactNumber').html('<input type="text" class="form-control" value="' + row.find('.contactNumber').text() + '">');
+                
+                // Replace action buttons with Save and Cancel
                 row.find('.table-actions').html(`
-                    <button id="saveBtn" class="btn btn-success btn-actions">Save</button>
-                    <button id="cancelBtn" class="btn btn-secondary btn-actions">Cancel</button>
+                    <button class="btn btn-success btn-sm save-btn">Save</button>
+                    <button class="btn btn-secondary btn-sm cancel-btn">Cancel</button>
                 `);
             });
 
             // Save functionality
-            $(document).on('click', '#saveBtn', function () {
+            $(document).on('click', '.save-btn', function () {
                 var row = $(this).closest('tr');
+                
+                // Retrieve input values
                 var fullName = row.find('.fullName input').val();
                 var email = row.find('.email input').val();
-                var address = row.find('.address input').val();
-                var contactName = row.find('.emergencyContactName input').val();
+                var dob = row.find('.dob input').val();
+                var emergencyContactName = row.find('.emergencyContactName input').val();
                 var contactNumber = row.find('.contactNumber input').val();
-
+                
+                // Replace input fields with text values
                 row.find('.fullName').text(fullName);
                 row.find('.email').text(email);
-                row.find('.address').text(address);
-                row.find('.emergencyContactName').text(contactName);
+                row.find('.dob').text(dob);
+                row.find('.emergencyContactName').text(emergencyContactName);
                 row.find('.contactNumber').text(contactNumber);
-
+                
+                // Replace action buttons back to View/Edit/Delete
                 row.find('.table-actions').html(`
                     <button class="btn btn-secondary btn-sm btn-actions">View</button>
                     <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
@@ -274,25 +302,8 @@
             });
 
             // Cancel functionality
-            $(document).on('click', '#cancelBtn', function () {
-                var row = $(this).closest('tr');
-                var fullName = row.find('.fullName input').attr('value');
-                var email = row.find('.email input').attr('value');
-                var address = row.find('.address input').attr('value');
-                var contactName = row.find('.emergencyContactName input').attr('value');
-                var contactNumber = row.find('.contactNumber input').attr('value');
-
-                row.find('.fullName').text(fullName);
-                row.find('.email').text(email);
-                row.find('.address').text(address);
-                row.find('.emergencyContactName').text(contactName);
-                row.find('.contactNumber').text(contactNumber);
-
-                row.find('.table-actions').html(`
-                    <button class="btn btn-secondary btn-sm btn-actions">View</button>
-                    <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
-                    <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
-                `);
+            $(document).on('click', '.cancel-btn', function () {
+                location.reload(); // Reload the page to cancel the changes
             });
 
             // Delete functionality
