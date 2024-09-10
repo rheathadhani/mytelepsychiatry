@@ -96,6 +96,34 @@ const getPastAppointments = (req, res) => {
     });
 };
 
+// Function to get available psychiatrists
+const getAvailablePsychiatrists = (req, res) => {
+    const { appointmentDate } = req.query;  // Get the date and time from query params
+    const query = `
+        SELECT psychiatrist_id, full_name 
+        FROM Psychiatrists
+        WHERE psychiatrist_id NOT IN (
+            SELECT psychiatrist_id 
+            FROM Appointments 
+            WHERE appointment_date = ?
+        );
+    `;
+
+    db.query(query, [appointmentDate], (err, results) => {
+        if (err) {
+            console.error('Error fetching available psychiatrists:', err);
+            return res.status(500).send(err);
+        }
+
+        res.status(200).json(results);
+    });
+};
+
+
+
+
+
+
 const trackSymptoms = (req, res) => {
     const patientId = req.params.patientId;  
     const { dateLogged, symptomDetails } = req.body; 
@@ -137,6 +165,7 @@ module.exports = {
     getUpcomingSessions,
     getMedicationsList,
     getPastAppointments,
+    getAvailablePsychiatrists,
     trackSymptoms,
     getSymptomsHistory
 };
