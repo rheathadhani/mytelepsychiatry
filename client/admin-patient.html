@@ -11,8 +11,13 @@
         .table-actions {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
+            gap: 0;
+        }
+
+        .table-actions button {
+            margin: 0;
+            width: 100%;
+            text-align: center;
         }
 
         .btn-block {
@@ -42,18 +47,7 @@
             color: white;
         }
 
-        .input-group {
-            margin-bottom: 15px;
-        }
-
         .form-control {
-            border-radius: 0;
-        }
-
-        .btn-primary,
-        .btn-danger,
-        .btn-warning,
-        .btn-info {
             border-radius: 0;
         }
 
@@ -84,6 +78,37 @@
         input {
             border: 1px solid #ced4da;
             padding: 6px;
+        }
+
+        /* Adjust search field and filter placement */
+        .search-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-section {
+            width: 100%;
+        }
+
+        .filter-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .filter-row div {
+            flex: 1;
+        }
+
+        .search-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .spacer {
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -117,41 +142,34 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h4>Patient Management</h4>
                         <div class="d-flex justify-content-end">
-                            <button class="btn btn-success text-white">
-                                <a href="admin-regpatient.html" id="admin-regpatient">Register New Patient</a>
-                            </button>
                             <button class="btn btn-success" id="generateReportBtn">Generate Report</button>
                         </div>
                     </div>
                     <div class="card-body">
-                        <!-- Search and Filter Inputs -->
-                        <div class="row mb-4">
-                            <div class="col-md-2">
-                                <label for="searchByName">Full Name</label>
-                                <input type="text" id="searchByName" class="form-control" placeholder="Search by Full Name">
+                        <!-- Search Section -->
+                        <div class="search-title">Search</div>
+                        <div class="search-container">
+                            <input type="text" id="searchByDetails" class="form-control" placeholder="Search by Full Name, Email, Address or Emergency Contact Name">
+                        </div>
+                        <!-- Spacer for better UI -->
+                        <div class="spacer"></div>
+                        <!-- Filters Section -->
+                        <div class="filter-row">
+                            <div>
+                                <label for="filterByCreatedDateTime">Created Date & Time</label>
+                                <input type="datetime-local" id="filterByCreatedDateTime" class="form-control">
                             </div>
-                            <div class="col-md-2">
-                                <label for="searchByEmail">Email</label>
-                                <input type="text" id="searchByEmail" class="form-control" placeholder="Search by Email">
+                            <div>
+                                <label for="filterByDOB">Date of Birth</label>
+                                <input type="date" id="filterByDOB" class="form-control">
                             </div>
-                            <div class="col-md-2">
-                                <label for="searchByAddress">Address</label>
-                                <input type="text" id="searchByAddress" class="form-control" placeholder="Search by Address">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="searchByContactName">Emergency Contact</label>
-                                <input type="text" id="searchByContactName" class="form-control" placeholder="Search by Name">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="searchByPhone">Contact Number</label>
-                                <input type="text" id="searchByPhone" class="form-control" placeholder="Search by Contact Number">
-                            </div>
-                            <div class="col-md-2">
-                                <label>&nbsp;</label> <!-- Empty label for alignment -->
-                                <button class="btn btn-secondary" id="resetFilters">Reset Filters</button>
+                            <div>
+                                <label>&nbsp;</label>
+                                <button class="btn btn-secondary form-control" id="resetFilters">Reset Filters</button>
                             </div>
                         </div>
-
+                        <!-- Spacer for better UI -->
+                        <div class="spacer"></div>
                         <!-- Table -->
                         <table class="table table-striped table-bordered">
                             <thead class="table-dark">
@@ -175,9 +193,9 @@
                                     <td class="emergencyContactName">Jane Doe</td>
                                     <td class="contactNumber">123-456-7890</td>
                                     <td class="table-actions">
-                                        <button class="btn btn-secondary btn-block btn-sm view-btn">View</button>
-                                        <button class="btn btn-warning btn-block btn-sm edit-btn">Edit</button>
-                                        <button class="btn btn-danger btn-block btn-sm delete-btn">Delete</button>
+                                        <button class="btn btn-secondary btn-sm view-btn">View</button>
+                                        <button class="btn btn-warning btn-sm edit-btn">Edit</button>
+                                        <button class="btn btn-danger btn-sm delete-btn">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -200,35 +218,27 @@
 
     <script>
         $(document).ready(function () {
-            // Search functionality for each field
+            // Search functionality
             function filterTable() {
-                var nameValue = $('#searchByName').val().toLowerCase();
-                var emailValue = $('#searchByEmail').val().toLowerCase();
-                var addressValue = $('#searchByAddress').val().toLowerCase();
-                var contactNameValue = $('#searchByContactName').val().toLowerCase();
-                var phoneValue = $('#searchByPhone').val().toLowerCase();
+                var searchValue = $('#searchByDetails').val().toLowerCase();
 
                 $('#patientTableBody tr').filter(function () {
                     var row = $(this);
-                    var nameMatch = row.find('.fullName').text().toLowerCase().indexOf(nameValue) > -1;
-                    var emailMatch = row.find('.email').text().toLowerCase().indexOf(emailValue) > -1;
-                    var addressMatch = row.find('.address').text().toLowerCase().indexOf(addressValue) > -1;
-                    var contactNameMatch = row.find('.emergencyContactName').text().toLowerCase().indexOf(contactNameValue) > -1;
-                    var phoneMatch = row.find('.contactNumber').text().toLowerCase().indexOf(phoneValue) > -1;
+                    var fullNameMatch = row.find('.fullName').text().toLowerCase().indexOf(searchValue) > -1;
+                    var emailMatch = row.find('.email').text().toLowerCase().indexOf(searchValue) > -1;
+                    var contactNameMatch = row.find('.emergencyContactName').text().toLowerCase().indexOf(searchValue) > -1;
 
-                    row.toggle(nameMatch && emailMatch && addressMatch && contactNameMatch && phoneMatch);
+                    row.toggle(fullNameMatch || emailMatch || contactNameMatch);
                 });
             }
 
-            $('#searchByName, #searchByEmail, #searchByAddress, #searchByContactName, #searchByPhone').on('keyup', filterTable);
+            $('#searchByDetails').on('keyup', filterTable);
 
             // Reset Filters
             $('#resetFilters').on('click', function () {
-                $('#searchByName').val('');
-                $('#searchByEmail').val('');
-                $('#searchByAddress').val('');
-                $('#searchByContactName').val('');
-                $('#searchByPhone').val('');
+                $('#searchByDetails').val('');
+                $('#filterByCreatedDateTime').val('');
+                $('#filterByDOB').val('');
                 filterTable();
             });
 
@@ -265,14 +275,14 @@
             // Edit functionality
             $(document).on('click', '.edit-btn', function () {
                 var row = $(this).closest('tr');
-                
+
                 // Replace table cell content with input fields
                 row.find('.fullName').html('<input type="text" class="form-control" value="' + row.find('.fullName').text() + '">');
                 row.find('.email').html('<input type="email" class="form-control" value="' + row.find('.email').text() + '">');
                 row.find('.dob').html('<input type="date" class="form-control" value="' + row.find('.dob').text() + '">');
                 row.find('.emergencyContactName').html('<input type="text" class="form-control" value="' + row.find('.emergencyContactName').text() + '">');
                 row.find('.contactNumber').html('<input type="text" class="form-control" value="' + row.find('.contactNumber').text() + '">');
-                
+
                 // Replace action buttons with Save and Cancel
                 row.find('.table-actions').html(`
                     <button class="btn btn-success btn-sm save-btn">Save</button>
@@ -283,21 +293,21 @@
             // Save functionality
             $(document).on('click', '.save-btn', function () {
                 var row = $(this).closest('tr');
-                
+
                 // Retrieve input values
                 var fullName = row.find('.fullName input').val();
                 var email = row.find('.email input').val();
                 var dob = row.find('.dob input').val();
                 var emergencyContactName = row.find('.emergencyContactName input').val();
                 var contactNumber = row.find('.contactNumber input').val();
-                
+
                 // Replace input fields with text values
                 row.find('.fullName').text(fullName);
                 row.find('.email').text(email);
                 row.find('.dob').text(dob);
                 row.find('.emergencyContactName').text(emergencyContactName);
                 row.find('.contactNumber').text(contactNumber);
-                
+
                 // Replace action buttons back to View/Edit/Delete
                 row.find('.table-actions').html(`
                     <button class="btn btn-secondary btn-sm btn-block view-btn">View</button>
@@ -316,9 +326,8 @@
                 $(this).closest('tr').remove();
             });
 
-            // View functionality - Connect to admin-viewpatient.html
+            // View functionality
             $(document).on('click', '.view-btn', function () {
-                // Get the row data
                 var row = $(this).closest('tr');
                 var patientData = {
                     id: row.find('td:nth-child(1)').text(),
@@ -327,19 +336,9 @@
                     dob: row.find('.dob').text(),
                     emergencyContactName: row.find('.emergencyContactName').text(),
                     contactNumber: row.find('.contactNumber').text(),
-                    createdDate: new Date().toLocaleString('en-US', {
-                        month: 'numeric',
-                        day: 'numeric',
-                        year: '2-digit',
-                        hour: 'numeric',
-                        minute: 'numeric'
-                    })
                 };
 
-                // Save the patient data to localStorage
                 localStorage.setItem('viewPatient', JSON.stringify(patientData));
-
-                // Redirect to the view page
                 window.location.href = 'admin-viewpatient.html';
             });
         });
