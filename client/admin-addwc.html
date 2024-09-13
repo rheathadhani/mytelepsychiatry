@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Wellness Content</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="patient-index.css" />
+    <style>
+        .card-header {
+            background-color: #343a40;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="bg-dark border-right" id="sidebar-wrapper">
+            <div class="list-group list-group-flush">
+                <p class="bg-dark text-white mb-1 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> +
+                        </span></strong></p>
+                <p class="text-white font-italic ml-4 mt-0 mb-3">Admin's Space</p>
+                <a href="admin-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="admin-psy.html" class="list-group-item list-group-item-action bg-dark text-white">Psychiatrists</a>
+                <a href="admin-patient.html" class="list-group-item list-group-item-action bg-dark text-white">Patients</a>
+                <a href="admin-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+            </div>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper" class="w-100">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white">
+                <button class="btn btn-primary" id="menu-toggle"> Menu </button>
+            </nav>
+
+            <!-- Content starts after nav -->
+            <div class="container">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4>Add Wellness Content</h4>
+                    </div>
+                    <!-- Registration Form for adding wellness content -->
+                    <div class="card-body">
+                        <form id="addWellnessContentForm">
+                            <div class="form-group">
+                                <label for="imageLink">Image Link</label>
+                                <input type="text" id="imageLink" class="form-control" placeholder="Enter image link" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="category">Category</label>
+                                <select id="category" class="form-control" required>
+                                    <option value="" disabled selected>Select category</option>
+                                    <option value="Mindfulness">Mindfullness</option>
+                                    <option value="Exercise">Exercise</option>
+                                    <option value="Nutrition">Nutrition</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <input type="text" id="description" class="form-control" placeholder="Enter description" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="videoLink">Video Link</label>
+                                <input type="text" id="videoLink" class="form-control" placeholder="Enter video link" required>
+                            </div>
+                            <button type="button" id="saveWellnessContent" class="btn btn-success">Save</button>
+                            <button type="button" id="cancel" class="btn btn-secondary">Cancel</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <!-- End of Content -->
+
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Bootstrap and jQuery scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="patient-index.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Get the next ID based on the content in localStorage
+            function getNextContentId() {
+                var allContent = JSON.parse(localStorage.getItem('wellnessContentList')) || [];
+                if (allContent.length === 0) {
+                    return 1; // Start from 1 if no records exist
+                } else {
+                    // Increment ID based on the last content ID
+                    var lastContent = allContent[allContent.length - 1];
+                    return lastContent.id + 1;
+                }
+            }
+
+            // Save button functionality
+            $('#saveWellnessContent').click(function () {
+                var imageLink = $('#imageLink').val();
+                var category = $('#category').val();
+                var description = $('#description').val();
+                var videoLink = $('#videoLink').val();
+
+                // Validate form
+                if (!category) {
+                    alert("Please select a category.");
+                    return;
+                }
+
+                // Get the next content ID
+                var nextContentId = getNextContentId();
+
+                // Create new wellness content object
+                var newContent = {
+                    id: nextContentId,
+                    imageLink: imageLink,
+                    category: category,
+                    description: description,
+                    videoLink: videoLink
+                };
+
+                // Store in localStorage (temporary storage)
+                var allContent = JSON.parse(localStorage.getItem('wellnessContentList')) || [];
+                allContent.push(newContent);
+                localStorage.setItem('wellnessContentList', JSON.stringify(allContent));
+
+                // Redirect to admin-wc.html
+                window.location.href = "admin-wc.html";
+            });
+
+            // Cancel button functionality
+            $('#cancel').click(function () {
+                window.location.href = "admin-wc.html";
+            });
+        });
+    </script>
+</body>
+
+</html>

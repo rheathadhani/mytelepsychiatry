@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Wellness Content</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="patient-index.css">
+    <style>
+        .table-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .table-actions button {
+            margin: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .addContent {
+            text-decoration: none;
+            font: #fff;
+        }
+
+        .btn-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .card-header {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .form-control {
+            border-radius: 0;
+        }
+
+        .d-flex.justify-content-end button {
+            margin-left: 10px;
+        }
+
+        .search-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .spacer {
+            margin-bottom: 20px;
+        }
+
+        a:hover {
+            text-decoration: none;
+            
+        }
+
+        .description, .imageLink {
+            max-height: 80px; /* Adjust height as necessary */
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .description {
+            max-width: 250px;
+        }
+
+        .imageLink {
+            max-width: 200px;
+        }
+
+        .videoLink {
+            max-width: 200px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="bg-dark border-right" id="sidebar-wrapper">
+            <div class="list-group list-group-flush">
+                <p class="bg-dark text-white mb-1 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> + </span></strong></p>
+                <p class="text-white font-italic ml-4 mt-0 mb-3">Admin's Space</p>
+                <a href="admin-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="admin-psy.html" class="list-group-item list-group-item-action bg-dark text-white">Psychiatrists</a>
+                <a href="admin-patient.html" class="list-group-item list-group-item-action bg-dark text-white">Patients</a>
+                <a href="admin-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+            </div>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper" class="w-100">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white">
+                <button class="btn btn-primary" id="menu-toggle"> Menu </button>
+            </nav>
+
+            <!-- Content starts after nav -->
+            <div class="container">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4>Wellness Content Management</h4>
+                        <div class="d-flex">
+                            <button class="btn btn-success mr-2"><a href="admin-addwc.html" class="text-white">Add Content</a></button>
+                            <button class="btn btn-success" id="generateReportBtn">Generate Report</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Search Section -->
+                        <div class="d-flex mb-3">
+                            <div class="mr-2" style="flex-grow: 1;">
+                                <label for="searchByDescription">Search</label>
+                                <input type="text" id="searchByDescription" class="form-control" placeholder="Search by Description">
+                            </div>
+                            <div class="mr-2" style="flex-grow: 1;">
+                                <label for="filterByCategory">Filter By Category</label>
+                                <select id="filterByCategory" class="form-control">
+                                    <option value="">Filter by Category</option>
+                                    <option value="Mindfulness">Mindfulness</option>
+                                    <option value="Exercise">Exercise</option>
+                                    <option value="Nutrition">Nutrition</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>&nbsp;</label>
+                                <button class="btn btn-secondary form-control" id="resetFilters">Reset Filters</button>
+                            </div>
+                        </div>
+                        <!-- Table -->
+                        <table class="table table-striped table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Image Link</th>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>Video Link</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contentTableBody">
+                                <!-- Example Row -->
+                                <tr>
+                                    <td>1</td>
+                                    <td class="imageLink">https://example.com/image1.jpg</td>
+                                    <td class="category">Mindfulness</td>
+                                    <td class="description">Meditation guide</td>
+                                    <td class="videoLink">https://example.com/video1.mp4</td>
+                                    <td class="table-actions">
+                                        <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Content -->
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Bootstrap and jQuery scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Load Wellness Content data from localStorage and append to the table
+            function loadWellnessContent() {
+                var allContent = JSON.parse(localStorage.getItem('wellnessContentList')) || [];
+                var tableBody = $('#contentTableBody');
+                tableBody.empty(); // Clear previous content
+
+                allContent.forEach(function (content) {
+                    var row = `
+                        <tr>
+                            <td>${content.id}</td>
+                            <td class="imageLink">${content.imageLink}</td>
+                            <td class="category">${content.category}</td>
+                            <td class="description">${content.description}</td>
+                            <td class="videoLink">${content.videoLink}</td>
+                            <td class="table-actions">
+                                <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+                            </td>
+                        </tr>`;
+                    tableBody.append(row);
+                });
+            }
+
+            // Call the function to load the wellness content when the page loads
+            loadWellnessContent();
+
+            // Search and Filter functionality
+            function filterTable() {
+                var searchValue = $('#searchByDescription').val().toLowerCase();
+                var categoryValue = $('#filterByCategory').val().toLowerCase();
+
+                $('#contentTableBody tr').filter(function () {
+                    var descriptionMatch = $(this).find('.description').text().toLowerCase().indexOf(searchValue) > -1;
+                    var categoryMatch = $(this).find('.category').text().toLowerCase().indexOf(categoryValue) > -1;
+
+                    $(this).toggle(descriptionMatch && (categoryValue === "" || categoryMatch));
+                });
+            }
+
+            $('#searchByDescription, #filterByCategory').on('keyup change', filterTable);
+
+            // Reset Filters
+            $('#resetFilters').on('click', function () {
+                $('#searchByDescription').val('');
+                $('#filterByCategory').val('');
+                filterTable();
+            });
+
+            // Generate Report
+            $('#generateReportBtn').on('click', function () {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const headers = ["ID", "Image Link", "Category", "Description", "Video Link"];
+                const tableRows = [];
+
+                $('#contentTableBody tr:visible').each(function () {
+                    const rowData = [];
+                    $(this).find('td').each(function (index) {
+                        if (index < headers.length) {
+                            rowData.push($(this).text().trim());
+                        }
+                    });
+                    tableRows.push(rowData);
+                });
+
+                doc.setFontSize(18);
+                doc.text("Wellness Content Report", 10, 10);
+                doc.autoTable({
+                    head: [headers],
+                    body: tableRows,
+                    startY: 20,
+                    theme: 'grid',
+                    margin: { top: 10 },
+                });
+
+                doc.save('wellness-content-report.pdf');
+            });
+
+            // Delete functionality
+            $(document).on('click', '.delete-btn', function () {
+                var row = $(this).closest('tr');
+                var id = row.find('td:first').text();
+
+                // Remove content from localStorage
+                var allContent = JSON.parse(localStorage.getItem('wellnessContentList')) || [];
+                var updatedContent = allContent.filter(function (content) {
+                    return content.id !== parseInt(id);
+                });
+                localStorage.setItem('wellnessContentList', JSON.stringify(updatedContent));
+
+                // Remove row from table
+                row.remove();
+            });
+        });
+    </script>
+
+</body>
+
+</html>
