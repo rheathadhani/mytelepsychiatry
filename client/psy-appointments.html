@@ -62,13 +62,13 @@
         }
 
         table td {
-            vertical-align: middle; /* Align content in the middle vertically */
+            vertical-align: middle;
         }
 
         .table-actions {
             display: flex;
-            justify-content: center; /* Center align buttons horizontally */
-            gap: 5px; /* Add some space between buttons */
+            justify-content: center;
+            gap: 5px;
         }
     </style>
 </head>
@@ -139,7 +139,7 @@
                                 </tr>
                             </thead>
                             <tbody id="appointmentTable">
-                                <tr data-status="Confirmed" data-name="John Doe" data-sessions="Details of previous sessions go here." data-medication="Medication details go here." data-notes='[]' data-payment="Paid">
+                                <tr data-status="Confirmed" data-name="John Doe" data-sessions="Details of previous sessions go here." data-notes='[]' data-payment="Paid">
                                     <td>John Doe</td>
                                     <td class="appointment-date">09/11/2024</td>
                                     <td class="appointment-time">07:37 AM</td>
@@ -147,12 +147,10 @@
                                     <td><span class="badge bg-success p-2 text-white">Confirmed</span></td>
                                     <td class="table-actions">
                                         <button class="btn btn-info btn-sm view-details">View Details</button>
-                                        <button class="btn btn-warning btn-sm reschedule">Reschedule</button>
-                                        <button class="btn btn-secondary btn-sm change-status">Change Status</button>
                                         <button class="btn btn-danger btn-sm cancel-appointment">Delete Record</button>
                                     </td>
                                 </tr>
-                                <tr data-status="Pending" data-name="Jane Smith" data-sessions="Details of previous sessions go here." data-medication="Medication details go here." data-notes='[]' data-payment="Unpaid">
+                                <tr data-status="Pending" data-name="Jane Smith" data-sessions="Details of previous sessions go here." data-notes='[]' data-payment="Unpaid">
                                     <td>Jane Smith</td>
                                     <td class="appointment-date">09/19/2024</td>
                                     <td class="appointment-time">03:41 AM</td>
@@ -160,8 +158,6 @@
                                     <td><span class="badge bg-warning p-2 text-white">Pending</span></td>
                                     <td class="table-actions">
                                         <button class="btn btn-info btn-sm view-details">View Details</button>
-                                        <button class="btn btn-warning btn-sm reschedule">Reschedule</button>
-                                        <button class="btn btn-secondary btn-sm change-status">Change Status</button>
                                         <button class="btn btn-danger btn-sm cancel-appointment">Delete Record</button>
                                     </td>
                                 </tr>
@@ -179,7 +175,6 @@
                                 <tr>
                                     <th>Patient Name</th>
                                     <th>Previous Sessions</th>
-                                    <th>Medication</th>
                                     <th>Clinical Notes</th>
                                     <th>Actions</th>
                                 </tr>
@@ -188,7 +183,6 @@
                                 <tr>
                                     <td id="patientName"></td>
                                     <td id="previousSessions"></td>
-                                    <td id="medicationPrescribed"></td>
                                     <td id="clinicalNotes">
                                         <ul class="list-group" id="notesList">
                                             <!-- Clinical notes will be added here -->
@@ -202,58 +196,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                </div>
-
-                <!-- Reschedule Section -->
-                <div class="card mb-3 dynamic-content" id="rescheduleContent">
-                    <div class="card-header bg-dark text-white">Reschedule Appointment</div>
-                    <div class="card-body">
-                        <form>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="newDate">New Date:</label>
-                                        <input type="date" class="form-control" id="newDate">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="newTime">New Time:</label>
-                                        <input type="time" class="form-control" id="newTime">
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-dark mt-2" id="confirmReschedule">Confirm Reschedule</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Change Status Modal -->
-                <div class="modal fade" id="changeStatusModal" tabindex="-1" role="dialog" aria-labelledby="changeStatusModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="changeStatusModalLabel">Change Status</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <select class="form-control" id="newStatus">
-                                    <option value="Pending">Pending</option>
-                                    <option value="Confirmed">Confirmed</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Cancelled">Cancelled</option>
-                                    <option value="Rescheduled">Rescheduled</option>
-                                    <option value="Ongoing">Ongoing</option>
-                                </select>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                <button type="button" class="btn btn-primary" id="confirmChangeStatus">Change</button>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -335,38 +277,35 @@
                 var row = $(this).closest('tr');
                 var patientName = row.data('name');
                 var previousSessions = row.data('sessions');
-                var medicationPrescribed = row.data('medication');
                 var clinicalNotes = JSON.parse(row.attr('data-notes'));
 
                 $('#patientName').text(patientName);
                 $('#previousSessions').text(previousSessions);
-                $('#medicationPrescribed').text(medicationPrescribed);
 
                 // Populate clinical notes
                 $('#notesList').empty();
                 clinicalNotes.forEach((note, index) => {
-                    $('#notesList').append(`
-                        <li class="list-group-item">
+                    $('#notesList').append(
+                        `<li class="list-group-item">
                             <input type="checkbox" class="note-checkbox" data-index="${index}">
                             ${note}
-                        </li>
-                    `);
+                        </li>`
+                    );
                 });
 
                 $('#dynamicContent').show();
-                $('#rescheduleContent').hide();
             });
 
             // Add new clinical note functionality
             $('.add-note').on('click', function () {
                 var noteContent = $(this).closest('tr').find('textarea').val();
                 if (noteContent.trim()) {
-                    $('#notesList').append(`
-                        <li class="list-group-item">
+                    $('#notesList').append(
+                        `<li class="list-group-item">
                             <input type="checkbox" class="note-checkbox">
                             ${noteContent}
-                        </li>
-                    `);
+                        </li>`
+                    );
                     $(this).closest('tr').find('textarea').val(''); // Clear textarea
                     $('#successToast .toast-body').text('Clinical note has been successfully saved.');
                     $('#successToast').toast('show');
@@ -382,46 +321,6 @@
                 $('#successToast').toast('show');
             });
 
-            // Reschedule action
-            $('.reschedule').on('click', function () {
-                var row = $(this).closest('tr');
-                $('#dynamicContent').hide();
-                $('#rescheduleContent').data('selectedRow', row).show(); // Store the row in the data attribute
-            });
-
-            // Confirm reschedule functionality
-            $('#confirmReschedule').on('click', function () {
-                var newDate = $('#newDate').val();
-                var newTime = $('#newTime').val();
-                var selectedRow = $('#rescheduleContent').data('selectedRow'); // Get the stored row
-
-                if (newDate && newTime && selectedRow) {
-                    selectedRow.find('.appointment-date').text(new Date(newDate).toLocaleDateString());
-
-                    // Correctly parse and format the time
-                    var formattedTime = new Date('1970-01-01T' + newTime)
-                        .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-
-                    selectedRow.find('.appointment-time').text(formattedTime);
-
-                    // Update status to Rescheduled
-                    selectedRow.data('status', 'Rescheduled');
-                    selectedRow.find('td:nth-child(5)').html('<span class="badge bg-primary p-2 text-white">Rescheduled</span>');
-
-                    $('#successToast .toast-body').text('Appointment rescheduled successfully.');
-                    $('#successToast').toast('show');
-                    $('#rescheduleContent').hide();
-
-                    // Automatically update to "Ongoing" at the exact date and time
-                    setTimeout(function () {
-                        selectedRow.data('status', 'Ongoing');
-                        selectedRow.find('td:nth-child(5)').html('<span class="badge bg-info p-2 text-white">Ongoing</span>');
-                    }, new Date(newDate + 'T' + newTime).getTime() - new Date().getTime());
-                } else {
-                    alert("Please select both date and time.");
-                }
-            });
-
             // Cancel appointment action with custom modal
             let selectedRowToDelete;
             $(document).on('click', '.cancel-appointment', function () {
@@ -435,47 +334,6 @@
                 $('#successToast .toast-body').text('Appointment deleted successfully.');
                 $('#successToast').toast('show');
                 $('#confirmationModal').modal('hide');
-            });
-
-            // Change status action
-            let selectedRowToChangeStatus;
-            $(document).on('click', '.change-status', function () {
-                selectedRowToChangeStatus = $(this).closest('tr');
-                $('#changeStatusModal').modal('show');
-            });
-
-            // Confirm change status in the modal
-            $('#confirmChangeStatus').on('click', function () {
-                var newStatus = $('#newStatus').val();
-                selectedRowToChangeStatus.data('status', newStatus);
-                var badgeClass;
-
-                switch (newStatus) {
-                    case 'Confirmed':
-                        badgeClass = 'bg-success';
-                        break;
-                    case 'Pending':
-                        badgeClass = 'bg-warning';
-                        break;
-                    case 'Completed':
-                        badgeClass = 'bg-secondary';
-                        break;
-                    case 'Cancelled':
-                        badgeClass = 'bg-danger';
-                        break;
-                    case 'Rescheduled':
-                        badgeClass = 'bg-primary';
-                        break;
-                    case 'Ongoing':
-                        badgeClass = 'bg-info';
-                        break;
-                }
-
-                selectedRowToChangeStatus.find('td:nth-child(5)').html(`<span class="badge ${badgeClass} p-2 text-white">${newStatus}</span>`);
-
-                $('#successToast .toast-body').text('Status changed successfully.');
-                $('#successToast').toast('show');
-                $('#changeStatusModal').modal('hide');
             });
 
             // Initialize toast
