@@ -533,6 +533,333 @@ const deleteRecord = (req, res) => {
 };
 
 
+// Get the list of patients who have booked at least one session with the psychiatrist
+const getPatientsForPrescription = (req, res) => {
+    // Call checkPsychiatristRole to ensure access control
+    checkPsychiatristRole(req, res);
+
+    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+
+    if (!psychiatristId) {
+        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
+    }
+
+    // Query to get the patients who have booked at least one session
+    const getPatientsQuery = `
+        SELECT DISTINCT p.patient_id, p.full_name 
+        FROM Appointments a
+        INNER JOIN Patients p ON a.patient_id = p.patient_id
+        WHERE a.psychiatrist_id = ?;
+    `;
+
+    db.query(getPatientsQuery, [psychiatristId], (err, results) => {
+        if (err) {
+            console.error('Error querying patients:', err);
+            return res.status(500).send('Server error');
+        }
+
+        if (results.length === 0) {
+            return res.status(200).json({ message: 'No patients found.', patients: [] });
+        }
+
+        // Return the list of patients
+        res.status(200).json({
+            message: 'Patients retrieved successfully',
+            patients: results.map(patient => ({
+                patientId: patient.patient_id,
+                fullName: patient.full_name
+            }))
+        });
+    });
+};
+
+
+// Post a new prescription for the selected patient
+const postPrescription = (req, res) => {
+    // Call checkPsychiatristRole to ensure access control
+    checkPsychiatristRole(req, res);
+
+    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+    const { patientId, medicationName, dosage, frequencyPerDay, durationInDays } = req.body;
+
+    if (!psychiatristId) {
+        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
+    }
+
+    if (!patientId || !medicationName || !dosage || !frequencyPerDay || !durationInDays) {
+        return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    // Get the current date for the prescription
+    const prescribedDate = new Date(); // Automatically sets to today's date
+
+    // Query to insert the new prescription with the current date
+    const insertPrescriptionQuery = `
+        INSERT INTO Prescriptions (patient_id, psychiatrist_id, medicine_name, dosage, frequency_per_day, duration_in_days, prescribed_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?);
+    `;
+
+    db.query(insertPrescriptionQuery, [patientId, psychiatristId, medicationName, dosage, frequencyPerDay, durationInDays, prescribedDate], (err, result) => {
+        if (err) {
+            console.error('Error inserting prescription:', err);
+            return res.status(500).send('Server error');
+        }
+
+        // Respond with success message
+        res.status(201).json({
+            message: 'Prescription added successfully',
+            prescriptionId: result.insertId // Return the ID of the inserted prescription
+        });
+    });
+};
+
+
+// Get the prescription history for the logged-in psychiatrist
+const getPrescriptionHistory = (req, res) => {
+    // Call checkPsychiatristRole to ensure access control
+    checkPsychiatristRole(req, res);
+
+    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+
+    if (!psychiatristId) {
+        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
+    }
+
+    // Query to get the prescription history for the logged-in psychiatrist
+    const getHistoryQuery = `
+        SELECT p.full_name, pr.medicine_name, pr.dosage, pr.frequency_per_day, pr.duration_in_days, pr.prescribed_date
+        FROM Prescriptions pr
+        INNER JOIN Patients p ON pr.patient_id = p.patient_id
+        WHERE pr.psychiatrist_id = ?
+        ORDER BY pr.prescribed_date DESC;
+    `;
+
+    db.query(getHistoryQuery, [psychiatristId], (err, results) => {
+        if (err) {
+            console.error('Error querying prescription history:', err);
+            return res.status(500).send('Server error');
+        }
+
+        if (results.length === 0) {
+            return res.status(200).json({ message: 'No prescription history found.', history: [] });
+        }
+
+        // Return the prescription history
+        res.status(200).json({
+            message: 'Prescription history retrieved successfully',
+            history: results.map(prescription => ({
+                date: prescription.prescribed_date,
+                patientName: prescription.full_name,
+                medicationName: prescription.medicine_name,
+                dosage: prescription.dosage,
+                frequencyPerDay: prescription.frequency_per_day,
+                durationInDays: prescription.duration_in_days
+            }))
+        });
+    });
+};
+
+// Get the list of patients who have booked at least one session with the psychiatrist
+const getPatientList = (req, res) => {
+    // Call checkPsychiatristRole to ensure access control
+    checkPsychiatristRole(req, res);
+
+    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+
+    if (!psychiatristId) {
+        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
+    }
+
+    // Query to get the list of distinct patients who have booked at least one session
+    const getPatientsQuery = `
+        SELECT DISTINCT p.patient_id, p.full_name 
+        FROM Appointments a
+        INNER JOIN Patients p ON a.patient_id = p.patient_id
+        WHERE a.psychiatrist_id = ?;
+    `;
+
+    db.query(getPatientsQuery, [psychiatristId], (err, results) => {
+        if (err) {
+            console.error('Error querying patient list:', err);
+            return res.status(500).send('Server error');
+        }
+
+        if (results.length === 0) {
+            return res.status(200).json({ message: 'No patients found.', patients: [] });
+        }
+
+        // Return the list of patients
+        res.status(200).json({
+            message: 'Patients retrieved successfully',
+            patients: results.map(patient => ({
+                patientId: patient.patient_id,
+                fullName: patient.full_name
+            }))
+        });
+    });
+};
+
+
+// Post a new clinical note for the selected patient
+const postClinicalNotes = (req, res) => {
+    // Call checkPsychiatristRole to ensure access control
+    checkPsychiatristRole(req, res);
+
+    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+    const { patientId, noteText } = req.body; // Get patient ID and note text from the request body
+
+    if (!psychiatristId) {
+        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
+    }
+
+    if (!patientId || !noteText) {
+        return res.status(400).json({ message: 'Patient ID and clinical note text are required.' });
+    }
+
+    // Query to insert a new clinical note for the patient
+    const insertNoteQuery = `
+        INSERT INTO ClinicalNotes (patient_id, psychiatrist_id, note_text, note_date)
+        VALUES (?, ?, ?, NOW());
+    `;
+
+    db.query(insertNoteQuery, [patientId, psychiatristId, noteText], (err, result) => {
+        if (err) {
+            console.error('Error inserting clinical note:', err);
+            return res.status(500).send('Server error');
+        }
+
+        // Respond with success message
+        res.status(201).json({
+            message: 'Clinical note added successfully',
+            noteId: result.insertId // Return the ID of the inserted note for reference
+        });
+    });
+};
+
+
+// Get all clinical notes (current and old) for the selected patient
+const getAllClinicalNotesForEdit = (req, res) => {
+    // Ensure the logged-in user is a psychiatrist
+    checkPsychiatristRole(req, res);
+
+    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from session
+    const { patientId } = req.params; // Get patient ID from request parameters
+
+    if (!psychiatristId) {
+        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
+    }
+
+    if (!patientId) {
+        return res.status(400).json({ message: 'Patient ID is required.' });
+    }
+
+    // Query to retrieve all clinical notes for the patient
+    const getNotesQuery = `
+        SELECT note_id, note_text, note_date
+        FROM ClinicalNotes
+        WHERE psychiatrist_id = ? AND patient_id = ?
+        ORDER BY note_date DESC;
+    `;
+
+    db.query(getNotesQuery, [psychiatristId, patientId], (err, results) => {
+        if (err) {
+            console.error('Error retrieving clinical notes:', err);
+            return res.status(500).send('Server error');
+        }
+
+        if (results.length === 0) {
+            return res.status(200).json({ message: 'No clinical notes found for this patient.', notes: [] });
+        }
+
+        // Return the list of clinical notes for editing
+        res.status(200).json({
+            message: 'Clinical notes retrieved successfully',
+            notes: results.map(note => ({
+                noteId: note.note_id,
+                noteText: note.note_text,
+                noteDate: note.note_date
+            }))
+        });
+    });
+};
+
+
+// Save the edited clinical note by patching the old note
+const saveEditedNotes = (req, res) => {
+    // Ensure the logged-in user is a psychiatrist
+    checkPsychiatristRole(req, res);
+
+    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from session
+    const { noteId } = req.params; // Get the note ID from request parameters
+    const { updatedNoteText } = req.body; // Get updated note text from request body
+
+    if (!psychiatristId) {
+        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
+    }
+
+    if (!noteId || !updatedNoteText) {
+        return res.status(400).json({ message: 'Note ID and updated note text are required.' });
+    }
+
+    // Query to update the clinical note with the new text
+    const updateNoteQuery = `
+        UPDATE ClinicalNotes
+        SET note_text = ?, note_date = NOW()
+        WHERE note_id = ? AND psychiatrist_id = ?;
+    `;
+
+    db.query(updateNoteQuery, [updatedNoteText, noteId, psychiatristId], (err, result) => {
+        if (err) {
+            console.error('Error updating clinical note:', err);
+            return res.status(500).send('Server error');
+        }
+
+        // Respond with success message
+        res.status(200).json({
+            message: 'Clinical note updated successfully',
+            affectedRows: result.affectedRows // Return the number of rows updated
+        });
+    });
+};
+
+
+// Delete all clinical notes for the selected patient
+const deleteAllClinicalNotes = (req, res) => {
+    // Ensure the logged-in user is a psychiatrist
+    checkPsychiatristRole(req, res);
+
+    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+    const { patientId } = req.params; // Get patient ID from request parameters
+
+    if (!psychiatristId) {
+        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
+    }
+
+    if (!patientId) {
+        return res.status(400).json({ message: 'Patient ID is required.' });
+    }
+
+    // Query to delete all clinical notes for the given patient
+    const deleteNotesQuery = `
+        DELETE FROM ClinicalNotes
+        WHERE psychiatrist_id = ? AND patient_id = ?;
+    `;
+
+    db.query(deleteNotesQuery, [psychiatristId, patientId], (err, result) => {
+        if (err) {
+            console.error('Error deleting clinical notes:', err);
+            return res.status(500).send('Server error');
+        }
+
+        // Return success message
+        res.status(200).json({
+            message: 'All clinical notes deleted successfully',
+            affectedRows: result.affectedRows // Return the number of rows deleted
+        });
+    });
+};
+
+
 
 
 
@@ -549,6 +876,12 @@ module.exports = {
     postNewClinicalNotes,
     deleteSelectedNotes,
     deleteRecord,
-
-
+    getPatientsForPrescription,
+    postPrescription,
+    getPrescriptionHistory,
+    getPatientList,
+    postClinicalNotes,
+    getAllClinicalNotesForEdit,
+    saveEditedNotes,
+    deleteAllClinicalNotes
 }
