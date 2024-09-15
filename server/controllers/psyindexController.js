@@ -860,6 +860,121 @@ const deleteAllClinicalNotes = (req, res) => {
 };
 
 
+// Get Psychiatrist Personal Details
+const getPersonalDetails = (req, res) => {
+    checkAdminRole(req, res);
+
+    const psychiatristId = req.session.userId;  // Assuming the psychiatrist is logged in and their ID is stored in the session.
+
+    const query = `
+        SELECT u.username AS fullName, u.email, p.specialization
+        FROM Users u
+        JOIN Psychiatrists p ON u.user_id = p.user_id
+        WHERE u.user_id = ?;
+    `;
+
+    db.query(query, [psychiatristId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching psychiatrist details', error: err });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Psychiatrist not found' });
+        }
+
+        const psychiatrist = results[0];
+        res.status(200).json({
+            fullName: psychiatrist.fullName,
+            email: psychiatrist.email,
+            specialization: psychiatrist.specialization,
+        });
+    });
+};
+
+
+// Update Psychiatrist Password
+const patchPassword = (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const psychiatristId = req.session.userId; // Assuming psychiatrist is logged in and their ID is stored in the session.
+
+    // Step 1: Fetch the current password from the database
+    const getCurrentPasswordQuery = `
+        SELECT password FROM Users WHERE user_id = ?;
+    `;
+
+    db.query(getCurrentPasswordQuery, [psychiatristId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching current password', error: err });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Psychiatrist not found' });
+        }
+
+        const currentPasswordFromDb = results[0].password;
+
+        // Step 2: Check if the current password matches the input
+        if (currentPassword !== currentPasswordFromDb) {
+            return res.status(401).json({ message: 'Current password is incorrect' });
+        }
+
+        // Step 3: Update the password with the new password
+        const updatePasswordQuery = `
+            UPDATE Users SET password = ? WHERE user_id = ?;
+        `;
+
+        db.query(updatePasswordQuery, [newPassword, psychiatristId], (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error updating password', error: err });
+            }
+
+            res.status(200).json({ message: 'Password updated successfully' });
+        });
+    });
+};
+
+
+// Delete Psychiatrist Account
+const deleteAccount = (req, res) => {
+    const psychiatristId = req.session.userId; // Assuming psychiatrist ID is stored in the session.
+
+    if (!psychiatristId) {
+        return res.status(401).json({ message: 'Unauthorized request' });
+    }
+
+    // Step 1: Delete from the Psychiatrists table
+    const deletePsychiatristQuery = `
+        DELETE FROM Psychiatrists WHERE user_id = ?;
+    `;
+
+    db.query(deletePsychiatristQuery, [psychiatristId], (err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error deleting psychiatrist account', error: err });
+        }
+
+        // Step 2: Delete from the Users table
+        const deleteUserQuery = `
+            DELETE FROM Users WHERE user_id = ?;
+        `;
+
+        db.query(deleteUserQuery, [psychiatristId], (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error deleting user account', error: err });
+            }
+
+            // Optionally, clear the session or log the user out after account deletion
+            req.session.destroy((err) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Error ending session after account deletion', error: err });
+                }
+
+                res.status(200).json({ message: 'Account deleted successfully' });
+            });
+        });
+    });
+};
+
+
 
 
 
@@ -883,5 +998,8 @@ module.exports = {
     postClinicalNotes,
     getAllClinicalNotesForEdit,
     saveEditedNotes,
-    deleteAllClinicalNotes
+    deleteAllClinicalNotes,
+    getPersonalDetails,
+    patchPassword,
+    deleteAccount
 }
