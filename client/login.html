@@ -50,7 +50,7 @@
                     </div>
 
                     <!-- Login Form -->
-                    <form class="w-75 mx-auto mt-3" id="loginForm">
+                    <form class="w-75 mx-auto mt-3" id="loginForm" novalidate>
                         <div class="tab-content" id="pills-tabContent">
                             <!-- Patient Tab -->
                             <div class="tab-pane fade show active" id="patient" role="tabpanel" aria-labelledby="patient-tab">
@@ -96,12 +96,35 @@
             </div>
         </div>
     </div>
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="login.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Function to show/hide the register link
+            function toggleRegisterLink() {
+                const selectedTab = $('.nav-pills .nav-link.active').attr('id');
+                if (selectedTab === 'psychiatrist-tab' || selectedTab === 'admin-tab') {
+                    $('#registerLink').hide();
+                } else {
+                    $('#registerLink').show();
+                }
+            }
+
+            // Call the toggle function when the page loads
+            toggleRegisterLink();
+
+            // Call the toggle function when tab is changed
+            $('.nav-pills .nav-link').on('shown.bs.tab', function () {
+                toggleRegisterLink();
+            });
+        });
+    </script>
+
 </body>
 
 </html>

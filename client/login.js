@@ -1,19 +1,20 @@
-$(document).ready(function () {
-    // Handle the form control validation issue by adding/removing the name attribute
-    function setFormNames(role) {
-        // Remove 'name' attribute from all inputs first
-        $('#patientEmail, #patientPassword, #psychiatristEmail, #psychiatristPassword, #adminEmail, #adminPassword').removeAttr('name');
 
-        // Add the 'name' attribute based on the active role
+$(document).ready(function () {
+    // Handle the form control validation issue by adding/updating the name attribute
+    function setFormNames(role) {
+        // Update the 'name' attribute based on the active role
         if (role === 'patient') {
             $('#patientEmail').attr('name', 'email');
             $('#patientPassword').attr('name', 'password');
+            $('#psychiatristEmail, #psychiatristPassword, #adminEmail, #adminPassword').removeAttr('name');
         } else if (role === 'psychiatrist') {
             $('#psychiatristEmail').attr('name', 'email');
             $('#psychiatristPassword').attr('name', 'password');
+            $('#patientEmail, #patientPassword, #adminEmail, #adminPassword').removeAttr('name');
         } else if (role === 'admin') {
             $('#adminEmail').attr('name', 'email');
             $('#adminPassword').attr('name', 'password');
+            $('#patientEmail, #patientPassword, #psychiatristEmail, #psychiatristPassword').removeAttr('name');
         }
     }
 
@@ -63,10 +64,8 @@ $(document).ready(function () {
         // Send login request using Axios
         axios.post('http://localhost:5500/api/login', loginData) // Replace with your backend's login endpoint
             .then(function (response) {
-                // Handle successful login
-                alert('Login successful!');
                 // Redirect or perform other actions
-                window.location.href = '/patient-index.html'; // Replace with the correct URL
+                window.location.href = 'http://127.0.0.1:5500/client/patient-index.html'; // Replace with the correct URL
             })
             .catch(function (error) {
                 // Handle error
