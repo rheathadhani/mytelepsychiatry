@@ -72,6 +72,10 @@
                                     <option value="Geriatric Psychiatry">Geriatric Psychiatry</option>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label for="imageLink">Image Link</label>
+                                <input type="url" id="imageLink" class="form-control" placeholder="Enter image URL">
+                            </div>
                             <button type="button" id="savePsychiatrist" class="btn btn-success">Save</button>
                             <button type="button" id="cancelRegistration" class="btn btn-secondary">Cancel</button>
                         </form>
@@ -102,6 +106,7 @@
                 var email = $('#email').val();
                 var password = $('#password').val();
                 var specialization = $('#specialization').val();
+                var imageLink = $('#imageLink').val();
                 var createdDate = new Date().toLocaleString('en-US', {
                     month: 'numeric',
                     day: 'numeric',
@@ -123,6 +128,7 @@
                     email: email,
                     password: password,
                     specialization: specialization,
+                    imageLink: imageLink, // Added image link here
                     createdDate: createdDate
                 };
 

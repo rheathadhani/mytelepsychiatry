@@ -145,34 +145,7 @@
                             </thead>
                             <tbody id="psychiatristTableBody">
                                 <!-- Example Row in Normal Mode -->
-                                <tr>
-                                    <td>1</td>
-                                    <td class="fullName">Dr. John Doe</td>
-                                    <td class="email">john@example.com</td>
-                                    <td class="password">root</td>
-                                    <td class="specialization">General Psychiatry</td>
-                                    <td>9/1/24, 10:00 AM</td>
-                                    <td class="table-actions">
-                                        <button class="btn btn-secondary btn-sm btn-actions">View</button>
-                                        <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
-                                        <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
-                                    </td>
-                                </tr>
 
-                                <!-- Example Row in Normal Mode -->
-                                <tr>
-                                    <td>2</td>
-                                    <td class="fullName">Dr. Mary Doe</td>
-                                    <td class="email">mary@example.com</td>
-                                    <td class="password">test</td>
-                                    <td class="specialization">Geriatric Psychiatry</td>
-                                    <td>9/1/24, 10:00 AM</td>
-                                    <td class="table-actions">
-                                        <button class="btn btn-secondary btn-sm btn-actions">View</button>
-                                        <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
-                                        <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
-                                    </td>
-                                </tr>
 
                                 <!-- Add more rows as needed -->
                             </tbody>
@@ -201,120 +174,35 @@
             var newPsychiatrist = localStorage.getItem('newPsychiatrist');
             if (newPsychiatrist) {
                 newPsychiatrist = JSON.parse(newPsychiatrist);
-
-                // Append the new record to the table
+    
+                // Get the last ID from the table
+                var lastID = $('#psychiatristTableBody tr:last td:first').text();
+                var newID = 1; // Default to 1 if no records exist
+                if (lastID) {
+                    newID = parseInt(lastID) + 1;
+                }
+    
+                // Append the new record to the table with the generated ID
                 $('#psychiatristTableBody').append(`
                 <tr>
-                    <td>${newPsychiatrist.id}</td>
+                    <td>${newID}</td>
                     <td class="fullName">${newPsychiatrist.fullName}</td>
                     <td class="email">${newPsychiatrist.email}</td>
                     <td class="password">${newPsychiatrist.password}</td>
                     <td class="specialization">${newPsychiatrist.specialization}</td>
                     <td class="createdDate">${newPsychiatrist.createdDate}</td>
                     <td class="table-actions">
-                        <button class="btn btn-secondary btn-sm btn-actions">View</button>
                         <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
                         <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
                     </td>
                 </tr>
             `);
-
+    
                 // Clear the stored data after it has been appended
                 localStorage.removeItem('newPsychiatrist');
             }
         });
-
-        //Generate Report
-        $(document).ready(function () {
-            // Add event listener to the "Generate Report" button
-            $('#generateReportBtn').on('click', function () {
-                generatePDFReport();
-            });
-
-            function generatePDFReport() {
-                // Get the visible rows after filtering
-                var rows = $('#psychiatristTableBody tr:visible');
-
-                if (rows.length === 0) {
-                    alert('No data to generate the report.');
-                    return;
-                }
-
-                // Initialize jsPDF
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-
-                // Set title
-                doc.setFontSize(18);
-                doc.text("Psychiatrist Report", 10, 10);
-
-                // Set column headers (excluding Password)
-                const headers = ["ID", "Full Name", "Email", "Specialization", "Created Date & Time"];
-                const tableRows = [];
-
-                // Loop through each visible row and extract data (skipping the Password column)
-                rows.each(function () {
-                    const rowData = [];
-                    $(this).find('td').each(function (index) {
-                        // Skip the password column (index 3)
-                        if (index !== 3 && index < headers.length + 1) {
-                            rowData.push($(this).text().trim());
-                        }
-                    });
-                    tableRows.push(rowData);
-                });
-
-                // Add the table to the PDF (excluding Password)
-                doc.autoTable({
-                    head: [headers],
-                    body: tableRows,
-                    startY: 20,  // Adjust this based on your title's position
-                    theme: 'grid',
-                    margin: { top: 10 },
-                });
-
-                // Save the generated PDF
-                doc.save('psychiatrist-report.pdf');
-            }
-        });
-
-        $(document).ready(function () {
-            // Search by ID or Name
-            $('#search').on('keyup', function () {
-                var value = $(this).val().toLowerCase();
-                $('#psychiatristTableBody tr').filter(function () {
-                    // Only search by the full name (second column, index 1)
-                    $(this).toggle($(this).find('td:eq(1)').text().toLowerCase().indexOf(value) > -1);
-                });
-            });
-
-        });
-
-        // Filter by Specialization
-        $('#filterSpecialization').on('change', function () {
-            var value = $(this).val().toLowerCase();
-            $('#psychiatristTableBody tr').filter(function () {
-                $(this).toggle($(this).find('td:eq(4)').text().toLowerCase().indexOf(value) > -1 || value == "");
-            });
-        });
-
-        // Filter by Date & Time
-        $('#filterByDateTime').on('change', function () {
-            var value = new Date($(this).val()).getTime();
-            $('#psychiatristTableBody tr').filter(function () {
-                var rowDate = new Date($(this).find('td:eq(5)').text()).getTime();
-                $(this).toggle(rowDate >= value || isNaN(value));
-            });
-        });
-
-        // Reset Filters
-        $('#resetFilters').on('click', function () {
-            $('#search').val('');
-            $('#filterByDateTime').val('');
-            $('#filterSpecialization').val('');
-            $('#psychiatristTableBody tr').show();
-        });
-
+    
         // Edit functionality
         $(document).on('click', '.edit-btn', function () {
             var row = $(this).closest('tr');
@@ -322,29 +210,31 @@
             var email = row.find('.email').text();
             var password = row.find('.password').text();
             var specialization = row.find('.specialization').text();
-
+            var createdDate = row.find('.createdDate').text(); // Keep the created date as non-editable
+    
             row.find('.fullName').html('<input type="text" value="' + fullName + '">');
             row.find('.email').html('<input type="email" value="' + email + '">');
             row.find('.password').html('<input type="password" value="' + password + '">');
-
+    
             var specializationOptions = `
-        <select class="form-control">
-            <option value="General Psychiatry" ${specialization === 'General Psychiatry' ? 'selected' : ''}>General Psychiatry</option>
-            <option value="Child and Adolescent Psychiatry" ${specialization === 'Child and Adolescent Psychiatry' ? 'selected' : ''}>Child and Adolescent Psychiatry</option>
-            <option value="Geriatric Psychiatry" ${specialization === 'Geriatric Psychiatry' ? 'selected' : ''}>Geriatric Psychiatry</option>
-        </select>
-    `;
+            <select class="form-control">
+                <option value="General Psychiatry" ${specialization === 'General Psychiatry' ? 'selected' : ''}>General Psychiatry</option>
+                <option value="Child and Adolescent Psychiatry" ${specialization === 'Child and Adolescent Psychiatry' ? 'selected' : ''}>Child and Adolescent Psychiatry</option>
+                <option value="Geriatric Psychiatry" ${specialization === 'Geriatric Psychiatry' ? 'selected' : ''}>Geriatric Psychiatry</option>
+            </select>
+        `;
             row.find('.specialization').html(specializationOptions);
-
-            // Hide the "Created Date & Time" column
-            row.find('.createdDate').hide(); // Hides the created date column in this row
-
+    
+            // Show "Created Date & Time" as non-editable text
+            row.find('.createdDate').text(createdDate);
+    
+            // Move Save and Cancel buttons to the Actions column
             row.find('.table-actions').html(`
-        <button id="saveBtn" class="btn btn-success btn-actions">Save</button>
-        <button id="cancelBtn" class="btn btn-secondary btn-actions">Cancel</button>
-    `);
+            <button id="saveBtn" class="btn btn-success btn-actions">Save</button>
+            <button id="cancelBtn" class="btn btn-secondary btn-actions">Cancel</button>
+        `);
         });
-
+    
         // Save functionality
         $(document).on('click', '#saveBtn', function () {
             var row = $(this).closest('tr');
@@ -352,22 +242,22 @@
             var email = row.find('.email input').val();
             var password = row.find('.password input').val();
             var specialization = row.find('.specialization select').val();
-
+    
             row.find('.fullName').text(fullName);
             row.find('.email').text(email);
             row.find('.password').text(password);
             row.find('.specialization').text(specialization);
-
-            // Show the "Created Date & Time" column again
-            row.find('.createdDate').show(); // Restores the created date column
-
+    
+            // Keep the created date unchanged
+            var createdDate = row.find('.createdDate').text();
+            row.find('.createdDate').text(createdDate);
+    
             row.find('.table-actions').html(`
-        <button class="btn btn-secondary btn-sm btn-actions">View</button>
-        <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
-        <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
-    `);
+            <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
+            <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
+        `);
         });
-
+    
         // Cancel functionality
         $(document).on('click', '#cancelBtn', function () {
             var row = $(this).closest('tr');
@@ -375,28 +265,27 @@
             var email = row.find('.email input').attr('value');
             var password = row.find('.password input').attr('value');
             var specialization = row.find('.specialization select').attr('value');
-
+            var createdDate = row.find('.createdDate').text(); // Keep created date unchanged
+    
             row.find('.fullName').text(fullName);
             row.find('.email').text(email);
             row.find('.password').text(password);
             row.find('.specialization').text(specialization);
-
-            // Show the "Created Date & Time" column again
-            row.find('.createdDate').show(); // Restores the created date column
-
+            row.find('.createdDate').text(createdDate); // Keep created date unchanged
+    
             row.find('.table-actions').html(`
-        <button class="btn btn-secondary btn-sm btn-actions">View</button>
-        <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
-        <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
-    `);
+            <button class="btn btn-warning btn-sm edit-btn btn-actions">Edit</button>
+            <button class="btn btn-danger btn-sm delete-btn btn-actions">Delete</button>
+        `);
         });
-
+    
         // Delete functionality
         $(document).on('click', '.delete-btn', function () {
             $(this).closest('tr').remove();
         });
-
     </script>
+    
+
 </body>
 
 </html>
