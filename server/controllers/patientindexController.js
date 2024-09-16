@@ -2,16 +2,17 @@ const db = require('../db');
 const multer = require('multer');
 const path = require('path');
 
-// Check if user is a patient
+/* // Check if user is a patient
 const checkPatientRole = (req, res) => {
     if (!req.session.userRole || req.session.userRole !== 'patient') {
         return res.status(403).json({ message: 'Access denied. This resource is only accessible to patients.' });
     }
 };
+ */
 
 // Get Patient's Full Name based on session
 const getPatientName = (req, res) => {
-    checkPatientRole(req, res);
+    //checkPatientRole(req, res);
 
     const patientId = req.session.patientId; // Retrieve patientId from session
 
@@ -40,7 +41,7 @@ const getPatientName = (req, res) => {
 
 // Get Upcoming Sessions based on session
 const getUpcomingSessions = (req, res) => {
-    checkPatientRole(req, res);
+    //checkPatientRole(req, res);
 
     const patientId = req.session.patientId; // Retrieve patientId from session
 
@@ -72,7 +73,7 @@ const getUpcomingSessions = (req, res) => {
 
 // Get Medications List based on session
 const getMedicationsList = (req, res) => {
-    checkPatientRole(req, res);
+    //checkPatientRole(req, res);
 
     const patientId = req.session.patientId; // Retrieve patientId from session
 
@@ -103,7 +104,7 @@ const getMedicationsList = (req, res) => {
 
 // Get Past Appointments based on session
 const getPastAppointments = (req, res) => {
-    checkPatientRole(req, res);
+    //checkPatientRole(req, res);
 
     const patientId = req.session.patientId; // Retrieve patientId from session
 
@@ -309,7 +310,7 @@ const getPaymentDetails = (req, res) => {
 
 // Track Symptoms based on session
 const trackSymptoms = (req, res) => {
-    checkPatientRole(req, res);
+   // checkPatientRole(req, res);
 
     const patientId = req.session.patientId; // Retrieve patientId from session
 
@@ -334,7 +335,7 @@ const trackSymptoms = (req, res) => {
 
 // Get Symptoms History based on session
 const getSymptomsHistory = (req, res) => {
-    checkPatientRole(req, res);
+   // checkPatientRole(req, res);
 
     const patientId = req.session.patientId; // Retrieve patientId from session
 
