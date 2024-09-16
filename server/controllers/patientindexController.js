@@ -2,6 +2,7 @@ const db = require('../db');
 const multer = require('multer');
 const path = require('path');
 
+<<<<<<< Updated upstream
 /* // Check if user is a patient
 const checkPatientRole = (req, res) => {
     if (!req.session.userRole || req.session.userRole !== 'patient') {
@@ -9,6 +10,14 @@ const checkPatientRole = (req, res) => {
     }
 };
  */
+=======
+// Check if user is a patient
+//const checkPatientRole = (req, res) => {
+//    if (!req.session.userRole || req.session.userRole !== 'patient') {
+//        return res.status(403).json({ message: 'Access denied. This resource is only accessible to patients.' });
+//    }
+//};
+>>>>>>> Stashed changes
 
 // Get Patient's Full Name based on session
 const getPatientName = (req, res) => {
@@ -359,6 +368,177 @@ const getSymptomsHistory = (req, res) => {
     });
 };
 
+
+// Get patient personal details
+const getPersonalDetails = (req, res) => {
+    const patientId = req.session.userId;  // Assuming userId is stored in session
+
+    const query = `
+        SELECT p.full_name, u.email, p.date_of_birth, p.address, p.gender, 
+               p.emergency_contact_name, p.emergency_contact_no 
+        FROM Patients p
+        JOIN Users u ON p.user_id = u.user_id
+        WHERE p.user_id = ?;
+    `;
+
+    db.query(query, [patientId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching patient details', error: err });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+
+        res.status(200).json(results[0]);
+    });
+};
+
+
+
+// Patch patient personal details
+const patchPersonalDetails = (req, res) => {
+    const patientId = req.session.userId; // Assuming userId is stored in session
+    const { fullName, email, dateOfBirth, address, gender, emergencyContactName, emergencyPhoneNumber } = req.body;
+
+    const queryUsers = `
+        UPDATE Users 
+        SET email = ? 
+        WHERE user_id = ?;
+    `;
+
+    const queryPatients = `
+        UPDATE Patients 
+        SET full_name = ?, date_of_birth = ?, address = ?, gender = ?, 
+            emergency_contact_name = ?, emergency_contact_no = ? 
+        WHERE user_id = ?;
+    `;
+
+    db.query(queryUsers, [email, patientId], (err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error updating user details', error: err });
+        }
+
+        db.query(queryPatients, [fullName, dateOfBirth, address, gender, emergencyContactName, emergencyPhoneNumber, patientId], (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error updating patient details', error: err });
+            }
+
+            res.status(200).json({ message: 'Patient details updated successfully' });
+        });
+    });
+};
+
+
+// Update patient password
+const patchPassword = (req, res) => {
+    const patientId = req.session.userId;  // Assuming userId is stored in session
+    const { newPassword } = req.body;
+
+    const query = `
+        UPDATE Users 
+        SET password = ? 
+        WHERE user_id = ?;
+    `;
+
+    db.query(query, [newPassword, patientId], (err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error updating password', error: err });
+        }
+
+        res.status(200).json({ message: 'Password updated successfully' });
+    });
+};
+
+// Delete patient account
+const deleteAccount = (req, res) => {
+    const patientId = req.session.userId;  // Assuming userId is stored in session
+
+    // Step 1: Delete from Patients table
+    const deletePatientQuery = `
+        DELETE FROM Patients WHERE user_id = ?;
+    `;
+
+    db.query(deletePatientQuery, [patientId], (err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error deleting patient account', error: err });
+        }
+
+        // Step 2: Delete from Users table
+        const deleteUserQuery = `
+            DELETE FROM Users WHERE user_id = ?;
+        `;
+
+        db.query(deleteUserQuery, [patientId], (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error deleting user account', error: err });
+            }
+
+            req.session.destroy((err) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Error ending session after account deletion', error: err });
+                }
+
+                res.status(200).json({ message: 'Account deleted successfully' });
+            });
+        });
+    });
+};
+
+
+const getPsychiatristsVisited = (req, res) => {
+    const patientId = req.session.userId; // Assuming userId is stored in session
+
+    const query = `
+        SELECT COUNT(DISTINCT psychiatrist_id) AS totalPsychiatristsVisited
+        FROM Appointments
+        WHERE patient_id = ?;
+    `;
+
+    db.query(query, [patientId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching psychiatrists visited', error: err });
+        }
+        res.status(200).json({ totalPsychiatristsVisited: results[0].totalPsychiatristsVisited });
+    });
+};
+
+
+const getConsultation = (req, res) => {
+    const patientId = req.session.userId; // Assuming userId is stored in session
+
+    const query = `
+        SELECT COUNT(*) AS totalConsultations
+        FROM Appointments
+        WHERE patient_id = ?;
+    `;
+
+    db.query(query, [patientId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching consultations', error: err });
+        }
+        res.status(200).json({ totalConsultations: results[0].totalConsultations });
+    });
+};
+
+const getTotalMedicationReceived = (req, res) => {
+    const patientId = req.session.userId; // Assuming userId is stored in session
+
+    const query = `
+        SELECT COUNT(*) AS totalMedicationsReceived
+        FROM Prescriptions
+        WHERE patient_id = ?;
+    `;
+
+    db.query(query, [patientId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching medications received', error: err });
+        }
+        res.status(200).json({ totalMedicationsReceived: results[0].totalMedicationsReceived });
+    });
+};
+
+
 module.exports = {
     getPatientName,
     getUpcomingSessions,
@@ -371,5 +551,11 @@ module.exports = {
     getPaymentDetails,
     upload,
     trackSymptoms,
-    getSymptomsHistory
+    getSymptomsHistory,
+    getPersonalDetails,
+    patchPersonalDetails,
+    patchPassword,
+    deleteAccount,
+    getPsychiatristsVisited,
+    getTotalMedicationReceived
 };
