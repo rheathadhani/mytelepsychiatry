@@ -11,7 +11,7 @@ const db = require('./db');
 
 const app = express();
 
-// Enable CORS for the frontend origin (127.0.0.1:5500)
+// Frontend running on (127.0.0.1:5500)
 app.use(cors({
     origin: 'http://127.0.0.1:5500',  // Use the exact origin
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
@@ -33,9 +33,8 @@ app.use(session({
     }
 }));
 
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(express.json()); 
+app.use(express.urlencoded({extended: true})); 
 
 app.use('/api', authRoutes);
 app.use('/api', patientRoutes);

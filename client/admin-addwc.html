@@ -98,16 +98,6 @@
     <script>
         $(document).ready(function () {
             // Get the next ID based on the content in localStorage
-            function getNextContentId() {
-                var allContent = JSON.parse(localStorage.getItem('wellnessContentList')) || [];
-                if (allContent.length === 0) {
-                    return 1; // Start from 1 if no records exist
-                } else {
-                    // Increment ID based on the last content ID
-                    var lastContent = allContent[allContent.length - 1];
-                    return lastContent.id + 1;
-                }
-            }
 
             $('#saveWellnessContent').click(function () {
                 var imageLink = $('#imageLink').val();
@@ -133,7 +123,6 @@
                     withCredentials: true
                 })
                     .then(function (response) {
-                        window.alert("added")
                         window.location.href = "admin-wc.html"; // Redirect after saving
                     })
                     .catch(function (error) {

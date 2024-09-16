@@ -1,30 +1,22 @@
 const db = require('../db');
 
-const checkAdminRole = (req, res, next) => {
-    console.log('Session in checkAdminRole:', req.session);  // Debug log
-
-    if (!req.session.userRole || req.session.userRole !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. This resource is only accessible to admins.' });
-    }
-    next();
-};
-
 //Psychiatrist Controller Functions
-
 const addNewPsychiatrist = (req, res) => {
-    checkAdminRole(req, res);
+    // Log incoming data
+    console.log('Request body:', req.body);
 
     const { fullName, email, password, specialization } = req.body;
     const createdAt = new Date(); // Record the current date and time
 
     // First, insert into the Users table
     const userInsertQuery = `
-        INSERT INTO Users (username, password, email, role, created_at)
-        VALUES (?, ?, ?, 'psychiatrist', ?);
+        INSERT INTO Users (password, email, role, created_at)
+        VALUES (?, ?, 'psychiatrist', ?);
     `;
 
-    db.query(userInsertQuery, [fullName, password, email, createdAt], (err, userResult) => {
+    db.query(userInsertQuery, [password, email, createdAt], (err, userResult) => {
         if (err) {
+            console.error('Error inserting user into Users table:', err);
             return res.status(500).json({ message: 'Error adding user to Users table', error: err });
         }
 
@@ -33,12 +25,13 @@ const addNewPsychiatrist = (req, res) => {
 
         // Now, insert into the Psychiatrists table
         const psychiatristInsertQuery = `
-            INSERT INTO Psychiatrists (user_id, full_name, specialization, created_at)
-            VALUES (?, ?, ?, ?);
+            INSERT INTO Psychiatrists (user_id, full_name, specialization)
+            VALUES (?, ?, ?);
         `;
 
-        db.query(psychiatristInsertQuery, [userId, fullName, specialization, createdAt], (err, psychiatristResult) => {
+        db.query(psychiatristInsertQuery, [userId, fullName, specialization], (err, psychiatristResult) => {
             if (err) {
+                console.error('Error inserting psychiatrist into Psychiatrists table:', err);
                 return res.status(500).json({ message: 'Error adding psychiatrist to Psychiatrists table', error: err });
             }
 
@@ -50,14 +43,11 @@ const addNewPsychiatrist = (req, res) => {
     });
 };
 
-
-// Get all psychiatrists
 const getPsychiatrists = (req, res) => {
-    checkAdminRole(req, res);
-
     const query = `
-        SELECT psychiatrist_id, full_name, email, password, specialization, created_at 
-        FROM Psychiatrists;
+        SELECT p.psychiatrist_id, p.full_name, u.email, u.password, p.specialization, u.created_at
+        FROM Psychiatrists p
+        JOIN Users u ON p.user_id = u.user_id;
     `;
 
     db.query(query, (err, results) => {
@@ -70,49 +60,111 @@ const getPsychiatrists = (req, res) => {
 
 // Edit psychiatrist details
 const editPsychiatrist = (req, res) => {
-    checkAdminRole(req, res);
-
     const psychiatristId = req.params.id;
     const { fullName, email, password, specialization } = req.body;
 
-    const query = `
-        UPDATE Psychiatrists 
-        SET full_name = ?, email = ?, password = ?, specialization = ? 
-        WHERE psychiatrist_id = ?;
+    // First, get the `user_id` associated with the psychiatrist
+    const getUserIdQuery = `
+        SELECT user_id FROM Psychiatrists WHERE psychiatrist_id = ?;
     `;
 
-    db.query(query, [fullName, email, password, specialization, psychiatristId], (err) => {
+    db.query(getUserIdQuery, [psychiatristId], (err, result) => {
         if (err) {
-            return res.status(500).json({ message: 'Error updating psychiatrist details', error: err });
+            return res.status(500).json({ message: 'Error fetching user ID', error: err });
         }
-        res.status(200).json({ message: 'Psychiatrist details updated successfully' });
+
+        if (result.length === 0) {
+            return res.status(404).json({ message: 'Psychiatrist not found' });
+        }
+
+        const userId = result[0].user_id;
+
+        // Update the Users table (for email and password)
+        const updateUsersQuery = `
+            UPDATE Users 
+            SET email = ?, password = ? 
+            WHERE user_id = ?;
+        `;
+
+        db.query(updateUsersQuery, [email, password, userId], (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error updating user details', error: err });
+            }
+
+            // Update the Psychiatrists table (for full name and specialization)
+            const updatePsychiatristQuery = `
+                UPDATE Psychiatrists 
+                SET full_name = ?, specialization = ? 
+                WHERE psychiatrist_id = ?;
+            `;
+
+            db.query(updatePsychiatristQuery, [fullName, specialization, psychiatristId], (err) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Error updating psychiatrist details', error: err });
+                }
+
+                res.status(200).json({ message: 'Psychiatrist details updated successfully' });
+            });
+        });
     });
 };
 
-// Delete a psychiatrist
 const deletePsychiatrist = (req, res) => {
-    checkAdminRole(req, res);
-
     const psychiatristId = req.params.id;
 
-    const query = `
-        DELETE FROM Psychiatrists 
-        WHERE psychiatrist_id = ?;
+    // First, retrieve the user_id from the Psychiatrists table
+    const getUserIdQuery = `
+        SELECT user_id FROM Psychiatrists WHERE psychiatrist_id = ?;
     `;
 
-    db.query(query, [psychiatristId], (err) => {
+    db.query(getUserIdQuery, [psychiatristId], (err, results) => {
         if (err) {
-            return res.status(500).json({ message: 'Error deleting psychiatrist', error: err });
+            console.error('Error retrieving user_id:', err);
+            return res.status(500).json({ message: 'Error retrieving user_id', error: err });
         }
-        res.status(200).json({ message: 'Psychiatrist deleted successfully' });
+
+        // If no psychiatrist is found
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Psychiatrist not found' });
+        }
+
+        const userId = results[0].user_id;
+
+        // First delete from the Psychiatrists table
+        const deletePsychiatristQuery = `
+            DELETE FROM Psychiatrists WHERE psychiatrist_id = ?;
+        `;
+
+        db.query(deletePsychiatristQuery, [psychiatristId], (err) => {
+            if (err) {
+                console.error('Error deleting psychiatrist:', err);
+                return res.status(500).json({ message: 'Error deleting psychiatrist', error: err });
+            }
+
+            // Now delete from the Users table
+            const deleteUserQuery = `
+                DELETE FROM Users WHERE user_id = ?;
+            `;
+
+            db.query(deleteUserQuery, [userId], (err) => {
+                if (err) {
+                    console.error('Error deleting user:', err);
+                    return res.status(500).json({ message: 'Error deleting user', error: err });
+                }
+
+                res.status(200).json({ message: 'Psychiatrist and associated user deleted successfully' });
+            });
+        });
     });
 };
+
+
+
 
 //Patient Controller Functions
 
 // Get all patients for table view (limited fields)
 const getPatients = (req, res) => {
-    checkAdminRole(req, res);
 
     const query = `
         SELECT p.patient_id, p.full_name, u.email, p.date_of_birth, p.emergency_contact_name, p.emergency_contact_no
@@ -130,7 +182,7 @@ const getPatients = (req, res) => {
 
 // View full details of a patient
 const getPatientById = (req, res) => {
-    checkAdminRole(req, res);
+
 
     const patientId = req.params.id;
     const query = `
@@ -156,7 +208,6 @@ const getPatientById = (req, res) => {
 
 // Edit specific fields of a patient (only editable fields)
 const editPatient = (req, res) => {
-    checkAdminRole(req, res);
 
     const patientId = req.params.id;
     const { fullName, dateOfBirth, emergencyContactName, contactNumber } = req.body;
@@ -177,7 +228,6 @@ const editPatient = (req, res) => {
 
 // Delete a patient by ID
 const deletePatient = (req, res) => {
-    checkAdminRole(req, res);
 
     const patientId = req.params.id;
 
@@ -260,7 +310,7 @@ const addWellnessContent = (req, res) => {
 
 // Get Psychiatrist to Patient Ratio
 const getPsychiatristToPatientRatio = (req, res) => {
-    checkAdminRole(req, res);
+
 
     const queryPsychiatrists = `SELECT COUNT(*) AS psychiatristCount FROM Psychiatrists;`;
     const queryPatients = `SELECT COUNT(*) AS patientCount FROM Patients;`;
@@ -287,7 +337,7 @@ const getPsychiatristToPatientRatio = (req, res) => {
 
 // Get Wellness Content Count by Category
 const getWellnessContentByCategory = (req, res) => {
-    checkAdminRole(req, res);
+
 
     const query = `
         SELECT content_category, COUNT(*) AS total
@@ -305,7 +355,6 @@ const getWellnessContentByCategory = (req, res) => {
 
 // Get Recent Payments with Payment Proof
 const getRecentPayments = (req, res) => {
-    checkAdminRole(req, res);
 
     const query = `
         SELECT p.payment_date AS date, p.payment_amount AS amount, 
@@ -344,5 +393,4 @@ module.exports = {
     getRecentPayments,
     getPsychiatristToPatientRatio,
     getWellnessContentByCategory,
-    checkAdminRole
 };

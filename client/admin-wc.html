@@ -201,10 +201,10 @@
                             var row = `
                         <tr>
                             <td>${content.contentID}</td>
-                            <td>${content.image_link}</td>
+                            <td class = "imageLink">${content.image_link}</td>
                             <td>${content.content_category || 'N/A'}</td>
-                            <td>${content.description}</td>
-                            <td>${content.video_link}</td>
+                            <td class = "description">${content.description}</td>
+                            <td class = "videoLink">${content.video_link}</td>
                             <td>
                                 <button class="btn btn-danger btn-sm delete-btn" data-id="${content.contentID}">Delete</button>
                             </td>
@@ -272,6 +272,15 @@
                 const headers = ["ID", "Image Link", "Category", "Description", "Video Link"];
                 const tableRows = [];
 
+                // Adjust the widths for each column
+                const columnStyles = {
+                    0: { cellWidth: 15 },  // ID column
+                    1: { cellWidth: 40 },  // Image Link column
+                    2: { cellWidth: 25 },  // Category column
+                    3: { cellWidth: 60 }, // Description column
+                    4: { cellWidth: 40 }   // Video Link column
+                };
+
                 $('#contentTableBody tr:visible').each(function () {
                     const rowData = [];
                     $(this).find('td').each(function (index) {
@@ -290,6 +299,7 @@
                     startY: 20,
                     theme: 'grid',
                     margin: { top: 10 },
+                    columnStyles: columnStyles // Apply the column widths
                 });
 
                 doc.save('wellness-content-report.pdf');

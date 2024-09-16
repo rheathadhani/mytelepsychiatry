@@ -25,10 +25,9 @@ const loginUser = (req, res) => {
             return res.status(401).json({ message: 'Invalid password' });
         }
 
-        // Set the session data
-        req.session.userId = user.user_id;
+        req.session.userId = user.id;
         req.session.userRole = user.role;
-
+        
         console.log('Session after login:', req.session);  // Debug log
 
         res.status(200).json({
