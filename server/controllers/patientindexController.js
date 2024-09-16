@@ -2,7 +2,6 @@ const db = require('../db');
 const multer = require('multer');
 const path = require('path');
 
-<<<<<<< Updated upstream
 /* // Check if user is a patient
 const checkPatientRole = (req, res) => {
     if (!req.session.userRole || req.session.userRole !== 'patient') {
@@ -10,14 +9,6 @@ const checkPatientRole = (req, res) => {
     }
 };
  */
-=======
-// Check if user is a patient
-//const checkPatientRole = (req, res) => {
-//    if (!req.session.userRole || req.session.userRole !== 'patient') {
-//        return res.status(403).json({ message: 'Access denied. This resource is only accessible to patients.' });
-//    }
-//};
->>>>>>> Stashed changes
 
 // Get Patient's Full Name based on session
 const getPatientName = (req, res) => {
