@@ -201,31 +201,34 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // Example Pie Chart Data for Psychiatrist to Patient Ratio
-    var ctx1 = document.getElementById('psychRatioChart').getContext('2d');
-    var psychRatioChart = new Chart(ctx1, {
-      type: 'pie',
-      data: {
-        labels: ['Psychiatrists', 'Patients'],
-        datasets: [{
-          data: [5, 95], // Example data
-          backgroundColor: ['#36A2EB', '#FF6384']
-        }]
-      }
+    $(document).ready(function () {
+      // Example Pie Chart Data for Psychiatrist to Patient Ratio
+      var ctx1 = $('#psychRatioChart')[0].getContext('2d'); // Accessing the canvas using jQuery
+      var psychRatioChart = new Chart(ctx1, {
+        type: 'pie',
+        data: {
+          labels: ['Psychiatrists', 'Patients'],
+          datasets: [{
+            data: [5, 95], // Example data
+            backgroundColor: ['#36A2EB', '#FF6384']
+          }]
+        }
+      });
+
+      // Example Pie Chart Data for Wellness Content by Category
+      var ctx2 = $('#wellnessContentChart')[0].getContext('2d'); // Accessing the canvas using jQuery
+      var wellnessContentChart = new Chart(ctx2, {
+        type: 'pie',
+        data: {
+          labels: ['Mindfulness', 'Exercise', 'Nutrition'],
+          datasets: [{
+            data: [40, 30, 30], // Example data
+            backgroundColor: ['#FFCE56', '#36A2EB', '#FF6384']
+          }]
+        }
+      });
     });
 
-    // Example Pie Chart Data for Wellness Content by Category
-    var ctx2 = document.getElementById('wellnessContentChart').getContext('2d');
-    var wellnessContentChart = new Chart(ctx2, {
-      type: 'pie',
-      data: {
-        labels: ['Mindfulness', 'Exercise', 'Nutrition'],
-        datasets: [{
-          data: [40, 30, 30], // Example data
-          backgroundColor: ['#FFCE56', '#36A2EB', '#FF6384']
-        }]
-      }
-    });
 
     // jQuery Example for dynamically adding a row in the Recent Payments
     $(document).ready(function () {
