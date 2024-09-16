@@ -67,14 +67,17 @@
 
         a:hover {
             text-decoration: none;
-            
+
         }
 
-        .description, .imageLink {
-            max-height: 80px; /* Adjust height as necessary */
+        .description,
+        .imageLink {
+            max-height: 80px;
+            /* Adjust height as necessary */
             overflow-y: auto;
             overflow-x: hidden;
         }
+
         .description {
             max-width: 250px;
         }
@@ -86,7 +89,6 @@
         .videoLink {
             max-width: 200px;
         }
-
     </style>
 </head>
 
@@ -95,12 +97,17 @@
         <!-- Sidebar -->
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-                <p class="bg-dark text-white mb-1 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> + </span></strong></p>
+                <p class="bg-dark text-white mb-1 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> +
+                        </span></strong></p>
                 <p class="text-white font-italic ml-4 mt-0 mb-3">Admin's Space</p>
-                <a href="admin-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-                <a href="admin-psy.html" class="list-group-item list-group-item-action bg-dark text-white">Psychiatrists</a>
-                <a href="admin-patient.html" class="list-group-item list-group-item-action bg-dark text-white">Patients</a>
-                <a href="admin-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
+                <a href="admin-index.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="admin-psy.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Psychiatrists</a>
+                <a href="admin-patient.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Patients</a>
+                <a href="admin-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness
+                    Content</a>
                 <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
         </div>
@@ -118,7 +125,8 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h4>Wellness Content Management</h4>
                         <div class="d-flex">
-                            <button class="btn btn-success mr-2"><a href="admin-addwc.html" class="text-white">Add Content</a></button>
+                            <button class="btn btn-success mr-2"><a href="admin-addwc.html" class="text-white">Add
+                                    Content</a></button>
                             <button class="btn btn-success" id="generateReportBtn">Generate Report</button>
                         </div>
                     </div>
@@ -127,13 +135,14 @@
                         <div class="d-flex mb-3">
                             <div class="mr-2" style="flex-grow: 1;">
                                 <label for="searchByDescription">Search</label>
-                                <input type="text" id="searchByDescription" class="form-control" placeholder="Search by Description">
+                                <input type="text" id="searchByDescription" class="form-control"
+                                    placeholder="Search by Description">
                             </div>
                             <div class="mr-2" style="flex-grow: 1;">
                                 <label for="filterByCategory">Filter By Category</label>
                                 <select id="filterByCategory" class="form-control">
                                     <option value="">Filter by Category</option>
-                                    <option value="Mindfulness">Mindfulness</option>
+                                    <option value="Mindfullness">Mindfullness</option>
                                     <option value="Exercise">Exercise</option>
                                     <option value="Nutrition">Nutrition</option>
                                 </select>
@@ -157,16 +166,7 @@
                             </thead>
                             <tbody id="contentTableBody">
                                 <!-- Example Row -->
-                                <tr>
-                                    <td>1</td>
-                                    <td class="imageLink">https://example.com/image1.jpg</td>
-                                    <td class="category">Mindfulness</td>
-                                    <td class="description">Meditation guide</td>
-                                    <td class="videoLink">https://example.com/video1.mp4</td>
-                                    <td class="table-actions">
-                                        <button class="btn btn-danger btn-sm delete-btn">Delete</button>
-                                    </td>
-                                </tr>
+
                             </tbody>
                         </table>
                     </div>
@@ -178,6 +178,7 @@
     </div>
     <!-- /#wrapper -->
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Bootstrap and jQuery scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -187,30 +188,60 @@
 
     <script>
         $(document).ready(function () {
-            // Load Wellness Content data from localStorage and append to the table
+            // Function to load wellness content
             function loadWellnessContent() {
-                var allContent = JSON.parse(localStorage.getItem('wellnessContentList')) || [];
-                var tableBody = $('#contentTableBody');
-                tableBody.empty(); // Clear previous content
+                axios.get('http://localhost:5500/api/wellness-content', { withCredentials: true })
+                    .then(function (response) {
+                        console.log(response.data); // Log the response to check if `content_category` is returned correctly
+                        var allContent = response.data;
+                        var tableBody = $('#contentTableBody');
+                        tableBody.empty(); // Clear previous content
 
-                allContent.forEach(function (content) {
-                    var row = `
+                        allContent.forEach(function (content) {
+                            var row = `
                         <tr>
-                            <td>${content.id}</td>
-                            <td class="imageLink">${content.imageLink}</td>
-                            <td class="category">${content.category}</td>
-                            <td class="description">${content.description}</td>
-                            <td class="videoLink">${content.videoLink}</td>
-                            <td class="table-actions">
-                                <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+                            <td>${content.contentID}</td>
+                            <td>${content.image_link}</td>
+                            <td>${content.content_category || 'N/A'}</td>
+                            <td>${content.description}</td>
+                            <td>${content.video_link}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="${content.contentID}">Delete</button>
                             </td>
-                        </tr>`;
-                    tableBody.append(row);
-                });
+                        </tr>
+                    `;
+                            tableBody.append(row);
+                        });
+                    })
+                    .catch(function (error) {
+                        console.error('Error loading wellness content:', error);
+                    });
             }
 
             // Call the function to load the wellness content when the page loads
             loadWellnessContent();
+
+            // Delete functionality (DELETE request)
+            $(document).on('click', '.delete-btn', function () {
+                var id = $(this).data('id');
+
+                if (!id) {
+                    console.error('No ID found for deletion');
+                    alert('Failed to find content ID for deletion');
+                    return;
+                }
+
+                // Send delete request using Axios
+                axios.delete(`http://localhost:5500/api/wellness-content/${id}`)
+                    .then(function () {
+                        //alert('Content deleted successfully');
+                        loadWellnessContent(); // Reload the content after deletion
+                    })
+                    .catch(function (error) {
+                        console.error('Error deleting content:', error);
+                        alert('Failed to delete content');
+                    });
+            });
 
             // Search and Filter functionality
             function filterTable() {
@@ -263,23 +294,8 @@
 
                 doc.save('wellness-content-report.pdf');
             });
-
-            // Delete functionality
-            $(document).on('click', '.delete-btn', function () {
-                var row = $(this).closest('tr');
-                var id = row.find('td:first').text();
-
-                // Remove content from localStorage
-                var allContent = JSON.parse(localStorage.getItem('wellnessContentList')) || [];
-                var updatedContent = allContent.filter(function (content) {
-                    return content.id !== parseInt(id);
-                });
-                localStorage.setItem('wellnessContentList', JSON.stringify(updatedContent));
-
-                // Remove row from table
-                row.remove();
-            });
         });
+
     </script>
 
 </body>

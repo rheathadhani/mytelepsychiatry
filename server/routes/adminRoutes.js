@@ -18,9 +18,11 @@ const {
     getWellnessContentByCategory
 } = require('../controllers/adminController');
 
+const { checkAdminRole } = require('../controllers/adminController');
+
 // Psychiatrist Routes
-router.post('/psychiatrists', addNewPsychiatrist);                  // Add new psychiatrist
-router.get('/psychiatrists', getPsychiatrists);                     // Get all psychiatrists
+router.post('/psychiatrists', checkAdminRole, addNewPsychiatrist);                  // Add new psychiatrist
+router.get('/psychiatrists', checkAdminRole, getPsychiatrists);                     // Get all psychiatrists
 router.put('/psychiatrists/:id', editPsychiatrist);                 // Edit psychiatrist details
 router.delete('/psychiatrists/:id', deletePsychiatrist);            // Delete psychiatrist
 

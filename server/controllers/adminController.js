@@ -1,32 +1,55 @@
 const db = require('../db');
 
-const checkAdminRole = (req, res) => {
+const checkAdminRole = (req, res, next) => {
+    console.log('Session in checkAdminRole:', req.session);  // Debug log
+
     if (!req.session.userRole || req.session.userRole !== 'admin') {
         return res.status(403).json({ message: 'Access denied. This resource is only accessible to admins.' });
     }
+    next();
 };
 
 //Psychiatrist Controller Functions
 
-// Add a new psychiatrist
 const addNewPsychiatrist = (req, res) => {
     checkAdminRole(req, res);
-    
+
     const { fullName, email, password, specialization } = req.body;
     const createdAt = new Date(); // Record the current date and time
 
-    const query = `
-        INSERT INTO Psychiatrists (full_name, email, password, specialization, created_at)
-        VALUES (?, ?, ?, ?, ?);
+    // First, insert into the Users table
+    const userInsertQuery = `
+        INSERT INTO Users (username, password, email, role, created_at)
+        VALUES (?, ?, ?, 'psychiatrist', ?);
     `;
 
-    db.query(query, [fullName, email, password, specialization, createdAt], (err, result) => {
+    db.query(userInsertQuery, [fullName, password, email, createdAt], (err, userResult) => {
         if (err) {
-            return res.status(500).json({ message: 'Error adding psychiatrist', error: err });
+            return res.status(500).json({ message: 'Error adding user to Users table', error: err });
         }
-        res.status(201).json({ message: 'Psychiatrist added successfully', psychiatristId: result.insertId });
+
+        // Get the inserted user's ID
+        const userId = userResult.insertId;
+
+        // Now, insert into the Psychiatrists table
+        const psychiatristInsertQuery = `
+            INSERT INTO Psychiatrists (user_id, full_name, specialization, created_at)
+            VALUES (?, ?, ?, ?);
+        `;
+
+        db.query(psychiatristInsertQuery, [userId, fullName, specialization, createdAt], (err, psychiatristResult) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error adding psychiatrist to Psychiatrists table', error: err });
+            }
+
+            res.status(201).json({ 
+                message: 'Psychiatrist added successfully', 
+                psychiatristId: psychiatristResult.insertId 
+            });
+        });
     });
 };
+
 
 // Get all psychiatrists
 const getPsychiatrists = (req, res) => {
@@ -175,8 +198,8 @@ const deletePatient = (req, res) => {
 
 // Get all wellness content
 const getWellnessContent = (req, res) => {
-    checkAdminRole(req, res);
 
+    console.log(req.session);
     const query = `
         SELECT contentID, image_link, content_category, description, video_link
         FROM WellnessContent;
@@ -192,9 +215,12 @@ const getWellnessContent = (req, res) => {
 
 // Delete wellness content by ID
 const deleteWellnessContent = (req, res) => {
-    checkAdminRole(req, res);
-
     const contentID = req.params.id;
+    console.log('Deleting content with ID:', contentID); // Debugging
+
+    if (!contentID) {
+        return res.status(400).json({ message: 'Content ID is missing' });
+    }
 
     const query = `
         DELETE FROM WellnessContent
@@ -203,17 +229,19 @@ const deleteWellnessContent = (req, res) => {
 
     db.query(query, [contentID], (err) => {
         if (err) {
+            console.error('Error executing delete query:', err); // Debugging
             return res.status(500).json({ message: 'Error deleting wellness content', error: err });
         }
+        console.log('Content deleted successfully'); // Debugging
         res.status(200).json({ message: 'Wellness content deleted successfully' });
     });
 };
 
-// Add new wellness content
-const addWellnessContent = (req, res) => {
-    checkAdminRole(req, res);
 
+const addWellnessContent = (req, res) => {
     const { imageLink, contentCategory, description, videoLink } = req.body;
+
+    console.log('Received category:', contentCategory); // Log to verify if the category is being received
 
     const query = `
         INSERT INTO WellnessContent (image_link, content_category, description, video_link)
@@ -227,6 +255,8 @@ const addWellnessContent = (req, res) => {
         res.status(201).json({ message: 'Wellness content added successfully', contentID: result.insertId });
     });
 };
+
+
 
 // Get Psychiatrist to Patient Ratio
 const getPsychiatristToPatientRatio = (req, res) => {
@@ -314,4 +344,5 @@ module.exports = {
     getRecentPayments,
     getPsychiatristToPatientRatio,
     getWellnessContentByCategory,
+    checkAdminRole
 };

@@ -62,10 +62,18 @@ $(document).ready(function () {
         };
 
         // Send login request using Axios
-        axios.post('http://localhost:5500/api/login', loginData) // Replace with your backend's login endpoint
+        axios.post('http://localhost:5500/api/login', loginData)
+// Replace with your backend's login endpoint
             .then(function (response) {
-                // Redirect or perform other actions
-                window.location.href = 'http://127.0.0.1:5500/client/patient-index.html'; // Replace with the correct URL
+                if (selectedRole == 'patient'){
+                    window.location.href = 'http://127.0.0.1:5500/client/patient-index.html'; 
+                } else if (selectedRole == 'psychiatrist'){
+                    window.location.href = 'http://127.0.0.1:5500/client/psy-index.html';
+                }
+                else if (selectedRole == 'admin') {
+                    window.location.href = 'http://127.0.0.1:5500/client/admin-index.html';
+                }
+                
             })
             .catch(function (error) {
                 // Handle error
@@ -75,5 +83,5 @@ $(document).ready(function () {
                     alert('Login failed: ' + error.message);
                 }
             });
-    });
+        });
 });

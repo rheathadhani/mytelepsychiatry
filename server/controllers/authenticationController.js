@@ -21,16 +21,16 @@ const loginUser = (req, res) => {
 
         const user = results[0];
 
-        // Directly compare the plain text password
         if (password !== user.password) {
             return res.status(401).json({ message: 'Invalid password' });
         }
 
-        // Store the user details and role in the session
+        // Set the session data
         req.session.userId = user.user_id;
         req.session.userRole = user.role;
 
-        // Successful login, respond with user details
+        console.log('Session after login:', req.session);  // Debug log
+
         res.status(200).json({
             message: 'Login successful',
             user: {
@@ -42,6 +42,7 @@ const loginUser = (req, res) => {
         });
     });
 };
+
 
 
 // Function to handle patient registration

@@ -23,10 +23,14 @@
                 <p class="bg-dark text-white mb-1 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> +
                         </span></strong></p>
                 <p class="text-white font-italic ml-4 mt-0 mb-3">Admin's Space</p>
-                <a href="admin-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-                <a href="admin-psy.html" class="list-group-item list-group-item-action bg-dark text-white">Psychiatrists</a>
-                <a href="admin-patient.html" class="list-group-item list-group-item-action bg-dark text-white">Patients</a>
-                <a href="admin-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
+                <a href="admin-index.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="admin-psy.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Psychiatrists</a>
+                <a href="admin-patient.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Patients</a>
+                <a href="admin-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness
+                    Content</a>
                 <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
         </div>
@@ -49,24 +53,28 @@
                         <form id="addWellnessContentForm">
                             <div class="form-group">
                                 <label for="imageLink">Image Link</label>
-                                <input type="text" id="imageLink" class="form-control" placeholder="Enter image link" required>
+                                <input type="text" id="imageLink" class="form-control" placeholder="Enter image link"
+                                    required>
                             </div>
                             <div class="form-group">
                                 <label for="category">Category</label>
                                 <select id="category" class="form-control" required>
                                     <option value="" disabled selected>Select category</option>
-                                    <option value="Mindfulness">Mindfullness</option>
+                                    <option value="Mindfullness">Mindfullness</option>
                                     <option value="Exercise">Exercise</option>
                                     <option value="Nutrition">Nutrition</option>
                                 </select>
                             </div>
+
                             <div class="form-group">
                                 <label for="description">Description</label>
-                                <input type="text" id="description" class="form-control" placeholder="Enter description" required>
+                                <input type="text" id="description" class="form-control" placeholder="Enter description"
+                                    required>
                             </div>
                             <div class="form-group">
                                 <label for="videoLink">Video Link</label>
-                                <input type="text" id="videoLink" class="form-control" placeholder="Enter video link" required>
+                                <input type="text" id="videoLink" class="form-control" placeholder="Enter video link"
+                                    required>
                             </div>
                             <button type="button" id="saveWellnessContent" class="btn btn-success">Save</button>
                             <button type="button" id="cancel" class="btn btn-secondary">Cancel</button>
@@ -81,7 +89,7 @@
         <!-- /#page-content-wrapper -->
     </div>
     <!-- /#wrapper -->
-
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Bootstrap and jQuery scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -101,44 +109,40 @@
                 }
             }
 
-            // Save button functionality
             $('#saveWellnessContent').click(function () {
                 var imageLink = $('#imageLink').val();
-                var category = $('#category').val();
+                var contentCategory = $('#category').val(); // Ensure you're using 'contentCategory'
                 var description = $('#description').val();
                 var videoLink = $('#videoLink').val();
 
-                // Validate form
-                if (!category) {
+                console.log("Selected category:", contentCategory); // Log to verify if the category is being selected
+
+                if (!contentCategory) {
                     alert("Please select a category.");
                     return;
                 }
 
-                // Get the next content ID
-                var nextContentId = getNextContentId();
-
-                // Create new wellness content object
                 var newContent = {
-                    id: nextContentId,
                     imageLink: imageLink,
-                    category: category,
+                    contentCategory: contentCategory, // Make sure to use the correct key here
                     description: description,
                     videoLink: videoLink
                 };
 
-                // Store in localStorage (temporary storage)
-                var allContent = JSON.parse(localStorage.getItem('wellnessContentList')) || [];
-                allContent.push(newContent);
-                localStorage.setItem('wellnessContentList', JSON.stringify(allContent));
-
-                // Redirect to admin-wc.html
-                window.location.href = "admin-wc.html";
+                axios.post('http://localhost:5500/api/wellness-content', newContent, {
+                    withCredentials: true
+                })
+                    .then(function (response) {
+                        window.alert("added")
+                        window.location.href = "admin-wc.html"; // Redirect after saving
+                    })
+                    .catch(function (error) {
+                        console.error('Error adding content:', error);
+                        alert('Failed to add wellness content');
+                    });
             });
 
-            // Cancel button functionality
-            $('#cancel').click(function () {
-                window.location.href = "admin-wc.html";
-            });
+
         });
     </script>
 </body>
