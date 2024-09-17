@@ -1,12 +1,5 @@
 const db = require('../db');
 
-// Check if user is a psychiatrist
-/* const checkPsychiatristRole = (req, res) => {
-    if (!req.session.userRole || req.session.userRole !== 'psychiatrist') {
-        return res.status(403).json({ message: 'Access denied. This resource is only accessible to psychiatrists.' });
-    }
-}; */
-
 // Get Psychiatrist's Full Name based on session
 const getPsychiatristName = (req, res) => {
 
@@ -125,8 +118,7 @@ const getUpcomingSession = (req, res) => {
 
 // Get the total number of distinct patients with at least one completed appointment
 const getTotalPatients = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //checkPsychiatristRole(req, res);
+    
 
     const psychiatristId = req.params.psychiatrist_id; 
 
@@ -159,8 +151,7 @@ const getTotalPatients = (req, res) => {
 
 // Get the total number of completed appointments for the logged-in psychiatrist
 const getTotalAppointments = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //checkPsychiatristRole(req, res);
+
 
     const psychiatristId = req.params.psychiatrist_id; ; // Get psychiatrist's user ID from the session
 
@@ -190,8 +181,6 @@ const getTotalAppointments = (req, res) => {
 
 // Get the total number of patients prescribed by the logged-in psychiatrist
 const getTotalPatientsPrescribed = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //checkPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
 
@@ -220,8 +209,6 @@ const getTotalPatientsPrescribed = (req, res) => {
 
 // Get the history of past appointments (completed and canceled) for the logged-in psychiatrist
 const getHistoryOfAppointments = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //checkPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id; 
 
@@ -260,14 +247,8 @@ const getHistoryOfAppointments = (req, res) => {
 
 // Get the list of upcoming appointments for the logged-in psychiatrist
 const getUpcomingAppointments = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //checkPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
 
     // Query to get the upcoming appointments and related details
     const upcomingAppointmentsQuery = `
@@ -308,8 +289,6 @@ const getUpcomingAppointments = (req, res) => {
 
 // Get the details of previous sessions and clinical notes for a selected patient
 const getViewDetails = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //checkPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
     const patientId = req.params.patientId; // Get patient ID from request parameters
@@ -369,15 +348,9 @@ const getViewDetails = (req, res) => {
 
 // Post a new clinical note for the selected patient
 const postNewClinicalNotes = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //checkPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { patientId, noteText } = req.body; // Get patient ID and note text from the request body
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
 
     if (!patientId || !noteText) {
         return res.status(400).json({ message: 'Patient ID and note text are required.' });
@@ -406,8 +379,6 @@ const postNewClinicalNotes = (req, res) => {
 
 // Delete selected clinical notes for the logged-in psychiatrist
 const deleteSelectedNotes = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //checkPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { noteIds } = req.body; // Get the selected note IDs from the request body
@@ -444,8 +415,6 @@ const deleteSelectedNotes = (req, res) => {
 
 // Delete the selected patient's appointments but keep the clinical notes and other patient data
 const deleteRecord = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //checkPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { patientId } = req.params; // Get patient ID from the request parameters
@@ -499,8 +468,6 @@ const deleteRecord = (req, res) => {
 
 // Get the list of patients who have booked at least one session with the psychiatrist
 const getPatientsForPrescription = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //heckPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
 
@@ -536,8 +503,6 @@ const getPatientsForPrescription = (req, res) => {
 
 // Post a new prescription for the selected patient
 const postPrescription = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //checkPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { patientId, medicationName, dosage, frequencyPerDay, durationInDays } = req.body;
@@ -572,8 +537,6 @@ const postPrescription = (req, res) => {
 
 // Get the prescription history for the logged-in psychiatrist
 const getPrescriptionHistory = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //checkPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id; 
 
@@ -614,8 +577,6 @@ const getPrescriptionHistory = (req, res) => {
 
 // Get the list of patients who have booked at least one session with the psychiatrist
 const getPatientList = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-   // checkPsychiatristRole(req, res);
 
    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
 
@@ -651,8 +612,6 @@ const getPatientList = (req, res) => {
 
 // Post a new clinical note for the selected patient
 const postClinicalNotes = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
-    //checkPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { patientId, noteText } = req.body; // Get patient ID and note text from the request body
@@ -684,8 +643,6 @@ const postClinicalNotes = (req, res) => {
 
 // Get all clinical notes (current and old) for the selected patient
 const getAllClinicalNotesForEdit = (req, res) => {
-    // Ensure the logged-in user is a psychiatrist
-   // checkPsychiatristRole(req, res);
 
    const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from session
     const { patientId } = req.params; // Get patient ID from request parameters
@@ -728,7 +685,6 @@ const getAllClinicalNotesForEdit = (req, res) => {
 // Save the edited clinical note by patching the old note
 const saveEditedNotes = (req, res) => {
     // Ensure the logged-in user is a psychiatrist
-    //checkPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from session
     const { noteId } = req.params; // Get the note ID from request parameters
@@ -763,8 +719,6 @@ const saveEditedNotes = (req, res) => {
 
 // Delete all clinical notes for the selected patient
 const deleteAllClinicalNotes = (req, res) => {
-    // Ensure the logged-in user is a psychiatrist
-    //checkPsychiatristRole(req, res);
 
     const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { patientId } = req.params; // Get patient ID from request parameters
@@ -932,5 +886,4 @@ module.exports = {
     getPersonalDetails,
     patchPassword,
     deleteAccount,
-    checkPsychiatristRole
 }

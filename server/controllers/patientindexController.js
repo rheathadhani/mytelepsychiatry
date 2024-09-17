@@ -2,7 +2,7 @@ const db = require('../db');
 const multer = require('multer');
 const path = require('path');
 
-const httpContext = require('express-http-context');
+//const httpContext = require('express-http-context');
 
 /* // Check if user is a patient
 const checkPatientRole = (req, res) => {
