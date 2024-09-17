@@ -119,11 +119,10 @@
                         <div class="card mb-3">
                             <div class="card-header bg-dark text-white">Choose Your Symptom</div>
                             <div class="card-body">
-                                <!-- Date and Time Picker -->
+                                <!-- Date Picker -->
                                 <div class="form-group">
-                                    <label for="symptomDateTime">Select Date and Time:</label>
-                                    <input type="datetime-local" class="form-control" id="symptomDateTime"
-                                        name="symptomDateTime">
+                                    <label for="symptomDate">Select Date:</label>
+                                    <input type="date" class="form-control" id="symptomDate" name="symptomDate">
                                 </div>
 
                                 <!-- Symptom Selection -->
@@ -156,7 +155,7 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>Date and Time</th>
+                                            <th>Date</th>
                                             <th>Symptoms</th>
                                         </tr>
                                     </thead>
@@ -211,8 +210,8 @@
                 // Add more tips as needed
             ];
 
-            // Enable/Disable symptom buttons based on datetime input
-            $('#symptomDateTime').on('input', function () {
+            // Enable/Disable symptom buttons based on date input
+            $('#symptomDate').on('input', function () {
                 if ($(this).val()) {
                     $('.symptom-button').removeClass('disabled');
                     $('#applySymptoms').prop('disabled', false);
@@ -237,17 +236,17 @@
                     selectedSymptoms.push($(this).text());
                 });
 
-                // Get the selected date and time
-                let dateTime = $('#symptomDateTime').val();
+                // Get the selected date
+                let date = $('#symptomDate').val();
 
                 // Get the patientId from localStorage (assuming you've stored it during login)
                 const patientId = localStorage.getItem('patientId');
 
-                // If symptoms and datetime are selected and patientId exists
-                if (selectedSymptoms.length > 0 && dateTime && patientId) {
+                // If symptoms and date are selected and patientId exists
+                if (selectedSymptoms.length > 0 && date && patientId) {
                     // Prepare data for the API request
                     const symptomData = {
-                        dateLogged: dateTime,
+                        dateLogged: date,
                         symptomDetails: selectedSymptoms.join(', ')
                     };
 
@@ -264,7 +263,7 @@
                             console.error('Error tracking symptoms:', error);
                         });
                 } else {
-                    console.error('Missing data: selectedSymptoms or dateTime or patientId');
+                    console.error('Missing data: selectedSymptoms or date or patientId');
                 }
             });
 
@@ -278,7 +277,7 @@
                             let historyRows = '';
 
                             symptomsHistory.forEach(entry => {
-                                historyRows += `<tr><td>${formatDateTime(entry.date_logged)}</td><td>${entry.symptom_details}</td></tr>`;
+                                historyRows += `<tr><td>${formatDate(entry.date_logged)}</td><td>${entry.symptom_details}</td></tr>`;
                             });
 
                             $('#symptomsHistoryTable').html(historyRows);
@@ -301,18 +300,15 @@
                 }
             });
 
-            // Format date and time for display
-            function formatDateTime(dateTime) {
-                let dateObj = new Date(dateTime);
+            // Format date for display
+            function formatDate(date) {
+                let dateObj = new Date(date);
                 let options = {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: true
                 };
-                return dateObj.toLocaleString('en-US', options);
+                return dateObj.toLocaleDateString('en-US', options);
             }
 
             // Menu toggle
