@@ -1,5 +1,5 @@
 const db = require('../db');
-
+//Start Dashbod
 // Get Psychiatrist's Full Name based on session
 const getPsychiatristName = (req, res) => {
 
@@ -9,7 +9,7 @@ const getPsychiatristName = (req, res) => {
     const query = `
         SELECT full_name 
         FROM Psychiatrists 
-        WHERE user_id = ?;
+        WHERE psychiatrist_id = ?;
     `;
 
     db.query(query, [psychiatristId], (err, results) => {
@@ -17,7 +17,7 @@ const getPsychiatristName = (req, res) => {
             console.error('Error querying the database:', err);
             return res.status(500).send('Server error');
         }
-
+        console.log(results);
         if (results.length === 0) {
             return res.status(404).send('Psychiatrist not found.');
         }
@@ -243,7 +243,7 @@ const getHistoryOfAppointments = (req, res) => {
         });
     });
 };
-
+//End Dashbod
 
 // Get the list of upcoming appointments for the logged-in psychiatrist
 const getUpcomingAppointments = (req, res) => {
@@ -888,4 +888,4 @@ module.exports = {
     getPersonalDetails,
     patchPassword,
     deleteAccount,
-}
+};
