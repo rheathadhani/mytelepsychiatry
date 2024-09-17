@@ -79,11 +79,16 @@
         <!-- Sidebar -->
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> + </span></strong></p>
-                <a href="patient-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-                <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
-                <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom Tracker</a>
-                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
+                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> +
+                        </span></strong></p>
+                <a href="patient-index.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="patient-appointments.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
+                <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom
+                    Tracker</a>
+                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness
+                    Content</a>
                 <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
         </div>
@@ -117,7 +122,8 @@
                                 <!-- Date and Time Picker -->
                                 <div class="form-group">
                                     <label for="symptomDateTime">Select Date and Time:</label>
-                                    <input type="datetime-local" class="form-control" id="symptomDateTime" name="symptomDateTime">
+                                    <input type="datetime-local" class="form-control" id="symptomDateTime"
+                                        name="symptomDateTime">
                                 </div>
 
                                 <!-- Symptom Selection -->
@@ -161,11 +167,12 @@
                             </div>
                         </div>
                         <div class="card mb-3">
-                            <div class="card-header bg-dark text-white">Daily Wellness Tips 
+                            <div class="card-header bg-dark text-white">Daily Wellness Tips
                                 <button class="btn btn-secondary btn-sm float-right" id="refreshTips">Refresh</button>
                             </div>
                             <div class="card-body" id="wellnessTips">
-                                Remember to drink plenty of water and take short breaks to stretch if you've been sitting for an extended period!
+                                Remember to drink plenty of water and take short breaks to stretch if you've been
+                                sitting for an extended period!
                             </div>
                         </div>
                     </div>
@@ -189,7 +196,7 @@
     </div>
 
     <!-- /#wrapper -->
-
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Bootstrap and jQuery scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -201,15 +208,10 @@
                 "Remember to drink plenty of water and take short breaks to stretch if you've been sitting for an extended period!",
                 "Take deep breaths to relax your mind and body. Practice mindfulness to reduce stress.",
                 "Ensure you get at least 7-8 hours of sleep each night for better mental health.",
-                "Incorporate fruits and vegetables into your diet to boost your immune system.",
-                "Stay active! Regular physical exercise helps reduce anxiety and improve mood.",
-                "Engage in activities you enjoy, such as reading a book or listening to music, to unwind and relax.",
-                "Practice gratitude. Reflect on things you're thankful for to enhance your well-being.",
-                "Stay connected with loved ones. A supportive network is essential for mental health.",
-                "Limit your caffeine intake to avoid increased anxiety and restlessness."
+                // Add more tips as needed
             ];
 
-            // Function to enable/disable symptom buttons based on datetime input
+            // Enable/Disable symptom buttons based on datetime input
             $('#symptomDateTime').on('input', function () {
                 if ($(this).val()) {
                     $('.symptom-button').removeClass('disabled');
@@ -220,12 +222,14 @@
                 }
             });
 
+            // Toggle active state of symptom buttons
             $('.symptom-button').on('click', function () {
                 if (!$(this).hasClass('disabled')) {
                     $(this).toggleClass('active');
                 }
             });
 
+            // Apply button click event
             $('#applySymptoms').on('click', function () {
                 // Gather selected symptoms
                 let selectedSymptoms = [];
@@ -236,17 +240,68 @@
                 // Get the selected date and time
                 let dateTime = $('#symptomDateTime').val();
 
-                // If symptoms are selected, update the history table and show the toast
-                if (selectedSymptoms.length > 0 && dateTime) {
-                    let formattedDateTime = formatDateTime(dateTime);
-                    let newRow = `<tr><td>${formattedDateTime}</td><td>${selectedSymptoms.join(', ')}</td></tr>`;
-                    $('#symptomsHistoryTable').prepend(newRow);
+                // Get the patientId from localStorage (assuming you've stored it during login)
+                const patientId = localStorage.getItem('patientId');
 
-                    // Show toast notification
-                    $('#successToast').toast('show');
+                // If symptoms and datetime are selected and patientId exists
+                if (selectedSymptoms.length > 0 && dateTime && patientId) {
+                    // Prepare data for the API request
+                    const symptomData = {
+                        dateLogged: dateTime,
+                        symptomDetails: selectedSymptoms.join(', ')
+                    };
+
+                    // Axios POST request to track symptoms (with patientId in URL)
+                    axios.post(`http://localhost:5500/api/patient/${patientId}/track-symptoms`, symptomData, { withCredentials: true })
+                        .then(response => {
+                            console.log('Symptoms tracked:', response.data);
+                            // Show toast notification
+                            $('#successToast').toast('show');
+                            // Refresh symptoms history after submission
+                            fetchSymptomsHistory(patientId);
+                        })
+                        .catch(error => {
+                            console.error('Error tracking symptoms:', error);
+                        });
+                } else {
+                    console.error('Missing data: selectedSymptoms or dateTime or patientId');
                 }
             });
 
+
+            function fetchSymptomsHistory(patientId) {
+                // If patientId exists, proceed
+                if (patientId) {
+                    axios.get(`http://localhost:5500/api/patient/${patientId}/symptoms-history`, { withCredentials: true })
+                        .then(response => {
+                            const symptomsHistory = response.data;
+                            let historyRows = '';
+
+                            symptomsHistory.forEach(entry => {
+                                historyRows += `<tr><td>${formatDateTime(entry.date_logged)}</td><td>${entry.symptom_details}</td></tr>`;
+                            });
+
+                            $('#symptomsHistoryTable').html(historyRows);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching symptoms history:', error);
+                        });
+                } else {
+                    console.error('Missing patientId');
+                }
+            }
+
+            // On page load, fetch the patient ID and symptoms history
+            $(document).ready(function () {
+                const patientId = localStorage.getItem('patientId');
+                if (patientId) {
+                    fetchSymptomsHistory(patientId);
+                } else {
+                    console.error('Patient ID not found in localStorage');
+                }
+            });
+
+            // Format date and time for display
             function formatDateTime(dateTime) {
                 let dateObj = new Date(dateTime);
                 let options = {
@@ -260,20 +315,22 @@
                 return dateObj.toLocaleString('en-US', options);
             }
 
+            // Menu toggle
             $('#menu-toggle').click(function () {
                 $('#wrapper').toggleClass('toggled');
             });
 
-            // Initialize toast
+            // Toast settings
             $('.toast').toast({ autohide: true, delay: 3000 });
 
-            // Refresh button functionality for wellness tips
+            // Refresh button for wellness tips
             $('#refreshTips').on('click', function () {
                 let randomTip = wellnessTips[Math.floor(Math.random() * wellnessTips.length)];
                 $('#wellnessTips').text(randomTip);
             });
         });
     </script>
+
 </body>
 
 </html>

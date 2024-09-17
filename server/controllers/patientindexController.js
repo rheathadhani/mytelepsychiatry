@@ -2,6 +2,8 @@ const db = require('../db');
 const multer = require('multer');
 const path = require('path');
 
+const httpContext = require('express-http-context');
+
 /* // Check if user is a patient
 const checkPatientRole = (req, res) => {
     if (!req.session.userRole || req.session.userRole !== 'patient') {
@@ -10,15 +12,8 @@ const checkPatientRole = (req, res) => {
 };
  */
 
-// Get Patient's Full Name based on session
 const getPatientName = (req, res) => {
-    //checkPatientRole(req, res);
-
-    const patientId = req.session.patientId; // Retrieve patientId from session
-
-    if (!patientId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+    const patientId = req.params.patientId;  // Get patientId from URL parameters
 
     const query = `
         SELECT full_name 
@@ -39,15 +34,9 @@ const getPatientName = (req, res) => {
     });
 };
 
-// Get Upcoming Sessions based on session
+// Get Upcoming Sessions based on patientId from params
 const getUpcomingSessions = (req, res) => {
-    //checkPatientRole(req, res);
-
-    const patientId = req.session.patientId; // Retrieve patientId from session
-
-    if (!patientId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+    const patientId = req.params.patientId;  // Get patientId from URL parameters
 
     const query = `
         SELECT 
@@ -71,15 +60,8 @@ const getUpcomingSessions = (req, res) => {
     });
 };
 
-// Get Medications List based on session
 const getMedicationsList = (req, res) => {
-    //checkPatientRole(req, res);
-
-    const patientId = req.session.patientId; // Retrieve patientId from session
-
-    if (!patientId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+    const patientId = req.params.patientId;  // Get patientId from URL parameters
 
     const query = `
         SELECT 
@@ -102,15 +84,8 @@ const getMedicationsList = (req, res) => {
     });
 };
 
-// Get Past Appointments based on session
 const getPastAppointments = (req, res) => {
-    //checkPatientRole(req, res);
-
-    const patientId = req.session.patientId; // Retrieve patientId from session
-
-    if (!patientId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+    const patientId = req.params.patientId;  // Get patientId from URL parameters
 
     const query = `
         SELECT 
@@ -135,6 +110,8 @@ const getPastAppointments = (req, res) => {
     });
 };
 
+
+//Appoinments Page
 // Get available psychiatrists based on selected date and time
 const getAvailablePsychiatrists = (req, res) => {
     const { selectedDateTime } = req.body;  // The selected date and time sent from the frontend
@@ -308,40 +285,28 @@ const getPaymentDetails = (req, res) => {
     });
 };
 
-// Track Symptoms based on session
+// Track Symptoms based on patientId from params
 const trackSymptoms = (req, res) => {
-   // checkPatientRole(req, res);
-
-    const patientId = req.session.patientId; // Retrieve patientId from session
-
-    if (!patientId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
-
+    const patientId = req.params.patientId;  // Get patientId from URL parameters
     const { dateLogged, symptomDetails } = req.body;
+
     const query = `
         INSERT INTO Symptoms (patient_id, date_logged, symptom_details)
         VALUES (?, ?, ?);
     `;
-    
+
     db.query(query, [patientId, dateLogged, symptomDetails], (err, result) => {
         if (err) {
-            console.error('Error inserting symptoms:', err);
-            return res.status(500).send(err);
+            return res.status(500).send('Error tracking symptoms');
         }
         res.status(201).json({ message: 'Symptoms tracked successfully.' });
     });
 };
 
-// Get Symptoms History based on session
+
+//Get Symptoms History based on patientId from params
 const getSymptomsHistory = (req, res) => {
-   // checkPatientRole(req, res);
-
-    const patientId = req.session.patientId; // Retrieve patientId from session
-
-    if (!patientId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+    const patientId = req.params.patientId;  // Get patientId from URL parameters
 
     const query = `
         SELECT date_logged, symptom_details
@@ -349,7 +314,7 @@ const getSymptomsHistory = (req, res) => {
         WHERE patient_id = ?
         ORDER BY date_logged DESC;
     `;
-    
+
     db.query(query, [patientId], (err, results) => {
         if (err) {
             console.error('Error fetching symptoms history:', err);
@@ -360,9 +325,10 @@ const getSymptomsHistory = (req, res) => {
 };
 
 
+
 // Get patient personal details
 const getPersonalDetails = (req, res) => {
-    const patientId = req.session.userId;  // Assuming userId is stored in session
+    const patientId = req.params.patientId; // Assuming userId is stored in session
 
     const query = `
         SELECT p.full_name, u.email, p.date_of_birth, p.address, p.gender, 
@@ -389,7 +355,7 @@ const getPersonalDetails = (req, res) => {
 
 // Patch patient personal details
 const patchPersonalDetails = (req, res) => {
-    const patientId = req.session.userId; // Assuming userId is stored in session
+    const patientId = req.params.patientId; // Assuming userId is stored in session
     const { fullName, email, dateOfBirth, address, gender, emergencyContactName, emergencyPhoneNumber } = req.body;
 
     const queryUsers = `
@@ -423,7 +389,7 @@ const patchPersonalDetails = (req, res) => {
 
 // Update patient password
 const patchPassword = (req, res) => {
-    const patientId = req.session.userId;  // Assuming userId is stored in session
+    const patientId = req.params.patientId; // Assuming userId is stored in session
     const { newPassword } = req.body;
 
     const query = `
@@ -443,7 +409,7 @@ const patchPassword = (req, res) => {
 
 // Delete patient account
 const deleteAccount = (req, res) => {
-    const patientId = req.session.userId;  // Assuming userId is stored in session
+    const patientId = req.params.patientId;  // Assuming userId is stored in session
 
     // Step 1: Delete from Patients table
     const deletePatientQuery = `
@@ -478,7 +444,7 @@ const deleteAccount = (req, res) => {
 
 
 const getPsychiatristsVisited = (req, res) => {
-    const patientId = req.session.userId; // Assuming userId is stored in session
+    const patientId = req.params.patientId;// Assuming userId is stored in session
 
     const query = `
         SELECT COUNT(DISTINCT psychiatrist_id) AS totalPsychiatristsVisited
@@ -496,7 +462,7 @@ const getPsychiatristsVisited = (req, res) => {
 
 
 const getConsultation = (req, res) => {
-    const patientId = req.session.userId; // Assuming userId is stored in session
+    const patientId = req.params.patientId; // Assuming userId is stored in session
 
     const query = `
         SELECT COUNT(*) AS totalConsultations
@@ -513,7 +479,7 @@ const getConsultation = (req, res) => {
 };
 
 const getTotalMedicationReceived = (req, res) => {
-    const patientId = req.session.userId; // Assuming userId is stored in session
+    const patientId = req.params.patientId; // Assuming userId is stored in session
 
     const query = `
         SELECT COUNT(*) AS totalMedicationsReceived
@@ -548,5 +514,6 @@ module.exports = {
     patchPassword,
     deleteAccount,
     getPsychiatristsVisited,
+    getConsultation,
     getTotalMedicationReceived
 };

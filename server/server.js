@@ -1,19 +1,20 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const session = require('express-session');
 const cors = require('cors');
+const httpContext = require('express-http-context'); // Import http-context
+
 const patientRoutes = require('./routes/patientIndexRoutes'); 
 const authRoutes = require("./routes/authenticationsRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 
 require('dotenv').config();
-const db = require('./db');
+
 
 const app = express();
 
 // Frontend running on (127.0.0.1:5500)
 app.use(cors({
-    origin: 'http://127.0.0.1:5500',  // Use the exact origin
+    origin: ['http://127.0.0.1:5500', 'http://127.0.0.1:5501'],  // Use the exact origin
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,  // Important for sending cookies with requests
     allowedHeaders: ['Content-Type', 'Authorization']  // Allow the necessary headers
@@ -32,6 +33,9 @@ app.use(session({
         sameSite: 'strict', 
     }
 }));
+
+// Initialize express-http-context middleware
+app.use(httpContext.middleware);
 
 app.use(express.json()); 
 app.use(express.urlencoded({extended: true})); 

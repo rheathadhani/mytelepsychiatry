@@ -7,15 +7,20 @@
     <title>View Patient</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="patient-index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <style>
         .card-header {
             background-color: #343a40;
             color: white;
         }
+
         table {
             width: 100%;
         }
-        th, td {
+
+        th,
+        td {
             padding: 12px;
             text-align: left;
         }
@@ -76,6 +81,14 @@
                                     <td id="dob"></td>
                                 </tr>
                                 <tr>
+                                    <th>Gender</th>
+                                    <td id="gender"></td>
+                                </tr>
+                                <tr>
+                                    <th>Address</th>
+                                    <td id="address"></td>
+                                </tr>
+                                <tr>
                                     <th>Emergency Contact Name</th>
                                     <td id="emergencyContactName"></td>
                                 </tr>
@@ -89,7 +102,8 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <button class="btn btn-dark" onclick="window.location.href='admin-patient.html'">Back to Patients</button>
+                        <button class="btn btn-dark" onclick="window.location.href='admin-patient.html'">Back to
+                            Patients</button>
                     </div>
 
                 </div>
@@ -106,8 +120,46 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Code to populate patient details goes here
+        // Code to populate patient  d etails including gender and address
+        // Fetch the patient data using Axios
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get patient data from localStorage
+            const viewPatient = JSON.parse(localStorage.getItem('viewPatient'));
+
+            // Check if patient data exists in localStorage
+            if (!viewPatient || !viewPatient.patient_id) {
+                alert('No patient data found. Please go back and select a patient.');
+                window.location.href = 'admin-patient.html'; // Redirect to the patient list
+                return;
+            }
+
+            const patientId = viewPatient.patient_id;
+
+            // Axios GET request to fetch the patient data
+            axios.get(`http://localhost:5500/api/patients/${patientId}`)
+                .then(response => {
+                    const patient = response.data;
+
+                    // Populate the HTML table with the patient data
+                    document.getElementById('patientId').innerText = patient.patient_id;
+                    document.getElementById('fullName').innerText = patient.full_name;
+                    document.getElementById('email').innerText = patient.email;
+                    document.getElementById('dob').innerText = new Date(patient.date_of_birth).toLocaleDateString(); // Format date
+                    document.getElementById('gender').innerText = patient.gender || 'N/A';
+                    document.getElementById('address').innerText = patient.address || 'N/A';
+                    document.getElementById('emergencyContactName').innerText = patient.emergency_contact_name || 'N/A';
+                    document.getElementById('contactNumber').innerText = patient.emergency_contact_no || 'N/A';
+                    document.getElementById('createdDate').innerText = new Date(patient.created_at).toLocaleString(); // Format date and time
+                })
+                .catch(error => {
+                    console.error('Error fetching patient details:', error);
+                    alert('Error fetching patient details');
+                });
+        });
+
+
     </script>
+
 </body>
 
 </html>

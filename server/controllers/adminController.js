@@ -163,11 +163,11 @@ const deletePsychiatrist = (req, res) => {
 
 //Patient Controller Functions
 
-// Get all patients for table view (limited fields)
 const getPatients = (req, res) => {
-
     const query = `
-        SELECT p.patient_id, p.full_name, u.email, p.date_of_birth, p.emergency_contact_name, p.emergency_contact_no
+        SELECT p.patient_id, p.full_name, u.email, 
+               DATE_FORMAT(p.date_of_birth, '%Y-%m-%d') as date_of_birth, 
+               p.emergency_contact_name, p.emergency_contact_no
         FROM Patients p
         JOIN Users u ON p.user_id = u.user_id;
     `;
@@ -180,14 +180,12 @@ const getPatients = (req, res) => {
     });
 };
 
-// View full details of a patient
+
 const getPatientById = (req, res) => {
-
-
     const patientId = req.params.id;
     const query = `
         SELECT p.patient_id, p.full_name, u.email, p.date_of_birth, p.address, 
-               p.emergency_contact_name, p.emergency_contact_no, u.created_at
+               p.emergency_contact_name, p.emergency_contact_no, p.gender, u.created_at
         FROM Patients p
         JOIN Users u ON p.user_id = u.user_id
         WHERE p.patient_id = ?;
@@ -205,6 +203,7 @@ const getPatientById = (req, res) => {
         res.status(200).json(results[0]);
     });
 };
+
 
 // Edit specific fields of a patient (only editable fields)
 const editPatient = (req, res) => {

@@ -7,6 +7,8 @@
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="patient-index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <style>
         .table-actions {
             display: flex;
@@ -195,19 +197,7 @@
                             </thead>
                             <tbody id="patientTableBody">
                                 <!-- Example Row -->
-                                <tr>
-                                    <td>1</td>
-                                    <td class="fullName">John Doe</td>
-                                    <td class="email">john@example.com</td>
-                                    <td class="dob">01/01/1980</td>
-                                    <td class="emergencyContactName">Jane Doe</td>
-                                    <td class="contactNumber">123-456-7890</td>
-                                    <td class="table-actions">
-                                        <button class="btn btn-secondary btn-sm view-btn">View</button>
-                                        <button class="btn btn-warning btn-sm edit-btn">Edit</button>
-                                        <button class="btn btn-danger btn-sm delete-btn">Delete</button>
-                                    </td>
-                                </tr>
+
                             </tbody>
                         </table>
                     </div>
@@ -228,6 +218,143 @@
 
     <script>
         $(document).ready(function () {
+            // Fetch all patients and populate the table
+            function fetchPatients() {
+                axios.get('http://localhost:5500/api/patients')
+                    .then(function (response) {
+                        const patients = response.data;
+                        let tableRows = '';
+
+                        patients.forEach(patient => {
+                            tableRows += `
+                        <tr>
+                            <td>${patient.patient_id}</td>
+                            <td class="fullName">${patient.full_name}</td>
+                            <td class="email">${patient.email}</td>
+                            <td class="dob">${patient.date_of_birth}</td>
+                            <td class="emergencyContactName">${patient.emergency_contact_name}</td>
+                            <td class="contactNumber">${patient.emergency_contact_no}</td>
+                            <td class="table-actions">
+                                <button class="btn btn-secondary btn-sm view-btn" data-id="${patient.patient_id}">View</button>
+                                <button class="btn btn-warning btn-sm edit-btn" data-id="${patient.patient_id}">Edit</button>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="${patient.patient_id}">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                        });
+
+                        $('#patientTableBody').html(tableRows);
+                    })
+                    .catch(function (error) {
+                        console.error('Error fetching patients:', error);
+                    });
+            }
+
+            // Fetch patients on page load
+            fetchPatients();
+
+            // View patient details
+            $(document).on('click', '.view-btn', function () {
+                const patientId = $(this).data('id');
+
+                axios.get(`http://localhost:5500/api/patients/${patientId}`)
+                    .then(function (response) {
+                        const patient = response.data;
+                        localStorage.setItem('viewPatient', JSON.stringify(patient));
+                        window.location.href = 'admin-viewpatient.html';
+                    })
+                    .catch(function (error) {
+                        console.error('Error fetching patient details:', error);
+                    });
+            });
+
+            // Edit patient details
+            $(document).on('click', '.edit-btn', function () {
+                const row = $(this).closest('tr');
+                const patientId = $(this).data('id');
+
+                row.find('.fullName').html(`<input type="text" class="form-control" value="${row.find('.fullName').text()}">`);
+                row.find('.email').html(`<input type="email" class="form-control" value="${row.find('.email').text()}">`);
+                row.find('.dob').html(`<input type="date" class="form-control" value="${row.find('.dob').text()}">`);
+                row.find('.emergencyContactName').html(`<input type="text" class="form-control" value="${row.find('.emergencyContactName').text()}">`);
+                row.find('.contactNumber').html(`<input type="text" class="form-control" value="${row.find('.contactNumber').text()}">`);
+
+                row.find('.table-actions').html(`
+            <button class="btn btn-success btn-sm save-btn" data-id="${patientId}">Save</button>
+            <button class="btn btn-secondary btn-sm cancel-btn">Cancel</button>
+        `);
+            });
+
+            // Save edited patient details
+            $(document).on('click', '.save-btn', function () {
+                const row = $(this).closest('tr');
+                const patientId = $(this).data('id');
+
+                const updatedData = {
+                    fullName: row.find('.fullName input').val(),
+                    email: row.find('.email input').val(),
+                    dateOfBirth: row.find('.dob input').val(),
+                    emergencyContactName: row.find('.emergencyContactName input').val(),
+                    contactNumber: row.find('.contactNumber input').val(),
+                };
+
+                axios.put(`http://localhost:5500/api/patients/${patientId}`, updatedData)
+                    .then(function () {
+                        row.find('.fullName').text(updatedData.fullName);
+                        row.find('.email').text(updatedData.email);
+                        row.find('.dob').text(updatedData.dateOfBirth);
+                        row.find('.emergencyContactName').text(updatedData.emergencyContactName);
+                        row.find('.contactNumber').text(updatedData.contactNumber);
+
+                        row.find('.table-actions').html(`
+                    <button class="btn btn-secondary btn-sm view-btn" data-id="${patientId}">View</button>
+                    <button class="btn btn-warning btn-sm edit-btn" data-id="${patientId}">Edit</button>
+                    <button class="btn btn-danger btn-sm delete-btn" data-id="${patientId}">Delete</button>
+                `);
+                    })
+                    .catch(function (error) {
+                        console.error('Error updating patient details:', error);
+                    });
+            });
+
+            // Delete patient
+            $(document).on('click', '.delete-btn', function () {
+                const patientId = $(this).data('id');
+
+                axios.delete(`http://localhost:5500/api/patients/${patientId}`)
+                    .then(function () {
+                        fetchPatients(); // Reload the table after deletion
+                    })
+                    .catch(function (error) {
+                        console.error('Error deleting patient:', error);
+                    });
+            });
+
+            // Cancel editing
+            $(document).on('click', '.cancel-btn', function () {
+                location.reload(); // Reload the page to cancel changes
+            });
+            $(document).on('click', '.view-btn', function () {
+                const patientId = $(this).data('id');
+
+                // Fetch the patient data from the row
+                axios.get(`http://localhost:5500/api/patients/${patientId}`)
+                    .then(function (response) {
+                        const patient = response.data;
+
+                        // Store patient data in localStorage
+                        localStorage.setItem('viewPatient', JSON.stringify(patient));
+
+                        // Redirect to the view page
+                        window.location.href = 'admin-viewpatient.html';
+                    })
+                    .catch(function (error) {
+                        console.error('Error fetching patient details:', error);
+                    });
+            });
+
+
+
             // Search functionality
             function filterTable() {
                 var searchValue = $('#searchByDetails').val().toLowerCase();
@@ -282,76 +409,12 @@
                 doc.save('patient-report.pdf');
             });
 
-            // Edit functionality
-            $(document).on('click', '.edit-btn', function () {
-                var row = $(this).closest('tr');
-
-                // Replace table cell content with input fields
-                row.find('.fullName').html('<input type="text" class="form-control" value="' + row.find('.fullName').text() + '">');
-                row.find('.email').html('<input type="email" class="form-control" value="' + row.find('.email').text() + '">');
-                row.find('.dob').html('<input type="date" class="form-control" value="' + row.find('.dob').text() + '">');
-                row.find('.emergencyContactName').html('<input type="text" class="form-control" value="' + row.find('.emergencyContactName').text() + '">');
-                row.find('.contactNumber').html('<input type="text" class="form-control" value="' + row.find('.contactNumber').text() + '">');
-
-                // Replace action buttons with Save and Cancel
-                row.find('.table-actions').html(`
-                    <button class="btn btn-success btn-sm save-btn">Save</button>
-                    <button class="btn btn-secondary btn-sm cancel-btn">Cancel</button>
-                `);
-            });
-
-            // Save functionality
-            $(document).on('click', '.save-btn', function () {
-                var row = $(this).closest('tr');
-
-                // Retrieve input values
-                var fullName = row.find('.fullName input').val();
-                var email = row.find('.email input').val();
-                var dob = row.find('.dob input').val();
-                var emergencyContactName = row.find('.emergencyContactName input').val();
-                var contactNumber = row.find('.contactNumber input').val();
-
-                // Replace input fields with text values
-                row.find('.fullName').text(fullName);
-                row.find('.email').text(email);
-                row.find('.dob').text(dob);
-                row.find('.emergencyContactName').text(emergencyContactName);
-                row.find('.contactNumber').text(contactNumber);
-
-                // Replace action buttons back to View/Edit/Delete
-                row.find('.table-actions').html(`
-        <button class="btn btn-secondary btn-sm view-btn">View</button>
-        <button class="btn btn-warning btn-sm edit-btn">Edit</button>
-        <button class="btn btn-danger btn-sm delete-btn">Delete</button>
-    `);
-            });
 
 
-            // Cancel functionality
-            $(document).on('click', '.cancel-btn', function () {
-                location.reload(); // Reload the page to cancel the changes
-            });
 
-            // Delete functionality
-            $(document).on('click', '.delete-btn', function () {
-                $(this).closest('tr').remove();
-            });
 
-            // View functionality
-            $(document).on('click', '.view-btn', function () {
-                var row = $(this).closest('tr');
-                var patientData = {
-                    id: row.find('td:nth-child(1)').text(),
-                    fullName: row.find('.fullName').text(),
-                    email: row.find('.email').text(),
-                    dob: row.find('.dob').text(),
-                    emergencyContactName: row.find('.emergencyContactName').text(),
-                    contactNumber: row.find('.contactNumber').text(),
-                };
 
-                localStorage.setItem('viewPatient', JSON.stringify(patientData));
-                window.location.href = 'admin-viewpatient.html';
-            });
+
         });
     </script>
 </body>

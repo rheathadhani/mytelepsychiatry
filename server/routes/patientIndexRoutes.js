@@ -17,11 +17,11 @@ const {
 
 const router = express.Router();
 
-// Patient details routes
-router.get('/patient/patient-name', getPatientName);
-router.get('/patient/upcoming-sessions', getUpcomingSessions);
-router.get('/patient/medications', getMedicationsList);
-router.get('/patient/past-appointments', getPastAppointments);
+// Patient details routes with patientId in URL params
+router.get('/patient/:patientId/patient-name', getPatientName);
+router.get('/patient/:patientId/upcoming-sessions', getUpcomingSessions);
+router.get('/patient/:patientId/medications', getMedicationsList);
+router.get('/patient/:patientId/past-appointments', getPastAppointments);
 
 // Psychiatrist-related routes
 router.post('/patient/available-psychiatrists', getAvailablePsychiatrists);
@@ -34,8 +34,9 @@ router.get('/patient/appointment-details/:appointmentId', getAppointmentDetails)
 router.post('/patient/payment', upload.single('paymentProof'), postPaymentDetails);
 router.get('/patient/payment-details/:appointmentId', getPaymentDetails);
 
-// Symptom tracking routes
-router.post('/patient/track-symptoms', trackSymptoms);
-router.get('/patient/symptoms-history', getSymptomsHistory);
+
+// Symptom tracking routes with patientId in URL params
+router.post('/patient/:patientId/track-symptoms', trackSymptoms);
+router.get('/patient/:patientId/symptoms-history', getSymptomsHistory)
 
 module.exports = router;

@@ -194,40 +194,61 @@
     <!-- /#page-content-wrapper -->
   </div>
   <!-- /#wrapper -->
-
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <!-- Bootstrap and jQuery scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    $(document).ready(function () {
-      // Example Pie Chart Data for Psychiatrist to Patient Ratio
-      var ctx1 = $('#psychRatioChart')[0].getContext('2d'); // Accessing the canvas using jQuery
-      var psychRatioChart = new Chart(ctx1, {
-        type: 'pie',
-        data: {
-          labels: ['Psychiatrists', 'Patients'],
-          datasets: [{
-            data: [5, 95], // Example data
-            backgroundColor: ['#36A2EB', '#FF6384']
-          }]
-        }
+ $(document).ready(function () {
+    // Fetch Psychiatrist to Patient Ratio using Axios
+    axios.get('http://localhost:5500/api/psychiatrist-to-patient-ratio')
+      .then(function (response) {
+        const psychiatristCount = response.data.psychiatristCount;
+        const patientCount = response.data.patientCount;
+
+        // Update the pie chart with fetched data
+        var ctx1 = $('#psychRatioChart')[0].getContext('2d');
+        var psychRatioChart = new Chart(ctx1, {
+          type: 'pie',
+          data: {
+            labels: ['Psychiatrists', 'Patients'],
+            datasets: [{
+              data: [psychiatristCount, patientCount],
+              backgroundColor: ['#36A2EB', '#FF6384']
+            }]
+          }
+        });
+      })
+      .catch(function (error) {
+        console.error('Error fetching psychiatrist-to-patient ratio:', error);
       });
 
-      // Example Pie Chart Data for Wellness Content by Category
-      var ctx2 = $('#wellnessContentChart')[0].getContext('2d'); // Accessing the canvas using jQuery
-      var wellnessContentChart = new Chart(ctx2, {
-        type: 'pie',
-        data: {
-          labels: ['Mindfulness', 'Exercise', 'Nutrition'],
-          datasets: [{
-            data: [40, 30, 30], // Example data
-            backgroundColor: ['#FFCE56', '#36A2EB', '#FF6384']
-          }]
-        }
+    // Fetch Wellness Content by Category using Axios
+    axios.get('http://localhost:5500/api/wellness-content-by-category')
+      .then(function (response) {
+        const contentData = response.data;
+        const labels = contentData.map(item => item.content_category);
+        const values = contentData.map(item => item.total);
+
+        // Update the pie chart with fetched data
+        var ctx2 = $('#wellnessContentChart')[0].getContext('2d');
+        var wellnessContentChart = new Chart(ctx2, {
+          type: 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: values,
+              backgroundColor: ['#FFCE56', '#36A2EB', '#FF6384']
+            }]
+          }
+        });
+      })
+      .catch(function (error) {
+        console.error('Error fetching wellness content by category:', error);
       });
-    });
+  });
 
 
     // jQuery Example for dynamically adding a row in the Recent Payments

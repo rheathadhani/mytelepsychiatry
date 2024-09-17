@@ -61,27 +61,26 @@ $(document).ready(function () {
             role: selectedRole
         };
 
-        // Send login request using Axios
         axios.post('http://localhost:5500/api/login', loginData)
-// Replace with your backend's login endpoint
-            .then(function (response) {
-                if (selectedRole == 'patient'){
-                    window.location.href = 'http://127.0.0.1:5500/client/patient-index.html'; 
-                } else if (selectedRole == 'psychiatrist'){
-                    window.location.href = 'http://127.0.0.1:5500/client/psy-index.html';
-                }
-                else if (selectedRole == 'admin') {
-                    window.location.href = 'http://127.0.0.1:5500/client/admin-index.html';
-                }
-                
-            })
-            .catch(function (error) {
-                // Handle error
-                if (error.response) {
-                    alert('Login failed: ' + error.response.data.message);
-                } else {
-                    alert('Login failed: ' + error.message);
-                }
-            });
-        });
-});
+    .then(function (response) {
+        const user = response.data.user; // Assuming `user` object contains the IDs
+        if (selectedRole == 'patient') {
+            localStorage.setItem('patientId', user.patient_id); // Store patientId
+            window.location.href = 'patient-index.html';
+        } else if (selectedRole == 'psychiatrist') {
+            localStorage.setItem('psychiatristId', user.psychiatrist_id); // Store psychiatristId
+            window.location.href = 'psy-index.html';
+        } else if (selectedRole == 'admin') {
+            window.location.href = 'admin-index.html';
+        }
+    })
+    .catch(function (error) {
+        if (error.response) {
+            alert('Login failed: ' + error.response.data.message);
+        } else {
+            alert('Login failed: ' + error.message);
+        }
+    });
+    })
+
+})
