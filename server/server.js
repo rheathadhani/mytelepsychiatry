@@ -1,11 +1,12 @@
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
-const httpContext = require('express-http-context'); // Import http-context
+//const httpContext = require('express-http-context'); // Import http-context
 
-const patientRoutes = require('./routes/patientIndexRoutes'); 
 const authRoutes = require("./routes/authenticationsRoutes");
+const patientRoutes = require('./routes/patientIndexRoutes'); 
 const adminRoutes = require("./routes/adminRoutes");
+const psyRoutes = require("./routes/psyIndexRoutes");
 
 require('dotenv').config();
 
@@ -34,15 +35,13 @@ app.use(session({
     }
 }));
 
-// Initialize express-http-context middleware
-app.use(httpContext.middleware);
-
 app.use(express.json()); 
 app.use(express.urlencoded({extended: true})); 
 
 app.use('/api', authRoutes);
 app.use('/api', patientRoutes);
 app.use('/api', adminRoutes);
+app.use('/api', psyRoutes);
 
 
 const PORT = process.env.PORT || 5500;

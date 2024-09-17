@@ -1,21 +1,17 @@
 const db = require('../db');
 
 // Check if user is a psychiatrist
-const checkPsychiatristRole = (req, res) => {
+/* const checkPsychiatristRole = (req, res) => {
     if (!req.session.userRole || req.session.userRole !== 'psychiatrist') {
         return res.status(403).json({ message: 'Access denied. This resource is only accessible to psychiatrists.' });
     }
-};
+}; */
 
 // Get Psychiatrist's Full Name based on session
 const getPsychiatristName = (req, res) => {
 
 
-    const psychiatristId = req.session.userId; // Retrieve psychiatrist's user ID from session
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+    const psychiatristId = req.params.psychiatrist_id; 
 
     const query = `
         SELECT full_name 
@@ -40,12 +36,7 @@ const getPsychiatristName = (req, res) => {
 // Get the number of patients needing medication review
 const getNumberPatientMedReview = (req, res) => {
 
-
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+    const psychiatristId = req.params.psychiatrist_id; 
 
     // Query to get all completed appointments for the psychiatrist within the last 24 hours
     const completedAppointmentsQuery = `
@@ -94,14 +85,9 @@ const getNumberPatientMedReview = (req, res) => {
 
 // Get upcoming sessions for the logged-in psychiatrist
 const getUpcomingSession = (req, res) => {
-    // Call checkPsychiatristRole to ensure access control
+    
+    const psychiatristId = req.params.psychiatrist_id; 
 
-
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
 
     // Query to get upcoming appointments for the psychiatrist
     const upcomingAppointmentsQuery = `
@@ -142,11 +128,7 @@ const getTotalPatients = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+    const psychiatristId = req.params.psychiatrist_id; 
 
     // Query to get the total number of distinct patients with completed appointments
     const totalPatientsQuery = `
@@ -180,11 +162,7 @@ const getTotalAppointments = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+    const psychiatristId = req.params.psychiatrist_id; ; // Get psychiatrist's user ID from the session
 
     // Query to get the total number of completed appointments
     const totalAppointmentsQuery = `
@@ -215,11 +193,7 @@ const getTotalPatientsPrescribed = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+    const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
 
     // Query to get the total number of distinct patients who have been prescribed medicines by the psychiatrist
     const totalPatientsPrescribedQuery = `
@@ -249,11 +223,7 @@ const getHistoryOfAppointments = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+    const psychiatristId = req.params.psychiatrist_id; 
 
     // Query to get the past appointments with status 'completed' or 'cancelled'
     const pastAppointmentsQuery = `
@@ -293,7 +263,7 @@ const getUpcomingAppointments = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+    const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
 
     if (!psychiatristId) {
         return res.status(401).json({ message: 'Unauthorized. Please log in.' });
@@ -341,12 +311,8 @@ const getViewDetails = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+    const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
     const patientId = req.params.patientId; // Get patient ID from request parameters
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
 
     // Query to get previous session details for the patient (completed appointments)
     const previousSessionsQuery = `
@@ -406,7 +372,7 @@ const postNewClinicalNotes = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { patientId, noteText } = req.body; // Get patient ID and note text from the request body
 
     if (!psychiatristId) {
@@ -443,7 +409,7 @@ const deleteSelectedNotes = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { noteIds } = req.body; // Get the selected note IDs from the request body
 
     if (!psychiatristId) {
@@ -481,7 +447,7 @@ const deleteRecord = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { patientId } = req.params; // Get patient ID from the request parameters
 
     if (!psychiatristId) {
@@ -536,11 +502,7 @@ const getPatientsForPrescription = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //heckPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+    const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
 
     // Query to get the patients who have booked at least one session
     const getPatientsQuery = `
@@ -577,12 +539,8 @@ const postPrescription = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { patientId, medicationName, dosage, frequencyPerDay, durationInDays } = req.body;
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
 
     if (!patientId || !medicationName || !dosage || !frequencyPerDay || !durationInDays) {
         return res.status(400).json({ message: 'All fields are required.' });
@@ -617,11 +575,8 @@ const getPrescriptionHistory = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+    const psychiatristId = req.params.psychiatrist_id; 
 
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
 
     // Query to get the prescription history for the logged-in psychiatrist
     const getHistoryQuery = `
@@ -662,11 +617,7 @@ const getPatientList = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
    // checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
+   const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
 
     // Query to get the list of distinct patients who have booked at least one session
     const getPatientsQuery = `
@@ -703,12 +654,8 @@ const postClinicalNotes = (req, res) => {
     // Call checkPsychiatristRole to ensure access control
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { patientId, noteText } = req.body; // Get patient ID and note text from the request body
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
 
     if (!patientId || !noteText) {
         return res.status(400).json({ message: 'Patient ID and clinical note text are required.' });
@@ -740,12 +687,8 @@ const getAllClinicalNotesForEdit = (req, res) => {
     // Ensure the logged-in user is a psychiatrist
    // checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from session
+   const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from session
     const { patientId } = req.params; // Get patient ID from request parameters
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
 
     if (!patientId) {
         return res.status(400).json({ message: 'Patient ID is required.' });
@@ -787,13 +730,10 @@ const saveEditedNotes = (req, res) => {
     // Ensure the logged-in user is a psychiatrist
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from session
+    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from session
     const { noteId } = req.params; // Get the note ID from request parameters
     const { updatedNoteText } = req.body; // Get updated note text from request body
 
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
 
     if (!noteId || !updatedNoteText) {
         return res.status(400).json({ message: 'Note ID and updated note text are required.' });
@@ -826,12 +766,9 @@ const deleteAllClinicalNotes = (req, res) => {
     // Ensure the logged-in user is a psychiatrist
     //checkPsychiatristRole(req, res);
 
-    const psychiatristId = req.session.userId; // Get psychiatrist's user ID from the session
+    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { patientId } = req.params; // Get patient ID from request parameters
 
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-    }
 
     if (!patientId) {
         return res.status(400).json({ message: 'Patient ID is required.' });
@@ -862,7 +799,7 @@ const deleteAllClinicalNotes = (req, res) => {
 const getPersonalDetails = (req, res) => {
    // checkAdminRole(req, res);
 
-    const psychiatristId = req.session.userId;  // Assuming the psychiatrist is logged in and their ID is stored in the session.
+   const psychiatristId = req.params.psychiatrist_id;   // Assuming the psychiatrist is logged in and their ID is stored in the session.
 
     const query = `
         SELECT u.username AS fullName, u.email, p.specialization
@@ -889,11 +826,10 @@ const getPersonalDetails = (req, res) => {
     });
 };
 
-
 // Update Psychiatrist Password
 const patchPassword = (req, res) => {
     const { currentPassword, newPassword } = req.body;
-    const psychiatristId = req.session.userId; // Assuming psychiatrist is logged in and their ID is stored in the session.
+    const psychiatristId = req.params.psychiatrist_id;  // Assuming psychiatrist is logged in and their ID is stored in the session.
 
     // Step 1: Fetch the current password from the database
     const getCurrentPasswordQuery = `
@@ -934,11 +870,7 @@ const patchPassword = (req, res) => {
 
 // Delete Psychiatrist Account
 const deleteAccount = (req, res) => {
-    const psychiatristId = req.session.userId; // Assuming psychiatrist ID is stored in the session.
-
-    if (!psychiatristId) {
-        return res.status(401).json({ message: 'Unauthorized request' });
-    }
+    const psychiatristId = req.params.psychiatrist_id;  // Assuming psychiatrist ID is stored in the session.
 
     // Step 1: Delete from the Psychiatrists table
     const deletePsychiatristQuery = `
