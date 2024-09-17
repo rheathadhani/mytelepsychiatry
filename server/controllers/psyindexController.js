@@ -466,17 +466,18 @@ const deleteRecord = (req, res) => {
 };
 
 
-// Get the list of patients who have booked at least one session with the psychiatrist
 const getPatientsForPrescription = (req, res) => {
 
     const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
-
+    console.log(`Psychiatrist ID: ${psychiatristId}`); // Log the psychiatrist ID
+    
     // Query to get the patients who have booked at least one session
     const getPatientsQuery = `
         SELECT DISTINCT p.patient_id, p.full_name 
         FROM Appointments a
         INNER JOIN Patients p ON a.patient_id = p.patient_id
-        WHERE a.psychiatrist_id = ?;
+        WHERE a.psychiatrist_id = ? 
+        AND a.status IN ('completed');
     `;
 
     db.query(getPatientsQuery, [psychiatristId], (err, results) => {
@@ -499,6 +500,7 @@ const getPatientsForPrescription = (req, res) => {
         });
     });
 };
+
 
 
 // Post a new prescription for the selected patient

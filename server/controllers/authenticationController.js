@@ -30,6 +30,7 @@ const loginUser = (req, res) => {
         req.session.userRole = user.role;
         req.session.isLoggedIn = true;
 
+        // Handle patient login
         if (role === 'patient') {
             const patientQuery = `SELECT patient_id FROM Patients WHERE user_id = ?`;
 
@@ -57,8 +58,42 @@ const loginUser = (req, res) => {
                     }
                 });
             });
-        } else {
-            // Return success for non-patient roles
+        }
+
+        // Handle psychiatrist login
+        else if (role === 'psychiatrist') {
+            const psychiatristQuery = `SELECT psychiatrist_id FROM Psychiatrists WHERE user_id = ?`;
+
+            db.query(psychiatristQuery, [user.user_id], (err, psychiatristResults) => {
+                if (err) {
+                    console.error('Error fetching psychiatrist details:', err);
+                    return res.status(500).json({ message: 'Error fetching psychiatrist details' });
+                }
+
+                if (psychiatristResults.length === 0) {
+                    return res.status(404).json({ message: 'Psychiatrist not found' });
+                }
+
+                const psychiatrist = psychiatristResults[0];
+                req.session.psychiatristId = psychiatrist.psychiatrist_id; // Store psychiatristId in session
+
+                // Also store in localStorage on the client-side if needed
+                res.status(200).json({
+                    message: 'Login successful',
+                    user: {
+                        user_id: user.user_id,
+                        username: user.username,
+                        email: user.email,
+                        role: user.role,
+                        psychiatrist_id: psychiatrist.psychiatrist_id // Include psychiatrist ID in the response
+                    }
+                });
+            });
+        }
+
+        // Handle other roles (admin, etc.)
+        else {
+            // Return success for non-patient and non-psychiatrist roles
             res.status(200).json({
                 message: 'Login successful',
                 user: {
@@ -71,6 +106,8 @@ const loginUser = (req, res) => {
         }
     });
 };
+
+
 
 // Function to handle patient registration
 const registerPatient = (req, res) => {
