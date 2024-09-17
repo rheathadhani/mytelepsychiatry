@@ -495,6 +495,52 @@ const getTotalMedicationReceived = (req, res) => {
     });
 };
 
+// Get Mindfulness Content
+const getMindfulnessContent = (req, res) => {
+    const query = `
+        SELECT * FROM WellnessContent 
+        WHERE content_category = 'mindfullness';
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching mindfulness content', error: err });
+        }
+        res.status(200).json(results);
+    });
+};
+
+// Get Exercise Content
+const getExerciseContent = (req, res) => {
+    const query = `
+        SELECT * FROM WellnessContent 
+        WHERE content_category = 'exercise';
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching exercise content', error: err });
+        }
+        res.status(200).json(results);
+    });
+};
+
+// Get Nutrition Content
+const getNutritionContent = (req, res) => {
+    const query = `
+        SELECT * FROM WellnessContent 
+        WHERE content_category = 'nutrition';
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching nutrition content', error: err });
+        }
+        res.status(200).json(results);
+    });
+};
+
+
 
 module.exports = {
     getPatientName,
@@ -515,5 +561,8 @@ module.exports = {
     deleteAccount,
     getPsychiatristsVisited,
     getConsultation,
-    getTotalMedicationReceived
+    getTotalMedicationReceived,
+    getMindfulnessContent,
+    getExerciseContent,
+    getNutritionContent
 };

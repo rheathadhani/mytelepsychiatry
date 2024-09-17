@@ -12,7 +12,10 @@ const {
     getPaymentDetails, 
     trackSymptoms, 
     getSymptomsHistory, 
-    upload 
+    upload,
+    getExerciseContent,
+    getMindfulnessContent,
+    getNutritionContent
 } = require('../controllers/patientindexController');
 
 const router = express.Router();
@@ -38,5 +41,14 @@ router.get('/patient/payment-details/:appointmentId', getPaymentDetails);
 // Symptom tracking routes with patientId in URL params
 router.post('/patient/:patientId/track-symptoms', trackSymptoms);
 router.get('/patient/:patientId/symptoms-history', getSymptomsHistory)
+
+// Route to get mindfulness content
+router.get('/wellness-content/mindfullness', getMindfulnessContent);
+
+// Route to get exercise content
+router.get('/wellness-content/exercise', getExerciseContent);
+
+// Route to get nutrition content
+router.get('/wellness-content/nutrition', getNutritionContent);
 
 module.exports = router;
