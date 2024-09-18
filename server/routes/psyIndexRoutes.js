@@ -5,9 +5,6 @@ const psyindexController = require('../controllers/psyindexController');
         // Route to get Psychiatrist's full name based on psychiatrist_id in params
         router.get('/psychiatrist/name/:psychiatrist_id', psyindexController.getPsychiatristName);
 
-        // Route to get the number of patients needing medication review
-        router.get('/psychiatrist/med-review/:psychiatrist_id', psyindexController.getNumberPatientMedReview);
-
         // Route to get upcoming sessions for the psychiatrist
         router.get('/psychiatrist/upcoming-sessions/:psychiatrist_id', psyindexController.getUpcomingSession);
 
@@ -16,9 +13,9 @@ const psyindexController = require('../controllers/psyindexController');
 
         // Route to get the total number of completed appointments
         router.get('/psychiatrist/total-appointments/:psychiatrist_id', psyindexController.getTotalAppointments);
-
-        // Route to get the total number of patients prescribed by the psychiatrist
-        router.get('/psychiatrist/total-patients-prescribed/:psychiatrist_id', psyindexController.getTotalPatientsPrescribed);
+////new
+        // Route to get a list of all patients who have logged in and booked appointments
+        router.get('/patients-for-prescription', psyindexController.getAllPatients);
 
         // Route to get the history of past appointments (completed and canceled)
         router.get('/psychiatrist/appointment-history/:psychiatrist_id', psyindexController.getHistoryOfAppointments);
@@ -38,6 +35,8 @@ const psyindexController = require('../controllers/psyindexController');
         // Route to delete a selected patient's appointments but keep clinical notes
         router.delete('/psychiatrist/delete-record/:psychiatrist_id/:patientId', psyindexController.deleteRecord);
 
+
+        //med pres
         // Route to get a list of patients for prescription purposes
         router.get('/psychiatrist/patients-for-prescription/:psychiatrist_id', psyindexController.getPatientsForPrescription);
 
