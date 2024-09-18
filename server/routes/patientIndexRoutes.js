@@ -1,4 +1,3 @@
-// routes/patientRoutes.js
 const express = require('express');
 const { 
     getPatientName, 
@@ -19,6 +18,10 @@ const {
     getExerciseContent,
     getMindfulnessContent,
     getNutritionContent,
+    getPersonalDetails,    // Newly added controller
+    patchPersonalDetails,  // Newly added controller
+    patchPassword,         // Newly added controller
+    deleteAccount          // Newly added controller
 } = require('../controllers/patientindexController');
 
 const router = express.Router();
@@ -32,6 +35,11 @@ router.get('/patient/:patientId/psychiatrists-visited', getPsychiatristsVisited)
 router.get('/patient/:patientId/consultations', getConsultation);
 router.get('/patient/:patientId/medications-received', getTotalMedicationReceived);
 
+// Routes for managing patient account
+router.get('/patient/:patientId/personal-details', getPersonalDetails);   // Get patient details
+router.patch('/patient/:patientId/personal-details', patchPersonalDetails);  // Update patient details
+router.patch('/patient/:patientId/password', patchPassword);    // Update password
+router.delete('/patient/:patientId/account', deleteAccount);    // Delete account
 
 // Psychiatrist-related routes
 router.post('/patient/available-psychiatrists', getAvailablePsychiatrists);
@@ -44,10 +52,9 @@ router.get('/patient/appointment-details/:appointmentId', getAppointmentDetails)
 router.post('/patient/payment', upload.single('paymentProof'), postPaymentDetails);
 router.get('/patient/payment-details/:appointmentId', getPaymentDetails);
 
-
 // Symptom tracking routes with patientId in URL params
 router.post('/patient/:patientId/track-symptoms', trackSymptoms);
-router.get('/patient/:patientId/symptoms-history', getSymptomsHistory)
+router.get('/patient/:patientId/symptoms-history', getSymptomsHistory);
 
 // Route to get mindfulness content
 router.get('/wellness-content/mindfullness', getMindfulnessContent);

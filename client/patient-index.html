@@ -14,7 +14,8 @@
     <!-- Sidebar -->
     <div class="bg-dark border-right" id="sidebar-wrapper">
       <div class="list-group list-group-flush">
-        <p class="bg-dark text-white mb-4 ml-4 mt-4"> <strong>Telepsychiatry <br> Platform <span> + </span></strong> </p>
+        <p class="bg-dark text-white mb-4 ml-4 mt-4"> <strong>Telepsychiatry <br> Platform <span> + </span></strong>
+        </p>
         <a href="patient-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
         <a href="patient-appointments.html"
           class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
@@ -40,7 +41,7 @@
               <div class="card-body">
                 <h1>Welcome back, [Patient Name]!</h1>
                 <br>
-                <p>You have <strong>[number]</strong> medications to take today.</p>
+                <br>
                 <button class="btn btn-dark"><a href="patient-profile.html" class="text-white text-decoration-none">View
                     Profile </a></button>
               </div>
@@ -50,9 +51,9 @@
             <div class="card mb-4">
               <div class="card-header bg-dark text-white"> Upcoming Session</div>
               <div class="card-body">
-                <p><strong>Psychiatrist:</strong> <span id="upcomingPsychiatrist">Psychiatrist 1</span></p>
-                <p><strong>Date & Time:</strong> <span id="upcomingDateTime">09/06/2024, 10:00 AM</span></p>
-                <p><strong>Location:</strong> Online Consultation</p>
+                <p><strong>Psychiatrist:</strong> <span id="upcomingPsychiatrist"></span></p>
+                <p><strong>Date & Time:</strong> <span id="upcomingDateTime"> </span></p>
+                <p><strong>Link:</strong></p>
               </div>
             </div>
           </div>
@@ -72,7 +73,7 @@
             <div class="card mb-4">
               <div class="card-body text-center">
                 <h6>Total Consultations</h6>
-                <h3><strong>34</strong></h3>
+                <h3 id="totalConsultations"><strong></strong></h3>
               </div>
             </div>
           </div>
@@ -80,7 +81,7 @@
             <div class="card mb-4">
               <div class="card-body text-center">
                 <h6>Total Medication Recieved</h6>
-                <h3> 12 </h3>
+                <h3 id="totalMedicationsReceived"> </h3>
               </div>
             </div>
           </div>
@@ -90,7 +91,7 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="card mb-4">
-              <div class="card-header bg-dark text-white"> List of Medications </div>
+              <div class="card-header bg-dark text-white">List of Medications</div>
               <div class="card-body">
                 <table class="table table-striped">
                   <thead>
@@ -98,22 +99,11 @@
                       <th>Medication Name</th>
                       <th>Dosage</th>
                       <th>Frequency</th>
-                      <th>Instructions</th>
+                      <th>Duration In Days</th>
+                      <th>Prescribed Date</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>Medication 1</td>
-                      <td>10mg</td>
-                      <td>2 times a day</td>
-                      <td>Take after meals</td>
-                    </tr>
-                    <tr>
-                      <td>Medication 2</td>
-                      <td>5mg</td>
-                      <td>1 time a day</td>
-                      <td>Take before bed</td>
-                    </tr>
+                  <tbody id="medicationsTableBody">
                   </tbody>
                 </table>
               </div>
@@ -136,19 +126,7 @@
                       <th>Status</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>09/02/2024</td>
-                      <td>10:00 AM</td>
-                      <td>Psychiatrist 1</td>
-                      <td>Completed</td>
-                    </tr>
-                    <tr>
-                      <td>08/28/2024</td>
-                      <td>03:00 PM</td>
-                      <td>Psychiatrist 2</td>
-                      <td>Cancelled</td>
-                    </tr>
+                  <tbody id="hoa">
                   </tbody>
                 </table>
               </div>
@@ -170,7 +148,7 @@
 
   <script>
 
-    document.addEventListener('DOMContentLoaded', function () {
+    $(document).ready(function () {
       // Retrieve patientId from localStorage
       const patientId = localStorage.getItem('patientId');
 
@@ -201,6 +179,57 @@
           console.error('Error fetching psychiatrists visited:', error);
         });
 
+      // Fetch total consultations using Axios
+      axios.get(`http://localhost:5500/api/patient/${patientId}/consultations`)
+        .then(response => {
+          if (response.data.totalConsultations !== undefined) {
+            // Update the DOM element for total consultations
+            document.getElementById('totalConsultations').textContent = response.data.totalConsultations;
+          } else {
+            console.error('No consultation data found.');
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching consultations:', error);
+        });
+
+      // Fetch past appointments using Axios
+      axios.get(`http://localhost:5500/api/patient/${patientId}/past-appointments`)
+        .then(response => {
+          const appointments = response.data;
+
+          // Reference to the table body where we want to add the rows
+          const tbody = document.querySelector('#hoa');
+
+          // Clear existing table rows (if any)
+          tbody.innerHTML = '';
+
+          // Loop through each appointment and create a new row
+          appointments.forEach(appointment => {
+            // Format the date and time from appointment_date
+            const appointmentDate = new Date(appointment.appointment_date);
+            const formattedDate = appointmentDate.toLocaleDateString();
+            const formattedTime = appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // Create a new row
+            const row = document.createElement('tr');
+
+            // Create cells for date, time, psychiatrist, and status
+            row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td>${formattedTime}</td>
+                    <td>${appointment.psychiatrist_name}</td>
+                    <td>${appointment.status}</td>
+                `;
+
+            // Append the row to the table body
+            tbody.appendChild(row);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching past appointments:', error);
+        });
+
       // Fetch upcoming sessions using Axios
       axios.get(`http://localhost:5500/api/patient/${patientId}/upcoming-sessions`)
         .then(function (response) {
@@ -219,6 +248,7 @@
             // Update the HTML with session details
             document.getElementById('upcomingPsychiatrist').innerText = psychiatristName;
             document.getElementById('upcomingDateTime').innerText = `${formattedDate}, ${formattedTime}`;
+
           } else {
             document.getElementById('upcomingPsychiatrist').innerText = 'No upcoming sessions';
             document.getElementById('upcomingDateTime').innerText = '';
@@ -227,6 +257,44 @@
         .catch(function (error) {
           console.error('Error fetching upcoming sessions:', error);
         });
+
+      // Fetch Medications for the Patient
+      axios.get(`http://localhost:5500/api/patient/${patientId}/medications`)
+        .then(function (response) {
+          const medications = response.data;
+          let medicationsRows = '';
+
+          // Loop through medications data and create table rows
+          medications.forEach(med => {
+            medicationsRows += `
+                    <tr>
+                        <td>${med.medicine_name}</td>
+                        <td>${med.dosage}</td>
+                        <td>${med.frequency_per_day}</td>
+                        <td>${med.duration_in_days}</td>
+                        <td>${new Date(med.prescribed_date).toLocaleDateString()}</td>
+                    </tr>`;
+          });
+
+          // Append the rows to the table body
+          $('#medicationsTableBody').html(medicationsRows);
+        })
+        .catch(function (error) {
+          console.error('Error fetching medications:', error);
+        });
+
+      // Fetch the total number of medications received
+      axios.get(`http://localhost:5500/api/patient/${patientId}/medications-received`)
+        .then(function (response) {
+          const totalMedicationsReceived = response.data.totalMedicationsReceived;
+
+          // Update the total medications received value in the HTML
+          $('#totalMedicationsReceived').text(totalMedicationsReceived);
+        })
+        .catch(function (error) {
+          console.error('Error fetching total medications received:', error);
+        });
+
     });
   </script>
 </body>

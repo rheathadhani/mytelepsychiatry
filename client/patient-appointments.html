@@ -14,11 +14,16 @@
         <!-- Sidebar -->
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-                <p class="bg-dark text-white mb-4 ml-4 mt-4"> <strong>Telepsychiatry <br> Platform <span> + </span></strong> </p>
-                <a href="patient-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-                <a href="patient-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
-                <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom Tracker</a>
-                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
+                <p class="bg-dark text-white mb-4 ml-4 mt-4"> <strong>Telepsychiatry <br> Platform <span> +
+                        </span></strong> </p>
+                <a href="patient-index.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
+                <a href="patient-appointments.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
+                <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom
+                    Tracker</a>
+                <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness
+                    Content</a>
                 <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
         </div>
@@ -67,9 +72,7 @@
                                     <label for="psychiatrist">Select Psychiatrist:</label>
                                     <select id="psychiatrist" class="form-control" required>
                                         <option value="" disabled selected>Select Psychiatrist</option>
-                                        <option value="Psychiatrist 1">Psychiatrist 1</option>
-                                        <option value="Psychiatrist 2">Psychiatrist 2</option>
-                                        <option value="Psychiatrist 3">Psychiatrist 3</option>
+
                                     </select>
                                 </div>
                             </div>
@@ -81,7 +84,7 @@
                 <div class="card mb-3" id="psychiatrist-profile" style="display: none;">
                     <div class="card-header bg-dark text-white">Psychiatrist Profile</div>
                     <div class="card-body text-center">
-                        <img id="psy-Image" src="#" alt="Psychiatrist Image" style="width: 100px; height: 100px;">
+
                         <h5 id="psy-Name">Psychiatrist Name</h5>
                         <p>Payment: RM<span id="psy-Payment">50</span></p>
                         <p>Specialization: <span id="psy-Degree"></span></p>
@@ -89,42 +92,126 @@
                 </div>
 
                 <!-- Proceed to Payment Button -->
-                <button type="button" class="btn btn-dark float-right" id="proceedPayment">Proceed to Payment Page</button>
+                <button type="button" class="btn btn-dark float-right" id="proceedPayment">Proceed to Payment
+                    Page</button>
             </div>
         </div>
     </div>
     <!-- /#wrapper -->
-
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Handle Psychiatrist Selection and Profile Display
-        document.getElementById('psychiatrist').addEventListener('change', function () {
-            document.getElementById('psychiatrist-profile').style.display = 'block';
-            const selectedPsychiatrist = this.value;
-            document.getElementById('psy-Name').textContent = selectedPsychiatrist;
+        $(document).ready(function () {
+            const patientId = localStorage.getItem('patientId');
+            if (patientId) {
+                console.log('Logged in patient ID:', patientId);
+            } else {
+                console.error('No patient ID found in localStorage');
+            }
+
+            // When the user selects a date and time
+            $('#date').on('change', function () {
+                const selectedDateTime = $(this).val();
+
+                // Make sure the selected date and time is valid
+                if (!selectedDateTime) {
+                    console.error('Please select a valid date and time');
+                    return;
+                }
+
+                axios.post('http://localhost:5500/api/patient/available-psychiatrists', {
+                    selectedDateTime: selectedDateTime
+                })
+                    .then(function (response) {
+                        // Clear the current options in the select dropdown
+                        $('#psychiatrist').empty();
+
+                        // Add the "Select Psychiatrist" default option
+                        $('#psychiatrist').append('<option value="" disabled selected>Select Psychiatrist</option>');
+
+                        // Populate the dropdown with the available psychiatrists
+                        response.data.forEach(function (psychiatrist) {
+                            const option = `<option value="${psychiatrist.psychiatrist_id}" data-name="${psychiatrist.psychiatrist_name}">${psychiatrist.psychiatrist_name}</option>`;
+                            $('#psychiatrist').append(option);
+                        });
+                    })
+                    .catch(function (error) {
+                        console.error('Error fetching available psychiatrists:', error);
+                        alert('No psychiatrists available at the selected time.');
+                    });
+            });
+        });
+
+        // When a psychiatrist is selected from the dropdown
+        $('#psychiatrist').on('change', function () {
+            const selectedPsychiatristId = $(this).val();
+            const selectedPsychiatristName = $('#psychiatrist option:selected').data('name');
+
+            if (!selectedPsychiatristId) {
+                console.error('Please select a psychiatrist.');
+                return;
+            }
+
+            // Axios call to get the selected psychiatrist's profile
+            axios.get(`http://localhost:5500/api/patient/psychiatrist-profile/${selectedPsychiatristId}`)
+                .then(function (response) {
+                    const psychiatristProfile = response.data;
+
+                    // Populate the psychiatrist profile section
+                    $('#psychiatrist-profile').show(); // Show the hidden profile section
+                    $('#psy-Name').text(psychiatristProfile.psychiatrist_name);
+                    $('#psy-Degree').text(psychiatristProfile.specialization);
+
+                    // Save the psychiatrist name to localStorage
+                    localStorage.setItem('selectedPsychiatristName', psychiatristProfile.psychiatrist_name);
+                })
+                .catch(function (error) {
+                    console.error('Error fetching psychiatrist profile:', error);
+                    alert('Unable to fetch psychiatrist profile.');
+                });
         });
 
         // Proceed to Payment Page
-        document.getElementById('proceedPayment').addEventListener('click', function () {
-            const selectedDateTime = document.getElementById('date').value;
-            const selectedPsychiatrist = document.getElementById('psychiatrist').value;
+        $('#proceedPayment').on('click', function () {
+            const selectedDateTime = $('#date').val();
+            const selectedPsychiatristId = $('#psychiatrist').val();
+            const selectedPsychiatristName = $('#psychiatrist option:selected').data('name'); // Retrieve the selected psychiatrist's name
 
             // Validate that both fields are filled
-            if (!selectedDateTime || !selectedPsychiatrist) {
+            if (!selectedDateTime || !selectedPsychiatristId) {
                 alert('Please select both a date and time and a psychiatrist before proceeding.');
                 return;
             }
 
             // Save appointment details to localStorage
             localStorage.setItem('appointmentDateTime', selectedDateTime);
-            localStorage.setItem('selectedPsychiatrist', selectedPsychiatrist);
-            localStorage.setItem('paymentAmount', '50'); // Fixed amount for now
+            localStorage.setItem('selectedPsychiatrist', selectedPsychiatristId); // Save the ID
+            localStorage.setItem('selectedPsychiatristName', selectedPsychiatristName); // Save the name 
+            window.location.href = 'patient-payment.html'; // Redirect to payment page
+        });
+
+        $('#proceedPayment').on('click', function () {
+            const selectedDateTime = $('#date').val();
+            const selectedPsychiatristId = $('#psychiatrist').val();
+            const selectedPsychiatristName = $('#psychiatrist option:selected').data('name'); // Retrieve the psychiatrist's name
+
+            // Validate that both fields are filled
+            if (!selectedDateTime || !selectedPsychiatristId) {
+                alert('Please select both a date and time and a psychiatrist before proceeding.');
+                return;
+            }
+
+            // Save appointment details to localStorage
+            localStorage.setItem('appointmentDateTime', selectedDateTime);
+            localStorage.setItem('selectedPsychiatristId', selectedPsychiatristId);
+            localStorage.setItem('selectedPsychiatristName', selectedPsychiatristName); // Store the name in localStorage
 
             window.location.href = 'patient-payment.html'; // Redirect to payment page
         });
+
     </script>
 </body>
 

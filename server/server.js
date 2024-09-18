@@ -13,12 +13,11 @@ require('dotenv').config();
 
 const app = express();
 
-// Frontend running on (127.0.0.1:5500)
 app.use(cors({
-    origin: ['http://127.0.0.1:5500', 'http://127.0.0.1:5501'],  // Use the exact origin
+    origin: ['http://127.0.0.1:5500', 'http://127.0.0.1:5501'],  //Cross Origin Request w/ Frontend URL
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    credentials: true,  // Important for sending cookies with requests
-    allowedHeaders: ['Content-Type', 'Authorization']  // Allow the necessary headers
+    credentials: true,  
+    allowedHeaders: ['Content-Type', 'Authorization'] 
 }));
 
 
@@ -45,6 +44,7 @@ app.use('/api', psyRoutes);
 
 
 const PORT = process.env.PORT || 5500;
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

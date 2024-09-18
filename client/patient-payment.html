@@ -24,9 +24,9 @@
         <div class="card mb-3">
             <div class="card-header bg-dark text-white">Appointment Details</div>
             <div class="card-body">
-                <p><strong>Patient Name:</strong> John Doe</p>
                 <p><strong>Psychiatrist Name:</strong> <span id="selectedPsychiatrist">Psychiatrist 1</span></p>
-                <p><strong>Appointment Date & Time:</strong> <span id="appointmentDateTime">09/06/2024, 10:00 AM</span></p>
+                <p><strong>Appointment Date & Time:</strong> <span id="appointmentDateTime">09/06/2024, 10:00 AM</span>
+                </p>
                 <p><strong>Payment Amount:</strong> <span id="paymentAmount">RM50</span></p>
             </div>
         </div>
@@ -37,15 +37,20 @@
             <div class="card-body">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#bankTransfer" id="bankTransferTab">Bank Transfer</a>
+                        <a class="nav-link active" data-toggle="tab" href="#bankTransfer" id="bankTransferTab">Bank
+                            Transfer</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link inactive-tab" data-toggle="tab" href="#qrPayment" id="qrPaymentTab">QR Payment</a>
+                        <a class="nav-link inactive-tab" data-toggle="tab" href="#qrPayment" id="qrPaymentTab">QR
+                            Payment</a>
                     </li>
                 </ul>
                 <div class="tab-content">
                     <!-- Bank Transfer Option -->
                     <div id="bankTransfer" class="container tab-pane active">
+                        <label>
+                            <input type="radio" name="paymentMethod" value="bank_transfer" checked> Bank Transfer
+                        </label>
                         <p>Transfer the payment to the account number below and attach payment proof:</p>
                         <p><strong>Bank Account:</strong> 1231 7362 0909, Maybank</p>
                         <p><strong>Account Name:</strong> MYTelepsychiatry Sdn. Bhd.</p>
@@ -53,10 +58,15 @@
                             <label for="paymentProof">Attach Payment Proof:</label>
                             <input type="file" class="form-control" id="paymentProof" required>
                         </div>
+                        <!-- Radio button for selecting Bank Transfer -->
+
                     </div>
 
                     <!-- QR Payment Option -->
                     <div id="qrPayment" class="container tab-pane fade">
+                        <label>
+                            <input type="radio" name="paymentMethod" value="qr_payment"> QR Payment
+                        </label>
                         <p>Scan the QR code to make payment and attach payment proof:</p>
                         <img src="../assets/QR Pic.png" alt="QR Code" style="width:150px;" />
                         <div class="form-group">
@@ -68,10 +78,11 @@
             </div>
         </div>
 
+
         <!-- Confirm Payment Button -->
         <button type="button" class="btn btn-dark float-right" id="confirmPayment">Confirm Payment</button>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -80,20 +91,90 @@
         // Retrieve appointment details from localStorage
         $(document).ready(function () {
             const appointmentDateTime = localStorage.getItem('appointmentDateTime');
-            const selectedPsychiatrist = localStorage.getItem('selectedPsychiatrist');
-            const paymentAmount = localStorage.getItem('paymentAmount');
-    
+            const selectedPsychiatristName = localStorage.getItem('selectedPsychiatristName'); // Fetching the name
+            const paymentAmount = localStorage.getItem('paymentAmount') || 50; // Default RM50 if not set
+
             // Reformat the date and time to a more readable format
             const date = new Date(appointmentDateTime);
             const formattedDate = date.toLocaleDateString();
             const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
+
             // Update the appointment details on the page
             $('#appointmentDateTime').text(`${formattedDate}, ${formattedTime}`);
-            $('#selectedPsychiatrist').text(selectedPsychiatrist);
+            $('#selectedPsychiatrist').text(selectedPsychiatristName); // Display the name
             $('#paymentAmount').text(`RM${paymentAmount}`);
+
+            let bankProofUploaded = false;
+            let qrProofUploaded = false;
+
+            // Track when a payment proof is uploaded in bank transfer
+            $('#paymentProof').on('change', function () {
+                if ($(this).val()) {
+                    bankProofUploaded = true;
+                    qrProofUploaded = false;
+                    $('#paymentProofQR').prop('disabled', true); // Disable QR Payment field
+                    //alert('You have uploaded bank transfer proof. You cannot upload QR payment proof now.');
+                } else {
+                    bankProofUploaded = false;
+                    $('#paymentProofQR').prop('disabled', false); // Enable QR Payment field if removed
+                }
+            });
+
+            // Track when a payment proof is uploaded in QR payment
+            $('#paymentProofQR').on('change', function () {
+                if ($(this).val()) {
+                    qrProofUploaded = true;
+                    bankProofUploaded = false;
+                    $('#paymentProof').prop('disabled', true); // Disable Bank Transfer field
+                    //alert('You have uploaded QR payment proof. You cannot upload bank transfer proof now.');
+                } else {
+                    qrProofUploaded = false;
+                    $('#paymentProof').prop('disabled', false); // Enable Bank Transfer field if removed
+                }
+            });
+            $('#confirmPayment').on('click', function () {
+                const paymentMethod = $('input[name="paymentMethod"]:checked').val(); // Get the selected payment method
+                const paymentProof = $('#paymentProof').prop('files')[0] || $('#paymentProofQR').prop('files')[0]; // Get the uploaded file
+                const appointmentDateTime = localStorage.getItem('appointmentDateTime'); // From localStorage
+                const psychiatristId = localStorage.getItem('selectedPsychiatrist'); // From localStorage
+                const patientId = localStorage.getItem('patientId'); // From localStorage
+
+                // Ensure payment proof is uploaded before confirming payment
+                if (!paymentProof || !paymentMethod) {
+                    alert('Please select a payment method and attach the payment proof before confirming.');
+                    return;
+                }
+
+                // Create a FormData object to handle file uploads
+                const formData = new FormData();
+                formData.append('appointmentDateTime', appointmentDateTime);
+                formData.append('psychiatristId', psychiatristId);
+                formData.append('paymentMethod', paymentMethod); // Attach payment method
+                formData.append('paymentProof', paymentProof); // Attach the file
+                formData.append('patientId', patientId); // Assuming patient ID is available in localStorage
+
+                console.log(paymentMethod);
+                // Axios request to submit the payment details and proof
+                axios.post('http://localhost:5500/api/patient/payment', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                    .then(function (response) {
+                        alert(response.data.message); // Show success message
+                        //window.location.href = 'patient-index.html'; // Redirect after successful payment
+                    })
+                    .catch(function (error) {
+                        console.error('Error saving payment details:', error);
+                        alert('Error saving payment details.');
+                    });
+                window.location.href = 'patient-index.html'
+            });
+
+
+
         });
-    
+
         // Change tab styles when switching between payment methods
         $('#bankTransferTab').on('click', function () {
             $(this).addClass('active').removeClass('inactive-tab');
@@ -102,7 +183,7 @@
             $('#bankTransfer').addClass('active show');
             $('#qrPayment').removeClass('active show');
         });
-    
+
         $('#qrPaymentTab').on('click', function () {
             $(this).addClass('active').removeClass('inactive-tab');
             $('#bankTransferTab').addClass('inactive-tab').removeClass('active');
@@ -110,18 +191,9 @@
             $('#qrPayment').addClass('active show');
             $('#bankTransfer').removeClass('active show');
         });
-    
-        // Ensure payment proof is uploaded before confirming payment
-        $('#confirmPayment').on('click', function () {
-            const paymentProof = $('#paymentProof').val() || $('#paymentProofQR').val();
-    
-            if (!paymentProof) {
-                alert('Please attach the payment proof before confirming.');
-            } else {
-                window.location.href = 'patient-index.html'; // Redirect to the dashboard after payment confirmation
-            }
-        });
-    </script>    
+
+
+    </script>
 </body>
 
 </html>

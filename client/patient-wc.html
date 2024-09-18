@@ -62,14 +62,15 @@
 
                 <!-- Mindfulness Category -->
                 <h2 class="text-dark mt-4">Mindfulness</h2>
+
                 <section class="mb-5" id="mindfulnessContent">
                     <div class="row">
                     </div>
                 </section>
 
-                <!-- Exercise Category -->
                 <h2 class="text-dark mt-4">Exercise</h2>
                 <section class="mb-5" id="exerciseContent">
+                    <!-- Exercise Category -->
                     <div class="row">
                     </div>
                 </section>
@@ -93,80 +94,83 @@
 
     <script>
         $(document).ready(function () {
-    // Fetch Mindfulness Content
-    axios.get('http://localhost:5500/api/wellness-content/mindfullness')
-        .then(function (response) {
-            const content = response.data;
-            let mindfulnessCards = '';
-            content.forEach(item => {
-                mindfulnessCards += `
-                <div class="col-md-3 mb-4">
-                    <div class="card h-100">
-                        <img src="${item.image_link}" class="card-img-top" alt="Mindfulness Image">
-                        <div class="card-body">
-                            <p class="card-text">${item.description}</p>
-                            <a href="${item.video_link}" class="btn btn-dark w-100">Video Link</a>
-                        </div>
+            // Fetch Mindfulness Content
+            axios.get('http://localhost:5500/api/wellness-content/mindfullness')
+                .then(function (response) {
+                    const content = response.data;
+                    let mindfulnessCards = '';
+                    content.forEach(item => {
+                        mindfulnessCards += `
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    <img src="${item.image_link}" class="card-img-top" alt="Mindfulness Image">
+                    <div class="card-body">
+                        <p class="card-text">${item.description}</p>
+                        <a href="${item.video_link}" class="btn btn-dark w-100">Video Link</a>
                     </div>
-                </div>`;
-            });
-            $('#mindfulnessContent').html(mindfulnessCards);
-        })
-        .catch(function (error) {
-            console.error('Error fetching mindfulness content:', error);
+                </div>
+            </div>`;
+                    });
+                    $('#mindfulnessContent .row').html(mindfulnessCards);
+
+                    // After loading mindfulness content, ensure the Exercise section stays in place
+                    //$('#exerciseContent').prepend('<h2 class="text-dark mt-4">Exercise</h2>');
+                })
+                .catch(function (error) {
+                    console.error('Error fetching mindfulness content:', error);
+                });
+
+            // Fetch Exercise Content
+            axios.get('http://localhost:5500/api/wellness-content/exercise')
+                .then(function (response) {
+                    const content = response.data;
+                    let exerciseCards = '';
+                    content.forEach(item => {
+                        exerciseCards += `
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    <img src="${item.image_link}" class="card-img-top" alt="Exercise Image">
+                    <div class="card-body">
+                        <p class="card-text">${item.description}</p>
+                        <a href="${item.video_link}" class="btn btn-dark w-100">Video Link</a>
+                    </div>
+                </div>
+            </div>`;
+                    });
+                    $('#exerciseContent .row').html(exerciseCards);
+                })
+                .catch(function (error) {
+                    console.error('Error fetching exercise content:', error);
+                });
+
+            // Fetch Nutrition Content
+            axios.get('http://localhost:5500/api/wellness-content/nutrition')
+                .then(function (response) {
+                    const content = response.data;
+                    let nutritionCards = '';
+                    content.forEach(item => {
+                        nutritionCards += `
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    <img src="${item.image_link}" class="card-img-top" alt="Nutrition Image">
+                    <div class="card-body">
+                        <p class="card-text">${item.description}</p>
+                        <a href="${item.video_link}" class="btn btn-dark w-100">Video Link</a>
+                    </div>
+                </div>
+            </div>`;
+                    });
+                    $('#nutritionContent .row').html(nutritionCards);
+                })
+                .catch(function (error) {
+                    console.error('Error fetching nutrition content:', error);
+                });
         });
 
-    // Fetch Exercise Content
-    axios.get('http://localhost:5500/api/wellness-content/exercise')
-        .then(function (response) {
-            const content = response.data;
-            let exerciseCards = '';
-            content.forEach(item => {
-                exerciseCards += `
-                <div class="col-md-3 mb-4">
-                    <div class="card h-100">
-                        <img src="${item.image_link}" class="card-img-top" alt="Exercise Image">
-                        <div class="card-body">
-                            <p class="card-text">${item.description}</p>
-                            <a href="${item.video_link}" class="btn btn-dark w-100">Video Link</a>
-                        </div>
-                    </div>
-                </div>`;
-            });
-            $('#exerciseContent').html(exerciseCards);
-        })
-        .catch(function (error) {
-            console.error('Error fetching exercise content:', error);
-        });
-
-    // Fetch Nutrition Content
-    axios.get('http://localhost:5500/api/wellness-content/nutrition')
-        .then(function (response) {
-            const content = response.data;
-            let nutritionCards = '';
-            content.forEach(item => {
-                nutritionCards += `
-                <div class="col-md-3 mb-4">
-                    <div class="card h-100">
-                        <img src="${item.image_link}" class="card-img-top" alt="Nutrition Image">
-                        <div class="card-body">
-                            <p class="card-text">${item.description}</p>
-                            <a href="${item.video_link}" class="btn btn-dark w-100">Video Link</a>
-                        </div>
-                    </div>
-                </div>`;
-            });
-            $('#nutritionContent').html(nutritionCards);
-        })
-        .catch(function (error) {
-            console.error('Error fetching nutrition content:', error);
-        });
-});
 
 
-    
     </script>
-    
+
 
 </body>
 

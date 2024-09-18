@@ -112,7 +112,7 @@ const getPastAppointments = (req, res) => {
 
 
 //Appoinments Page
-// Get available psychiatrists based on selected date and time
+
 const getAvailablePsychiatrists = (req, res) => {
     const { selectedDateTime } = req.body;  // The selected date and time sent from the frontend
 
@@ -124,8 +124,7 @@ const getAvailablePsychiatrists = (req, res) => {
         SELECT 
             p.psychiatrist_id,
             p.full_name AS psychiatrist_name,
-            p.specialization,
-            p.image_url AS psychiatrist_image
+            p.specialization
         FROM 
             Psychiatrists p
         WHERE 
@@ -134,12 +133,10 @@ const getAvailablePsychiatrists = (req, res) => {
                 FROM Appointments a 
                 WHERE 
                     (a.appointment_date >= ? AND a.appointment_date < ?)  -- Checks overlap of time slot
-                    OR 
-                    (a.appointment_date < ? AND a.appointment_end_time > ?)
             );
     `;
 
-    db.query(query, [selectedDateTime, selectedEndTime, selectedDateTime, selectedEndTime], (err, results) => {
+    db.query(query, [selectedDateTime, selectedEndTime], (err, results) => {
         if (err) {
             console.error('Error fetching available psychiatrists:', err);
             return res.status(500).send('Server error');
@@ -153,16 +150,14 @@ const getAvailablePsychiatrists = (req, res) => {
     });
 };
 
-// Get the profile of a selected psychiatrist
+
 const getPsychiatristProfile = (req, res) => {
     const psychiatristId = req.params.psychiatristId;  // The selected psychiatrist's ID
 
     const query = `
         SELECT 
             full_name AS psychiatrist_name,
-            specialization,
-            image_url AS psychiatrist_image,
-            'RM50' AS payment -- Static payment value
+            specialization
         FROM 
             Psychiatrists
         WHERE 
@@ -183,10 +178,11 @@ const getPsychiatristProfile = (req, res) => {
     });
 };
 
+
 // Set up multer for file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'server/uploads/'); // Directory to store uploaded files
+        cb(null, 'uploads/'); // Directory to store uploaded files
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + "payment " + path.extname(file.originalname)); // Appending file extension
@@ -232,24 +228,43 @@ const getAppointmentDetails = (req, res) => {
 
 // Post Payment Details and Save Payment Proof
 const postPaymentDetails = (req, res) => {
-    const { patientId, appointmentId, paymentMethod } = req.body; // Get patientId, appointmentId, and paymentMethod from the request
-    const paymentProof = req.file ? req.file.filename : null; // Check if the file exists
+    const { patientId, appointmentDateTime, psychiatristId, paymentMethod } = req.body; // Getting all the relevant data
+    const paymentProof = req.file ? req.file.filename : null; // Get the payment proof if uploaded
 
-    // Insert the payment record into the Payments table
-    const query = `
-        INSERT INTO Payments (patient_id, appointment_id, payment_method, payment_proof)
-        VALUES (?, ?, ?, ?);
+    console.log(req.body.paymentMethod);
+    // Step 1: Insert the appointment record into the Appointments table
+    const meetingLink = "www.meet.google.com/mytelepsychiatry-2024"; // Static meeting link
+    const insertAppointmentQuery = `
+        INSERT INTO Appointments (patient_id, psychiatrist_id, appointment_date, meeting_link, status)
+        VALUES (?, ?, ?, ?, 'scheduled');
     `;
 
-    db.query(query, [patientId, appointmentId, paymentMethod, paymentProof], (err, result) => {
+    db.query(insertAppointmentQuery, [patientId, psychiatristId, appointmentDateTime, meetingLink], (err, appointmentResult) => {
         if (err) {
-            console.error('Error saving payment details:', err);
-            return res.status(500).send('Server error');
+            console.error('Error saving appointment details:', err);
+            return res.status(500).send('Server error while saving appointment details.');
         }
 
-        res.status(201).json({ message: 'Payment details saved successfully.' });
+        const appointmentId = appointmentResult.insertId; // Get the appointment ID after insertion
+
+        // Step 2: Insert the payment record into the Payments table
+        const insertPaymentQuery = `
+            INSERT INTO Payments (patient_id, appointment_id, payment_method, payment_proof)
+            VALUES (?, ?, ?, ?);
+        `;
+
+        db.query(insertPaymentQuery, [patientId, appointmentId, paymentMethod, paymentProof], (err, paymentResult) => {
+            if (err) {
+                console.error('Error saving payment details:', err);
+                return res.status(500).send('Server error while saving payment details.');
+            }
+
+            res.status(201).json({ message: 'Appointment and payment details saved successfully.' });
+        });
     });
 };
+
+
 
 // Get Payment Details for Review (Before submitting payment)
 const getPaymentDetails = (req, res) => {
@@ -335,7 +350,7 @@ const getPersonalDetails = (req, res) => {
                p.emergency_contact_name, p.emergency_contact_no 
         FROM Patients p
         JOIN Users u ON p.user_id = u.user_id
-        WHERE p.user_id = ?;
+        WHERE p.patient_id = ?;
     `;
 
     db.query(query, [patientId], (err, results) => {
@@ -343,6 +358,7 @@ const getPersonalDetails = (req, res) => {
             return res.status(500).json({ message: 'Error fetching patient details', error: err });
         }
 
+        //console.log(results);
         if (results.length === 0) {
             return res.status(404).json({ message: 'Patient not found' });
         }
@@ -351,61 +367,98 @@ const getPersonalDetails = (req, res) => {
     });
 };
 
-
-
-// Patch patient personal details
 const patchPersonalDetails = (req, res) => {
-    const patientId = req.params.patientId; // Assuming userId is stored in session
+    const patientId = req.params.patientId; // Get the patient_id from the request parameters
     const { fullName, email, dateOfBirth, address, gender, emergencyContactName, emergencyPhoneNumber } = req.body;
 
-    const queryUsers = `
-        UPDATE Users 
-        SET email = ? 
-        WHERE user_id = ?;
+    // First, retrieve the user_id associated with this patient_id
+    const getUserQuery = `
+        SELECT user_id 
+        FROM Patients 
+        WHERE patient_id = ?;
     `;
 
-    const queryPatients = `
-        UPDATE Patients 
-        SET full_name = ?, date_of_birth = ?, address = ?, gender = ?, 
-            emergency_contact_name = ?, emergency_contact_no = ? 
-        WHERE user_id = ?;
-    `;
-
-    db.query(queryUsers, [email, patientId], (err) => {
+    db.query(getUserQuery, [patientId], (err, results) => {
         if (err) {
-            return res.status(500).json({ message: 'Error updating user details', error: err });
+            return res.status(500).json({ message: 'Error fetching user_id', error: err });
         }
 
-        db.query(queryPatients, [fullName, dateOfBirth, address, gender, emergencyContactName, emergencyPhoneNumber, patientId], (err) => {
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+
+        const userId = results[0].user_id;
+
+        // Now update the Users table with the correct user_id
+        const queryUsers = `
+            UPDATE Users 
+            SET email = ? 
+            WHERE user_id = ?;
+        `;
+
+        db.query(queryUsers, [email, userId], (err) => {
             if (err) {
-                return res.status(500).json({ message: 'Error updating patient details', error: err });
+                return res.status(500).json({ message: 'Error updating user details', error: err });
             }
 
-            res.status(200).json({ message: 'Patient details updated successfully' });
+            // Then update the Patients table with the patient-specific details
+            const queryPatients = `
+                UPDATE Patients 
+                SET full_name = ?, date_of_birth = ?, address = ?, gender = ?, 
+                    emergency_contact_name = ?, emergency_contact_no = ? 
+                WHERE patient_id = ?;
+            `;
+
+            db.query(queryPatients, [fullName, dateOfBirth, address, gender, emergencyContactName, emergencyPhoneNumber, patientId], (err) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Error updating patient details', error: err });
+                }
+
+                res.status(200).json({ message: 'Patient details updated successfully' });
+            });
         });
     });
 };
 
-
-// Update patient password
 const patchPassword = (req, res) => {
-    const patientId = req.params.patientId; // Assuming userId is stored in session
-    const { newPassword } = req.body;
+    const patientId = req.params.patientId; // Getting the patient ID from the params
+    const { newPassword } = req.body; // Assuming newPassword is passed in the request body
 
-    const query = `
-        UPDATE Users 
-        SET password = ? 
-        WHERE user_id = ?;
+    // First, retrieve the user_id associated with the patientId
+    const getUserQuery = `
+        SELECT user_id 
+        FROM Patients 
+        WHERE patient_id = ?;
     `;
 
-    db.query(query, [newPassword, patientId], (err) => {
+    db.query(getUserQuery, [patientId], (err, results) => {
         if (err) {
-            return res.status(500).json({ message: 'Error updating password', error: err });
+            return res.status(500).json({ message: 'Error fetching user ID', error: err });
         }
 
-        res.status(200).json({ message: 'Password updated successfully' });
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+
+        const userId = results[0].user_id;
+
+        // Now, update the password in the Users table using the retrieved user_id
+        const query = `
+            UPDATE Users 
+            SET password = ? 
+            WHERE user_id = ?;
+        `;
+
+        db.query(query, [newPassword, userId], (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error updating password', error: err });
+            }
+
+            res.status(200).json({ message: 'Password updated successfully' });
+        });
     });
 };
+
 
 // Delete patient account
 const deleteAccount = (req, res) => {
