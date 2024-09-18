@@ -26,56 +26,6 @@ const getPsychiatristName = (req, res) => {
     });
 };
 
-// Get the number of patients needing medication review
-const getNumberPatientMedReview = (req, res) => {
-
-    const psychiatristId = req.params.psychiatrist_id; 
-
-    // Query to get all completed appointments for the psychiatrist within the last 24 hours
-    const completedAppointmentsQuery = `
-        SELECT appointment_id, patient_id
-        FROM Appointments
-        WHERE psychiatrist_id = ?
-        AND status = 'completed'
-        AND appointment_date >= NOW() - INTERVAL 1 DAY;
-    `;
-
-    db.query(completedAppointmentsQuery, [psychiatristId], (err, appointments) => {
-        if (err) {
-            console.error('Error querying appointments:', err);
-            return res.status(500).send('Server error');
-        }
-
-        if (appointments.length === 0) {
-            return res.status(200).json({ message: 'No appointments to review.', reviewCount: 0 });
-        }
-
-        const appointmentIds = appointments.map(app => app.appointment_id);
-
-        // Query to check if these completed appointments have any prescriptions
-        const prescriptionCheckQuery = `
-            SELECT appointment_id
-            FROM Prescriptions
-            WHERE appointment_id IN (?);
-        `;
-
-        db.query(prescriptionCheckQuery, [appointmentIds], (err, prescriptions) => {
-            if (err) {
-                console.error('Error querying prescriptions:', err);
-                return res.status(500).send('Server error');
-            }
-
-            // Find appointments without prescriptions
-            const prescribedAppointmentIds = prescriptions.map(pres => pres.appointment_id);
-            const reviewNeededAppointments = appointments.filter(app => !prescribedAppointmentIds.includes(app.appointment_id));
-
-            // Return the count of patients needing a medication review
-            res.status(200).json({ message: 'Medication review count', reviewCount: reviewNeededAppointments.length });
-        });
-    });
-};
-
-
 // Get upcoming sessions for the logged-in psychiatrist
 const getUpcomingSession = (req, res) => {
     
@@ -113,7 +63,6 @@ const getUpcomingSession = (req, res) => {
         });
     });
 };
-
 
 
 // Get the total number of distinct patients with at least one completed appointment
@@ -465,22 +414,20 @@ const deleteRecord = (req, res) => {
     });
 };
 
+//Start Prescribed Patient Medication
+const getAllPatients = (req, res) => {
 
-const getPatientsForPrescription = (req, res) => {
-
-    const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
-    console.log(`Psychiatrist ID: ${psychiatristId}`); // Log the psychiatrist ID
-    
-    // Query to get the patients who have booked at least one session
+    // Query to get all patients who have booked appointments (no need for psychiatrist filter)
     const getPatientsQuery = `
         SELECT DISTINCT p.patient_id, p.full_name 
-        FROM Appointments a
-        INNER JOIN Patients p ON a.patient_id = p.patient_id
-        WHERE a.psychiatrist_id = ? 
-        AND a.status IN ('completed');
+        FROM Patients p
+        INNER JOIN Appointments a ON p.patient_id = a.patient_id
+        INNER JOIN Users u ON p.user_id = u.user_id
+        WHERE u.role = 'patient'
+        AND a.status IN ('scheduled', 'completed', 'ongoing');
     `;
 
-    db.query(getPatientsQuery, [psychiatristId], (err, results) => {
+    db.query(getPatientsQuery, (err, results) => {
         if (err) {
             console.error('Error querying patients:', err);
             return res.status(500).send('Server error');
@@ -576,6 +523,10 @@ const getPrescriptionHistory = (req, res) => {
         });
     });
 };
+//end 
+
+
+
 
 // Get the list of patients who have booked at least one session with the psychiatrist
 const getPatientList = (req, res) => {
@@ -866,7 +817,6 @@ const deleteAccount = (req, res) => {
 
 module.exports = {
     getPsychiatristName,
-    getNumberPatientMedReview,
     getUpcomingSession,
     getTotalPatients,
     getTotalAppointments,
@@ -877,7 +827,7 @@ module.exports = {
     postNewClinicalNotes,
     deleteSelectedNotes,
     deleteRecord,
-    getPatientsForPrescription,
+    getAllPatients,
     postPrescription,
     getPrescriptionHistory,
     getPatientList,

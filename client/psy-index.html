@@ -38,9 +38,9 @@
             <div class="card mb-4" id="greeting-body">
               <div class='card-header bg-dark'></div>
               <div class="card-body">
-                <h1>Welcome back, [Psychiatrist Name]!</h1>
+                <h1>Welcome back, <span id="psychiatristName"></span>!</h1>
                 <br>
-                <p>You have <strong>[number]</strong> patient prescriptions to review today.</p>
+                <br>
                 <button class="btn btn-dark"><a href="psy-profile.html" class="text-white text-decoration-none">View
                     Profile </a></button>
               </div>
@@ -50,7 +50,9 @@
             <div class="card mb-4">
               <div class="card-header bg-dark text-white"> Upcoming Session</div>
               <div class="card-body">
-                <!-- Embed calendar here -->
+                <p><strong>Patient:</strong> <span id="upcomingPatient"></span></p>
+                <p><strong>Date & Time:</strong> <span id="upcomingDateTime"></span></p>
+                <p><strong>Link:</strong> <span id="upcomingLocation"></span></p>
               </div>
             </div>
           </div>
@@ -62,23 +64,23 @@
             <div class="card mb-4">
               <div class="card-body text-center" id="cards">
                 <h6>Total Patients</h6>
-                <h3><strong>433</strong></h3>
+                <h3><strong id="totalPatients"></strong></h3> <!-- Added id for total patients -->
               </div>
             </div>
           </div>
           <div class="col-lg-4">
             <div class="card mb-4">
               <div class="card-body text-center">
-                <h6>Appointments</h6>
-                <h3><strong>34</strong></h3>
+                <h6>Total Appointments</h6>
+                <h3><strong id="totalAppointments"></strong></h3> <!-- Added id for total appointments -->
               </div>
             </div>
           </div>
           <div class="col-lg-4">
             <div class="card mb-4">
               <div class="card-body text-center">
-                <h6>Surgery</h6>
-                <h3> 12 </h3>
+                <h6>Total Patients Prescribed</h6>
+                <h3><strong id="totalPatientsPrescribed"></strong></h3> <!-- Added id for total patients prescribed -->
               </div>
             </div>
           </div>
@@ -90,7 +92,7 @@
             <div class="card mb-4">
               <div class="card-header bg-dark text-white"> History of Appointments </div>
               <div class="card-body">
-                <table class="table table-striped">
+                <table class="table table-striped" id="appointmentHistory">
                   <thead>
                     <tr>
                       <th>Date</th>
@@ -100,19 +102,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>09/02/2024</td>
-                      <td>10:00 AM</td>
-                      <td>Patient 1</td>
-                      <td>Completed</td>
-                    </tr>
-                    <tr>
-                      <td>08/28/2024</td>
-                      <td>03:00 PM</td>
-                      <td>Patient 2</td>
-                      <td>Cancelled</td>
-                    </tr>
-                    <!-- Add more rows as needed -->
+                    <!-- Appointment rows will be populated here -->
                   </tbody>
                 </table>
               </div>
@@ -131,47 +121,94 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="patient-index.js"></script>
 
-
   <script>
     $(document).ready(function () {
       // Retrieve the psychiatrist ID from localStorage or another source (depending on your application)
       const psychiatristId = localStorage.getItem('psychiatristId');
-
+    
       // Fetch psychiatrist's name
-      axios.get(`http://localhost:5500/api/psychiatrist/name/${psychiatristId}`)
-        .then(function (response) {
-          const psychiatristName = response.data.psychiatristName;
-          document.getElementById('psychiatristName').innerText = psychiatristName;
-        })
-        .catch(function (error) {
-          console.error('Error fetching psychiatrist name:', error);
-        });
-
+      $.get(`http://localhost:5500/api/psychiatrist/name/${psychiatristId}`, function (response) {
+        const psychiatristName = response.psychiatristName;
+        $('#psychiatristName').text(psychiatristName);
+      }).fail(function (error) {
+        console.error('Error fetching psychiatrist name:', error);
+      });
+  
+      // Fetch total patients with completed appointments
+      $.get(`http://localhost:5500/api/psychiatrist/total-patients/${psychiatristId}`, function (response) {
+        const totalPatients = response.totalPatients;
+        $('#totalPatients').text(totalPatients); // Display total patients
+      }).fail(function (error) {
+        console.error('Error fetching total patients:', error);
+      });
+  
+      // Fetch total appointments with completed status
+      $.get(`http://localhost:5500/api/psychiatrist/total-appointments/${psychiatristId}`, function (response) {
+        const totalAppointments = response.totalAppointments;
+        $('#totalAppointments').text(totalAppointments); // Display total appointments
+      }).fail(function (error) {
+        console.error('Error fetching total appointments:', error);
+      });
+  
+      // Fetch total patients prescribed medicines
+      $.get(`http://localhost:5500/api/psychiatrist/total-patients-prescribed/${psychiatristId}`, function (response) {
+        const totalPatientsPrescribed = response.totalPatientsPrescribed;
+        $('#totalPatientsPrescribed').text(totalPatientsPrescribed); // Display total patients prescribed
+      }).fail(function (error) {
+        console.error('Error fetching total patients prescribed:', error);
+      });
+    
       // Fetch upcoming sessions
-      axios.get(`http://localhost:5500/api/psychiatrist/upcoming-sessions/${psychiatristId}`)
-        .then(function (response) {
-          const upcomingSessions = response.data.sessions;
+      $.get(`http://localhost:5500/api/psychiatrist/upcoming-sessions/${psychiatristId}`, function (response) {
+        const upcomingSessions = response.sessions;
+    
+        if (upcomingSessions.length > 0) {
+          const session = upcomingSessions[0];
+          $('#upcomingPatient').text(session.patientName);
+          const appointmentDate = new Date(session.appointmentDate);
+          const formattedDate = appointmentDate.toLocaleDateString();
+          const formattedTime = appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          $('#upcomingDateTime').text(`${formattedDate}, ${formattedTime}`);
+          $('#upcomingLocation').text(session.meetingLink);
+        } else {
+          $('#upcomingPatient').text('No upcoming sessions');
+          $('#upcomingDateTime').text('N/A');
+          $('#upcomingLocation').text('N/A');
+        }
+      }).fail(function (error) {
+        console.error('Error fetching upcoming sessions:', error);
+      });
 
-          if (upcomingSessions.length > 0) {
-            const session = upcomingSessions[0];
-            document.getElementById('upcomingPatient').innerText = session.patientName;
-            const appointmentDate = new Date(session.appointmentDate);
+      // Fetch history of appointments (completed and cancelled)
+      $.get(`http://localhost:5500/api/psychiatrist/appointment-history/${psychiatristId}`, function (response) {
+        const appointments = response.appointments;
+
+        if (appointments.length > 0) {
+          appointments.forEach(appointment => {
+            const appointmentDate = new Date(appointment.appointmentDate);
             const formattedDate = appointmentDate.toLocaleDateString();
             const formattedTime = appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('upcomingDateTime').innerText = `${formattedDate}, ${formattedTime}`;
-            document.getElementById('upcomingLocation').innerText = "Online Consultation";
-          } else {
-            document.getElementById('upcomingPatient').innerText = 'No upcoming sessions';
-            document.getElementById('upcomingDateTime').innerText = 'N/A';
-            document.getElementById('upcomingLocation').innerText = 'N/A';
-          }
-        })
-        .catch(function (error) {
-          console.error('Error fetching upcoming sessions:', error);
-        });
+
+            // Add a row to the table for each appointment
+            $('#appointmentHistory tbody').append(`
+              <tr>
+                <td>${formattedDate}</td>
+                <td>${formattedTime}</td>
+                <td>${appointment.patientName}</td>
+                <td>${appointment.status}</td>
+              </tr>
+            `);
+          });
+        } else {
+          $('#appointmentHistory tbody').append(`
+            <tr><td colspan="4">No past appointments found.</td></tr>
+          `);
+        }
+      }).fail(function (error) {
+        console.error('Error fetching appointment history:', error);
+      });
     });
   </script>
-
 </body>
 
 </html>
