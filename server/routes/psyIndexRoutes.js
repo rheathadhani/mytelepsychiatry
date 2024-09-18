@@ -42,7 +42,7 @@ router.delete('/psychiatrist/delete-record/:psychiatrist_id/:patientId', psyinde
 // Prescribed Patient Medication Routes
 
 // Route to get list of patients for prescription purposes
-router.get('/patients-for-prescription/:psychiatrist_id', psyindexController.getPatientsForPrescription);
+router.get('/psychiatrist/:psychiatristId/patients-for-prescription', psyindexController.getPatientsForPrescription);
 
 // Route to post a new prescription for a selected patient
 router.post('/psychiatrist/prescription/:psychiatrist_id', psyindexController.postPrescription);

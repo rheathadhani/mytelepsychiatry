@@ -412,39 +412,40 @@ const deleteRecord = (req, res) => {
 //Start Prescribed Patient Medication
 // Get  patients who have booked for that psy appointments 
 const getPatientsForPrescription = (req, res) => {
+    const psychiatristId = req.params.psychiatristId; // Get psychiatrist ID from route parameters
 
-    const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
-    
-    // Query to get the patients who have booked at least one session
-    const getPatientsQuery = `
-        SELECT DISTINCT p.patient_id, p.full_name 
-        FROM Appointments a
-        INNER JOIN Patients p ON a.patient_id = p.patient_id
-        WHERE a.psychiatrist_id = ? 
-        AND a.status IN ('completed');
+    // SQL query to select all patient names who have booked a session under 'scheduled' or 'completed' status with the logged-in psychiatrist
+    const query = `
+        SELECT DISTINCT
+            p.patient_id, p.full_name 
+        FROM 
+            Patients p
+        JOIN 
+            Appointments a 
+        ON 
+            p.patient_id = a.patient_id
+        WHERE 
+            a.psychiatrist_id = ? 
+        AND 
+            (a.status = 'scheduled' OR a.status = 'completed');
     `;
 
-    db.query(getPatientsQuery, [psychiatristId], (err, results) => {
+    // Execute the query
+    db.query(query, [psychiatristId], (err, results) => {
         if (err) {
-            console.error('Error querying patients:', err);
-            return res.status(500).send('Server error');
+            console.error('Error fetching patients for prescription:', err);
+            return res.status(500).json({ message: 'Server error while fetching patients.' });
         }
 
-        console.log(results);
         if (results.length === 0) {
-            return res.status(200).json({ message: 'No patients found.', patients: [] });
+            return res.status(404).json({ message: 'No patients found.' });
         }
 
         // Return the list of patients
-        res.status(200).json({
-            message: 'Patients retrieved successfully',
-            patients: results.map(patient => ({
-                patientId: patient.patient_id,
-                fullName: patient.full_name
-            }))
-        });
+        res.status(200).json(results);
     });
 };
+
 
 
 // Post a new prescription for a selected patient (Prescribed button)
