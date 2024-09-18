@@ -1,5 +1,5 @@
 const db = require('../db');
-//Start Dashbod
+//Start Dashboard
 // Get Psychiatrist's Full Name based on session
 const getPsychiatristName = (req, res) => {
 
@@ -64,7 +64,7 @@ const getUpcomingSession = (req, res) => {
     });
 };
 
-
+//cards:
 // Get the total number of distinct patients with at least one completed appointment
 const getTotalPatients = (req, res) => {
     
@@ -97,7 +97,6 @@ const getTotalPatients = (req, res) => {
     });
 };
 
-
 // Get the total number of completed appointments for the logged-in psychiatrist
 const getTotalAppointments = (req, res) => {
 
@@ -126,8 +125,6 @@ const getTotalAppointments = (req, res) => {
     });
 };
 
-
-
 // Get the total number of patients prescribed by the logged-in psychiatrist
 const getTotalPatientsPrescribed = (req, res) => {
 
@@ -153,9 +150,7 @@ const getTotalPatientsPrescribed = (req, res) => {
         });
     });
 };
-
-
-
+//The table in the dashboard
 // Get the history of past appointments (completed and canceled) for the logged-in psychiatrist
 const getHistoryOfAppointments = (req, res) => {
 
@@ -194,6 +189,7 @@ const getHistoryOfAppointments = (req, res) => {
 };
 //End Dashbod
 
+//Patient Appointments
 // Get the list of upcoming appointments for the logged-in psychiatrist
 const getUpcomingAppointments = (req, res) => {
 
@@ -234,8 +230,7 @@ const getUpcomingAppointments = (req, res) => {
         });
     });
 };
-
-
+//view details button
 // Get the details of previous sessions and clinical notes for a selected patient
 const getViewDetails = (req, res) => {
 
@@ -293,8 +288,7 @@ const getViewDetails = (req, res) => {
         });
     });
 };
-
-
+//save the new changes in the view details
 // Post a new clinical note for the selected patient
 const postNewClinicalNotes = (req, res) => {
 
@@ -324,8 +318,7 @@ const postNewClinicalNotes = (req, res) => {
         });
     });
 };
-
-
+//delete selected notes button
 // Delete selected clinical notes for the logged-in psychiatrist
 const deleteSelectedNotes = (req, res) => {
 
@@ -361,7 +354,7 @@ const deleteSelectedNotes = (req, res) => {
     });
 };
 
-
+//delete button
 // Delete the selected patient's appointments but keep the clinical notes and other patient data
 const deleteRecord = (req, res) => {
 
@@ -413,26 +406,31 @@ const deleteRecord = (req, res) => {
         });
     });
 };
+//end of patient appointments page
+
 
 //Start Prescribed Patient Medication
-const getAllPatients = (req, res) => {
+// Get  patients who have booked for that psy appointments 
+const getPatientsForPrescription = (req, res) => {
 
-    // Query to get all patients who have booked appointments (no need for psychiatrist filter)
+    const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
+    
+    // Query to get the patients who have booked at least one session
     const getPatientsQuery = `
         SELECT DISTINCT p.patient_id, p.full_name 
-        FROM Patients p
-        INNER JOIN Appointments a ON p.patient_id = a.patient_id
-        INNER JOIN Users u ON p.user_id = u.user_id
-        WHERE u.role = 'patient'
-        AND a.status IN ('scheduled', 'completed', 'ongoing');
+        FROM Appointments a
+        INNER JOIN Patients p ON a.patient_id = p.patient_id
+        WHERE a.psychiatrist_id = ? 
+        AND a.status IN ('completed');
     `;
 
-    db.query(getPatientsQuery, (err, results) => {
+    db.query(getPatientsQuery, [psychiatristId], (err, results) => {
         if (err) {
             console.error('Error querying patients:', err);
             return res.status(500).send('Server error');
         }
 
+        console.log(results);
         if (results.length === 0) {
             return res.status(200).json({ message: 'No patients found.', patients: [] });
         }
@@ -449,13 +447,12 @@ const getAllPatients = (req, res) => {
 };
 
 
-
-// Post a new prescription for the selected patient
+// Post a new prescription for a selected patient (Prescribed button)
 const postPrescription = (req, res) => {
-
-    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
+    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the request (or session)
     const { patientId, medicationName, dosage, frequencyPerDay, durationInDays } = req.body;
 
+    // Validate input fields
     if (!patientId || !medicationName || !dosage || !frequencyPerDay || !durationInDays) {
         return res.status(400).json({ message: 'All fields are required.' });
     }
@@ -463,7 +460,7 @@ const postPrescription = (req, res) => {
     // Get the current date for the prescription
     const prescribedDate = new Date(); // Automatically sets to today's date
 
-    // Query to insert the new prescription with the current date
+    // Insert prescription query
     const insertPrescriptionQuery = `
         INSERT INTO Prescriptions (patient_id, psychiatrist_id, medicine_name, dosage, frequency_per_day, duration_in_days, prescribed_date)
         VALUES (?, ?, ?, ?, ?, ?, ?);
@@ -472,10 +469,9 @@ const postPrescription = (req, res) => {
     db.query(insertPrescriptionQuery, [patientId, psychiatristId, medicationName, dosage, frequencyPerDay, durationInDays, prescribedDate], (err, result) => {
         if (err) {
             console.error('Error inserting prescription:', err);
-            return res.status(500).send('Server error');
+            return res.status(500).json({ message: 'Server error occurred while adding prescription.' });
         }
 
-        // Respond with success message
         res.status(201).json({
             message: 'Prescription added successfully',
             prescriptionId: result.insertId // Return the ID of the inserted prescription
@@ -483,14 +479,10 @@ const postPrescription = (req, res) => {
     });
 };
 
-
-// Get the prescription history for the logged-in psychiatrist
+// Get the prescription history for the logged-in psychiatrist (Prescription History Table)
 const getPrescriptionHistory = (req, res) => {
-
     const psychiatristId = req.params.psychiatrist_id; 
 
-
-    // Query to get the prescription history for the logged-in psychiatrist
     const getHistoryQuery = `
         SELECT p.full_name, pr.medicine_name, pr.dosage, pr.frequency_per_day, pr.duration_in_days, pr.prescribed_date
         FROM Prescriptions pr
@@ -502,14 +494,13 @@ const getPrescriptionHistory = (req, res) => {
     db.query(getHistoryQuery, [psychiatristId], (err, results) => {
         if (err) {
             console.error('Error querying prescription history:', err);
-            return res.status(500).send('Server error');
+            return res.status(500).json({ message: 'Server error occurred while retrieving prescription history.' });
         }
 
         if (results.length === 0) {
             return res.status(200).json({ message: 'No prescription history found.', history: [] });
         }
 
-        // Return the prescription history
         res.status(200).json({
             message: 'Prescription history retrieved successfully',
             history: results.map(prescription => ({
@@ -523,11 +514,9 @@ const getPrescriptionHistory = (req, res) => {
         });
     });
 };
-//end 
+//end of Medicine Prescription
 
-
-
-
+//Start of Clinical Notes Page
 // Get the list of patients who have booked at least one session with the psychiatrist
 const getPatientList = (req, res) => {
 
@@ -562,7 +551,7 @@ const getPatientList = (req, res) => {
     });
 };
 
-
+//Write Notes and Save Notes button
 // Post a new clinical note for the selected patient
 const postClinicalNotes = (req, res) => {
 
@@ -594,7 +583,7 @@ const postClinicalNotes = (req, res) => {
 };
 
 
-// Get all clinical notes (current and old) for the selected patient
+// Get all clinical notes (current and old) for the selected patient (Existing Clinical Notes Table)
 const getAllClinicalNotesForEdit = (req, res) => {
 
    const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from session
@@ -635,7 +624,7 @@ const getAllClinicalNotesForEdit = (req, res) => {
 };
 
 
-// Save the edited clinical note by patching the old note
+// Save the edited clinical note by patching the old note (Edit and Save button)
 const saveEditedNotes = (req, res) => {
     // Ensure the logged-in user is a psychiatrist
 
@@ -670,7 +659,7 @@ const saveEditedNotes = (req, res) => {
 };
 
 
-// Delete all clinical notes for the selected patient
+// Delete all clinical notes for the selected patient (Delete Button)
 const deleteAllClinicalNotes = (req, res) => {
 
     const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
@@ -701,7 +690,10 @@ const deleteAllClinicalNotes = (req, res) => {
     });
 };
 
+//end of Clinical Notes Page
 
+
+//Start of Psychiatrist Profile
 // Get Psychiatrist Personal Details
 const getPersonalDetails = (req, res) => {
    // checkAdminRole(req, res);
@@ -811,7 +803,7 @@ const deleteAccount = (req, res) => {
     });
 };
 
-
+//End of Psychiatrist Profile
 
 
 
@@ -827,7 +819,7 @@ module.exports = {
     postNewClinicalNotes,
     deleteSelectedNotes,
     deleteRecord,
-    getAllPatients,
+    getPatientsForPrescription,
     postPrescription,
     getPrescriptionHistory,
     getPatientList,
