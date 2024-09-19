@@ -193,6 +193,88 @@
                     console.error('Error fetching patients:', error);
                     alert('Failed to load patients.');
                 });
+
+                //new
+
+                  // Submit the prescription form
+            $('#prescriptionForm').submit(function (event) {
+                event.preventDefault();
+
+                const patientId = $('#patient').val();
+                const medicationName = $('#medication').val();
+                const dosage = $('#dosage').val();
+                const frequencyPerDay = $('#frequencyDay').val();
+                const durationInDays = $('#duration').val();
+
+                // Validate form
+                if (!patientId || !medicationName || !dosage || !frequencyPerDay || !durationInDays) {
+                    alert('All fields are required.');
+                    return;
+                }
+
+                // Data to send in the POST request
+                const prescriptionData = {
+                    patientId,
+                    medicationName,
+                    dosage,
+                    frequencyPerDay,
+                    durationInDays
+                };
+
+                // Post new prescription using Axios
+                axios.post(`http://localhost:5500/api/psychiatrist/prescription/${psychiatristId}`, prescriptionData)
+                    .then(function (response) {
+                        // Show success message
+                        $('#successMessage').show();
+
+                        // Clear the form
+                        $('#prescriptionForm')[0].reset();
+
+                        // Refresh the prescription history
+                        fetchPrescriptionHistory();
+                    })
+                    .catch(function (error) {
+                        console.error('Error posting prescription:', error);
+                        alert('Failed to add prescription.');
+                    });
+            });
+
+            // Fetch prescription history
+            function fetchPrescriptionHistory() {
+                axios.get(`http://localhost:5500/api/psychiatrist/prescription-history/${psychiatristId}`)
+                    .then(function (response) {
+                        const prescriptions = response.data.history;
+                        const $historyBody = $('#prescriptionHistoryBody');
+
+                        // Clear the existing history
+                        $historyBody.empty();
+
+                        // Populate prescription history table
+                        if (prescriptions && prescriptions.length > 0) {
+                            prescriptions.forEach(function (prescription) {
+                                $historyBody.append(`
+                                    <tr>
+                                        <td>${new Date(prescription.date).toLocaleDateString()}</td>
+                                        <td>${prescription.patientName}</td>
+                                        <td>${prescription.medicationName}</td>
+                                        <td>${prescription.dosage}</td>
+                                        <td>${prescription.frequencyPerDay}</td>
+                                        <td>${prescription.durationInDays}</td>
+                                    </tr>
+                                `);
+                            });
+                        } else {
+                            $historyBody.append('<tr><td colspan="6">No prescriptions found.</td></tr>');
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Error fetching prescription history:', error);
+                        alert('Failed to load prescription history.');
+                    });
+            }
+
+            // Initial load of prescription history
+            fetchPrescriptionHistory();
         });
     </script>
 
