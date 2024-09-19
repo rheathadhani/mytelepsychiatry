@@ -164,7 +164,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
 
     <script>
-        // Fetch data from admin-regpsy.html for register new psychiatrist
         $(document).ready(function () {
             // Fetch all psychiatrists
             function loadPsychiatrists() {
@@ -178,18 +177,18 @@
                         // Loop through the list and populate the table
                         psychiatrists.forEach(function (psychiatrist) {
                             var row = `
-                            <tr data-id="${psychiatrist.psychiatrist_id}">
-                                <td>${psychiatrist.psychiatrist_id}</td>
-                                <td class="fullName">${psychiatrist.full_name}</td>
-                                <td class="email">${psychiatrist.email}</td>
-                                <td class="specialization">${psychiatrist.specialization}</td>
-                                <td class="createdDate">${new Date(psychiatrist.created_at).toLocaleString()}</td>
-                                <td class="table-actions">
-                                    <button class="btn btn-warning btn-sm edit-btn btn-actions" data-id="${psychiatrist.psychiatrist_id}">Edit</button>
-                                    <button class="btn btn-danger btn-sm delete-btn btn-actions" data-id="${psychiatrist.psychiatrist_id}">Delete</button>
-                                </td>
-                            </tr>
-                            `;
+                    <tr data-id="${psychiatrist.psychiatrist_id}">
+                        <td>${psychiatrist.psychiatrist_id}</td>
+                        <td class="fullName">${psychiatrist.full_name}</td>
+                        <td class="email">${psychiatrist.email}</td>
+                        <td class="specialization">${psychiatrist.specialization}</td>
+                        <td class="createdDate">${new Date(psychiatrist.created_at).toLocaleString()}</td>
+                        <td class="table-actions">
+                            <button class="btn btn-warning btn-sm edit-btn btn-actions" data-id="${psychiatrist.psychiatrist_id}">Edit</button>
+                            <button class="btn btn-danger btn-sm delete-btn btn-actions" data-id="${psychiatrist.psychiatrist_id}">Delete</button>
+                        </td>
+                    </tr>
+                    `;
                             tableBody.append(row);
                         });
                     })
@@ -200,6 +199,40 @@
 
             // Call the function to load the psychiatrists
             loadPsychiatrists();
+
+            // Search Filter
+            $('#search').on('keyup', function () {
+                var searchTerm = $(this).val().toLowerCase();
+                $('#psychiatristTableBody tr').filter(function () {
+                    $(this).toggle($(this).find('.fullName').text().toLowerCase().indexOf(searchTerm) > -1 ||
+                        $(this).find('td:first').text().toLowerCase().indexOf(searchTerm) > -1);
+                });
+            });
+
+            // Date Filter
+            $('#filterByDateTime').on('change', function () {
+                var selectedDate = new Date($(this).val()).toLocaleDateString(); // Get the selected date
+                $('#psychiatristTableBody tr').filter(function () {
+                    var rowDate = new Date($(this).find('.createdDate').text()).toLocaleDateString(); // Get the row date
+                    $(this).toggle(rowDate === selectedDate || !selectedDate); // Show if dates match
+                });
+            });
+
+            // Specialization Filter
+            $('#filterSpecialization').on('change', function () {
+                var selectedSpecialization = $(this).val().toLowerCase();
+                $('#psychiatristTableBody tr').filter(function () {
+                    $(this).toggle($(this).find('.specialization').text().toLowerCase().indexOf(selectedSpecialization) > -1 || !selectedSpecialization);
+                });
+            });
+
+            // Reset Filters
+            $('#resetFilters').on('click', function () {
+                $('#search').val('');
+                $('#filterByDateTime').val('');
+                $('#filterSpecialization').val('');
+                $('#psychiatristTableBody tr').show(); // Show all rows
+            });
 
             // Generate Report
             $('#generateReportBtn').on('click', function () {
@@ -233,6 +266,7 @@
                 doc.save('psychiatrists-report.pdf');
             });
         });
+
     </script>
 </body>
 

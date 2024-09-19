@@ -337,7 +337,6 @@ const getPsychiatristToPatientRatio = (req, res) => {
 // Get Wellness Content Count by Category
 const getWellnessContentByCategory = (req, res) => {
 
-
     const query = `
         SELECT content_category, COUNT(*) AS total
         FROM WellnessContent
@@ -354,17 +353,15 @@ const getWellnessContentByCategory = (req, res) => {
 
 // Get Recent Payments with Payment Proof
 const getRecentPayments = (req, res) => {
-
     const query = `
-        SELECT p.payment_date AS date, p.payment_amount AS amount, 
+        SELECT a.appointment_date AS date, p.payment_amount AS amount, 
                pt.full_name AS patient, psy.full_name AS psychiatrist
         FROM Payments p
         JOIN Patients pt ON p.patient_id = pt.patient_id
         JOIN Appointments a ON p.appointment_id = a.appointment_id
         JOIN Psychiatrists psy ON a.psychiatrist_id = psy.psychiatrist_id
         WHERE p.payment_proof IS NOT NULL
-        ORDER BY p.payment_date DESC
-        LIMIT 5;
+        ORDER BY a.appointment_date DESC;
     `;
 
     db.query(query, (err, results) => {
@@ -374,6 +371,7 @@ const getRecentPayments = (req, res) => {
         res.status(200).json(results);
     });
 };
+
 
 
 

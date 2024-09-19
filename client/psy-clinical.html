@@ -27,7 +27,7 @@
             flex-wrap: wrap;
         }
 
-        .equal-height > .col-md-6 {
+        .equal-height>.col-md-6 {
             display: flex;
             flex-direction: column;
         }
@@ -56,11 +56,15 @@
     <div class="d-flex" id="wrapper">
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> + </span></strong></p>
+                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> +
+                        </span></strong></p>
                 <a href="psy-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-                <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
-                <a href="psy-med-pre.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
-                <a href="psy-clinical.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical Notes</a>
+                <a href="psy-appointments.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
+                <a href="psy-med-pre.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine
+                    Prescription</a>
+                <a href="psy-clinical.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical
+                    Notes</a>
                 <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
         </div>
@@ -97,19 +101,8 @@
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>John Doe</td>
-                                            <td><button class="btn btn-dark btn-sm write-notes" data-patient="John Doe">Write Notes</button></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Jane Smith</td>
-                                            <td><button class="btn btn-dark btn-sm write-notes" data-patient="Jane Smith">Write Notes</button></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Michael Johnson</td>
-                                            <td><button class="btn btn-dark btn-sm write-notes" data-patient="Michael Johnson">Write Notes</button></td>
-                                        </tr>
+                                    <tbody id="patient-list">
+
                                     </tbody>
                                 </table>
                             </div>
@@ -121,13 +114,17 @@
                             <div class="card-header bg-dark text-white">Write Clinical Notes</div>
                             <div class="card-body">
                                 <form id="notesForm">
+                                    <!-- Add this hidden input field to store the patient ID -->
+                                    <input type="hidden" id="selectedPatientId">
+
                                     <div class="form-group">
                                         <label for="selectedPatient">Selected Patient:</label>
                                         <input type="text" id="selectedPatient" class="form-control" readonly>
                                     </div>
                                     <div class="form-group">
                                         <label for="clinicalNotes">Clinical Notes:</label>
-                                        <textarea id="clinicalNotes" class="form-control" rows="5" placeholder="Write clinical notes here..."></textarea>
+                                        <textarea id="clinicalNotes" class="form-control" rows="5"
+                                            placeholder="Write clinical notes here..."></textarea>
                                     </div>
                                     <button type="button" class="btn btn-dark" id="saveNotes">Save Notes</button>
                                 </form>
@@ -152,30 +149,13 @@
                                     </thead>
                                     <tbody id="clinicalNotesTable">
                                         <tr>
-                                            <td>John Doe</td>
+                                            <!--Patient Nae-->
                                             <td>
                                                 <div class="notes-content">
-                                                    <p>Details of previous sessions go here.</p>
-                                                    <p>Hu</p>
-                                                    <p>Helo</p>
+                                                    <!--Notes for patient--> <!--Several <p> tags-->
                                                 </div>
                                             </td>
                                             <td>09/06/2024</td>
-                                            <td>
-                                                <button class="btn btn-info btn-sm edit-note">Edit</button>
-                                                <button class="btn btn-danger btn-sm delete-note">Delete</button>
-                                                <button class="btn btn-success btn-sm save-note">Save</button>
-                                                <button class="btn btn-secondary btn-sm cancel-note">Cancel</button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Jane Smith</td>
-                                            <td>
-                                                <div class="notes-content">
-                                                    <p>Clinical note information about recent treatment.</p>
-                                                </div>
-                                            </td>
-                                            <td>09/03/2024</td>
                                             <td>
                                                 <button class="btn btn-info btn-sm edit-note">Edit</button>
                                                 <button class="btn btn-danger btn-sm delete-note">Delete</button>
@@ -192,69 +172,95 @@
             </div>
         </div>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         $(document).ready(function () {
+            // Toggle sidebar menu
             $('#menu-toggle').click(function () {
                 $('#wrapper').toggleClass('toggled');
             });
 
-            // Fetch the list of patients when the page loads
+            // Function to fetch the patient list for clinical notes
             function fetchPatientList() {
-                const psychiatristId = localStorage.getItem('psychiatristId'); // Replace this with the actual psychiatrist ID from session/localStorage
+                const psychiatristId = localStorage.getItem('psychiatristId'); // Get the psychiatrist ID from local storage
 
-                axios.get(`http://localhost:5500/psychiatrist/patient-list/${psychiatristId}`)
-                    .then(response => {
+                // Use Axios to send a GET request to fetch the list of patients
+                axios.get(`http://localhost:5500/api/psychiatrist/patient-list/${psychiatristId}`)
+                    .then(function (response) {
                         const patients = response.data.patients;
-                        const patientList = $('#patientList');
+                        const patientTableBody = $('#patient-list');
 
-                        // Clear existing patients in the table
-                        patientList.empty();
+                        patientTableBody.empty(); // Clear any previous rows
 
-                        if (patients && patients.length > 0) {
-                            patients.forEach(patient => {
-                                patientList.append(`
-                                    <tr>
+                        // Loop through the list of patients and create table rows
+                        patients.forEach(patient => {
+                            const row = `
+                                <tr>
                                         <td>${patient.fullName}</td>
-                                        <td><button class="btn btn-dark btn-sm write-notes" data-patient="${patient.fullName}">Write Notes</button></td>
+                                        <td>
+                                            <button class="btn btn-dark write-notes" data-patient-id="${patient.patientId}" data-patient-name="${patient.fullName}">Write Notes</button>
+                                        </td>
                                     </tr>
-                                `);
-                            });
-                        } else {
-                            patientList.append('<tr><td colspan="2">No patients found.</td></tr>');
-                        }
+                    `;
+                            patientTableBody.append(row);
+                        });
                     })
-                    .catch(error => {
-                        console.error('Error fetching patient list:', error);
+                    .catch(function (error) {
+                        console.error('Error fetching patients:', error);
+                        alert('Error fetching patients.');
                     });
             }
 
+            // Call fetchPatientList on page load
             fetchPatientList();
 
             // Write notes for a selected patient
             $(document).on('click', '.write-notes', function () {
-                const patient = $(this).data('patient');
-                $('#selectedPatient').val(patient);
+                const patientName = $(this).data('patient-name');
+                const patientId = $(this).data('patient-id');
+
+                //console.log(patientName);
+                //console.log(patientId);
+                // Set the selected patient name and ID in hidden fields
+                $('#selectedPatient').val(patientName); // Display the name
+                $('#selectedPatientId').val(patientId); // Store the ID in a hidden field
                 $('#clinicalNotes').val(''); // Clear the textarea
             });
 
-            // Save clinical notes
             $('#saveNotes').on('click', function () {
-                const patient = $('#selectedPatient').val();
+                const patientId = $('#selectedPatientId').val(); // Get the patient ID from the hidden field
                 const notes = $('#clinicalNotes').val();
+                const psychiatristId = localStorage.getItem('psychiatristId'); // Assuming the psychiatrist ID is stored in localStorage
 
-                if (patient && notes.trim()) {
-                    // Implement your save notes functionality here
-                    alert(`Saving notes for ${patient}: ${notes}`);
+                if (patientId && notes.trim()) {
+                    // Use Axios to send a POST request to save the clinical notes
+                    axios.post(`http://localhost:5500/api/psychiatrist/clinical-notes/${psychiatristId}`, {
+                        patientId: patientId,  // Send the patient ID, not the name
+                        noteText: notes
+                    })
+                        .then(function (response) {
+                            console.log(patientId);
+                            console.log(notes);
+                            console.log(response)
+                            alert(response.data.message); // Show success message
+                            // Optionally, clear the input fields after saving the notes
+                            $('#clinicalNotes').val('');
+                        })
+                        .catch(function (error) {
+                            console.error('Error saving clinical notes:', error);
+                            alert('There was an error saving the notes.');
+                        });
                 } else {
                     alert('Please select a patient and write some notes.');
                 }
             });
+
+
         });
+
     </script>
 </body>
 
