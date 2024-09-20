@@ -369,25 +369,29 @@
             $(document).on('click', '.cancel-note', function () {
                 fetchClinicalNotes($('#selectedPatientId').val());
             });
-    
+
             // Delete clinical notes functionality
             $(document).on('click', '.delete-note', function () {
                 const row = $(this).closest('tr');
                 const selectedNotes = row.find('.select-note:checked');
-                const psychiatristId = localStorage.getItem('psychiatristId');
                 const patientId = $('#selectedPatientId').val();
-    
+
                 if (confirm('Are you sure you want to delete the selected note(s)?')) {
                     selectedNotes.each(function () {
-                        const noteId = $(this).data('note-id');
-                        
+                        const noteId = $(this).data('note-id');  // Get the noteId from the checkbox data attribute
+
                         console.log(`Deleting note with ID: ${noteId}`); // Debugging log
-    
+
                         // Use Axios to send a DELETE request to delete the clinical note
-                        axios.delete(`http://localhost:5500/api/psychiatrist/clinical-notes/delete/${psychiatristId}/${noteId}`)
+                        axios.delete(`http://localhost:5500/api/psychiatrist/clinical-notes/delete/${noteId}`)
                             .then(function (response) {
-                                alert('Clinical note deleted successfully');
-                                fetchClinicalNotes(patientId); // Reload clinical notes after deletion
+                                console.log(response.data.message); // Log the success message
+
+                                // Now remove the deleted note from the DOM
+                                $(this).closest('.single-note').remove();
+
+                                // Optionally reload the clinical notes to ensure the list is up-to-date
+                                fetchClinicalNotes(patientId);  // Reload clinical notes after deletion
                             })
                             .catch(function (error) {
                                 console.error('Error deleting clinical note:', error);
@@ -396,10 +400,10 @@
                     });
                 }
             });
-    
+
+
         });
     </script>
-    
     
 </body>
 

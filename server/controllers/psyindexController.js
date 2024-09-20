@@ -691,6 +691,32 @@ const deleteAllClinicalNotes = (req, res) => {
     });
 };
 
+const deleteSingleClinicalNote = (req, res) => {
+    const { noteId } = req.params; // Get the note ID from the request parameters
+
+    if (!noteId) {
+        return res.status(400).json({ message: 'Note ID is required.' });
+    }
+
+    const deleteNoteQuery = `DELETE FROM ClinicalNotes WHERE note_id = ?`;
+
+    db.query(deleteNoteQuery, [noteId], (err, result) => {
+        if (err) {
+            console.error('Error deleting clinical note:', err);
+            return res.status(500).send('Server error');
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Note not found.' });
+        }
+
+        res.status(200).json({ message: 'Clinical note deleted successfully' });
+    });
+};
+
+
+
+
 //end of Clinical Notes Page
 
 
@@ -819,6 +845,7 @@ module.exports = {
     getViewDetails,
     postNewClinicalNotes,
     deleteSelectedNotes,
+    deleteAllClinicalNotes,
     deleteRecord,
     getPatientsForPrescription,
     postPrescription,
@@ -827,7 +854,7 @@ module.exports = {
     postClinicalNotes,
     getAllClinicalNotesForEdit,
     saveEditedNotes,
-    deleteAllClinicalNotes,
+    deleteSingleClinicalNote, 
     getPersonalDetails,
     patchPassword,
     deleteAccount,

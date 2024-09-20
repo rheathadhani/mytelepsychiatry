@@ -61,6 +61,11 @@ router.post('/psychiatrist/clinical-notes/:psychiatrist_id', psyindexController.
 // Route to get all clinical notes for editing for a selected patient
 router.get('/psychiatrist/clinical-notes/edit/:psychiatrist_id/:patientId', psyindexController.getAllClinicalNotesForEdit);
 
+
+// Route to delete a single clinical note by note ID
+router.delete('/psychiatrist/clinical-notes/delete/:noteId', psyindexController.deleteSingleClinicalNote);
+
+
 // Route to save edited clinical notes
 router.patch('/psychiatrist/clinical-notes/save/:psychiatrist_id/:noteId', psyindexController.saveEditedNotes);
 
