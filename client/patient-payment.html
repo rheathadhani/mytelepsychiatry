@@ -49,7 +49,7 @@
                     <!-- Bank Transfer Option -->
                     <div id="bankTransfer" class="container tab-pane active">
                         <label>
-                            <input type="radio" name="paymentMethod" value="bank_transfer" checked> Bank Transfer
+                            <input type="radio" name="paymentMethod" value="bank_transfer" id="bank_acc"> Bank Account Details <br>
                         </label>
                         <p>Transfer the payment to the account number below and attach payment proof:</p>
                         <p><strong>Bank Account:</strong> 1231 7362 0909, Maybank</p>
@@ -65,7 +65,7 @@
                     <!-- QR Payment Option -->
                     <div id="qrPayment" class="container tab-pane fade">
                         <label>
-                            <input type="radio" name="paymentMethod" value="qr_payment"> QR Payment
+                            <input type="radio" name="paymentMethod" value="qr_payment" id="qr"> QR Account Details
                         </label>
                         <p>Scan the QR code to make payment and attach payment proof:</p>
                         <img src="../assets/QR Pic.png" alt="QR Code" style="width:150px;" />
@@ -179,6 +179,8 @@
         $('#bankTransferTab').on('click', function () {
             $(this).addClass('active').removeClass('inactive-tab');
             $('#qrPaymentTab').addClass('inactive-tab').removeClass('active');
+            $("#qr").prop("checked", false);
+            $("#bank_acc").prop("checked", true);
             // Show Bank Transfer, hide QR Payment
             $('#bankTransfer').addClass('active show');
             $('#qrPayment').removeClass('active show');
@@ -187,6 +189,8 @@
         $('#qrPaymentTab').on('click', function () {
             $(this).addClass('active').removeClass('inactive-tab');
             $('#bankTransferTab').addClass('inactive-tab').removeClass('active');
+            $("#qr").prop("checked", true);
+            $("#bank_acc").prop("checked", false);
             // Show QR Payment, hide Bank Transfer
             $('#qrPayment').addClass('active show');
             $('#bankTransfer').removeClass('active show');

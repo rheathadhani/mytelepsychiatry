@@ -351,11 +351,11 @@ const getWellnessContentByCategory = (req, res) => {
     });
 };
 
-// Get Recent Payments with Payment Proof
 const getRecentPayments = (req, res) => {
     const query = `
         SELECT a.appointment_date AS date, p.payment_amount AS amount, 
-               pt.full_name AS patient, psy.full_name AS psychiatrist
+               pt.full_name AS patient, psy.full_name AS psychiatrist,
+               p.payment_proof AS paymentProof
         FROM Payments p
         JOIN Patients pt ON p.patient_id = pt.patient_id
         JOIN Appointments a ON p.appointment_id = a.appointment_id
@@ -368,12 +368,16 @@ const getRecentPayments = (req, res) => {
         if (err) {
             return res.status(500).json({ message: 'Error fetching recent payments', error: err });
         }
-        res.status(200).json(results);
+
+        // Add the URL for downloading the payment proof
+        const modifiedResults = results.map(payment => ({
+            ...payment,
+            paymentProofUrl: payment.paymentProof ? `http://localhost:5500/uploads/${payment.paymentProof}` : null
+        }));
+        //console.log(...payment)
+        res.status(200).json(modifiedResults);
     });
 };
-
-
-
 
 module.exports = {
     addNewPsychiatrist,
