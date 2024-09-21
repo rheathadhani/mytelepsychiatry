@@ -185,18 +185,18 @@
             $('#menu-toggle').click(function () {
                 $('#wrapper').toggleClass('toggled');
             });
-    
+
             // Fetch the patient list for clinical notes
             function fetchPatientList() {
                 const psychiatristId = localStorage.getItem('psychiatristId');
-    
+
                 // Axios request to get the list of patients
                 axios.get(`http://localhost:5500/api/psychiatrist/patient-list/${psychiatristId}`)
                     .then(function (response) {
                         const patients = response.data.patients;
                         const patientTableBody = $('#patient-list');
                         patientTableBody.empty();
-    
+
                         // Populate the table with patients
                         patients.forEach(patient => {
                             const row = `
@@ -215,10 +215,10 @@
                         alert('Error fetching patients.');
                     });
             }
-    
+
             // Fetch patient list on page load
             fetchPatientList();
-    
+
             // Write notes for a selected patient
             $(document).on('click', '.write-notes', function () {
                 const patientName = $(this).data('patient-name');
@@ -226,21 +226,26 @@
                 $('#selectedPatient').val(patientName);
                 $('#selectedPatientId').val(patientId);
                 $('#clinicalNotes').val('');
-    
+
                 // Fetch existing notes for the selected patient
                 fetchClinicalNotes(patientId);
             });
-    
+
+                // Clear the clinical notes table when page loads
+                $('#clinicalNotesTable').empty();
+
             // Fetch clinical notes for a specific patient
             function fetchClinicalNotes(patientId) {
                 const psychiatristId = localStorage.getItem('psychiatristId');
-    
+                $('.edit-note').prop('disabled', true);  // Disable edit buttons
+                $('.delete-note').prop('disabled', true);  // Disable delete buttons
+
                 axios.get(`http://localhost:5500/api/psychiatrist/clinical-notes/edit/${psychiatristId}/${patientId}`)
                     .then(function (response) {
                         const notes = response.data.notes;
                         const clinicalNotesTable = $('#clinicalNotesTable');
                         clinicalNotesTable.empty();
-    
+
                         // Group notes by patient name
                         let patientNotes = {};
                         notes.forEach(note => {
@@ -250,7 +255,7 @@
                             }
                             patientNotes[patientName].push({ noteText: note.noteText, noteId: note.noteId });
                         });
-    
+
                         // Create table rows for each patient and their notes
                         for (const [patientName, notesArray] of Object.entries(patientNotes)) {
                             const concatenatedNotes = notesArray.map(noteObj => `
@@ -258,7 +263,7 @@
                                     <input type="checkbox" class="select-note" data-note-id="${noteObj.noteId}"> <!-- Checkbox to select -->
                                     <span>${noteObj.noteText}</span>
                                 </div>`).join('<br>');
-    
+
                             const noteRow = `
                                 <tr>
                                     <td>${patientName}</td>
@@ -266,15 +271,20 @@
                                         <div class="notes-content">${concatenatedNotes}</div>
                                     </td>
                                     <td>${new Date().toLocaleDateString()}</td>
-                                    <td>
-                                        <button class="btn btn-info btn-sm edit-note" disabled>Edit</button>
-                                        <button class="btn btn-danger btn-sm delete-note" disabled>Delete</button>
+                                    <td style="display:none;"> <!-- Hidden initially -->
+                                        <button class="btn btn-info btn-sm edit-note">Edit</button>
+                                        <button class="btn btn-danger btn-sm delete-note">Delete</button>
                                         <button class="btn btn-success btn-sm save-note" style="display:none;">Save</button>
                                         <button class="btn btn-secondary btn-sm cancel-note" style="display:none;">Cancel</button>
                                     </td>
                                 </tr>
                             `;
                             clinicalNotesTable.append(noteRow);
+
+                            // Show the action buttons if there are notes available
+                            if (notesArray.length > 0) {
+                                clinicalNotesTable.find('td').last().show();  // Make action buttons visible
+                            }
                         }
                     })
                     .catch(function (error) {
@@ -282,13 +292,13 @@
                         alert('Error fetching clinical notes.');
                     });
             }
-    
+
             // Save new clinical notes
             $('#saveNotes').on('click', function () {
                 const patientId = $('#selectedPatientId').val();
                 const notes = $('#clinicalNotes').val();
                 const psychiatristId = localStorage.getItem('psychiatristId');
-    
+
                 if (patientId && notes.trim()) {
                     axios.post(`http://localhost:5500/api/psychiatrist/clinical-notes/${psychiatristId}`, {
                         patientId: patientId,
@@ -307,13 +317,13 @@
                     alert('Please select a patient and write some notes.');
                 }
             });
-    
+
             // Enable Edit and Delete buttons when a note is selected
             $(document).on('change', '.select-note', function () {
                 const selectedNotes = $(this).closest('tr').find('.select-note:checked');
                 const editButton = $(this).closest('tr').find('.edit-note');
                 const deleteButton = $(this).closest('tr').find('.delete-note');
-    
+
                 if (selectedNotes.length > 0) {
                     editButton.prop('disabled', false);
                     deleteButton.prop('disabled', false);
@@ -322,35 +332,35 @@
                     deleteButton.prop('disabled', true);
                 }
             });
-    
+
             // Edit clinical notes functionality
             $(document).on('click', '.edit-note', function () {
                 const row = $(this).closest('tr');
                 const selectedNotes = row.find('.select-note:checked');
-    
+
                 selectedNotes.each(function () {
                     const noteDiv = $(this).closest('.single-note').find('span');
                     const noteText = noteDiv.text();
-    
+
                     noteDiv.html(`<textarea class="form-control edit-note-textarea">${noteText}</textarea>`);
                 });
-    
+
                 row.find('.save-note, .cancel-note').show();
                 $(this).hide();
             });
-    
+
             // Save edited clinical notes
             $(document).on('click', '.save-note', function () {
                 const row = $(this).closest('tr');
                 const selectedNotes = row.find('.select-note:checked');
                 const psychiatristId = localStorage.getItem('psychiatristId');
                 const patientId = $('#selectedPatientId').val();
-    
+
                 selectedNotes.each(function () {
                     const noteDiv = $(this).closest('.single-note').find('.edit-note-textarea');
                     const updatedNoteText = noteDiv.val();
                     const noteId = $(this).data('note-id');
-    
+
                     axios.patch(`http://localhost:5500/api/psychiatrist/clinical-notes/save/${psychiatristId}/${noteId}`, {
                         updatedNoteText: updatedNoteText
                     })
@@ -364,7 +374,7 @@
                         });
                 });
             });
-    
+
             // Cancel editing note functionality
             $(document).on('click', '.cancel-note', function () {
                 fetchClinicalNotes($('#selectedPatientId').val());
@@ -400,9 +410,6 @@
                     });
                 }
             });
-
-            //all funtional working
-
         });
     </script>
     
