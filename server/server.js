@@ -1,6 +1,8 @@
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
+const path = require('path');
+
 //const httpContext = require('express-http-context'); // Import http-context
 
 const authRoutes = require("./routes/authenticationsRoutes");
@@ -41,6 +43,7 @@ app.use('/api', authRoutes);
 app.use('/api', patientRoutes);
 app.use('/api', adminRoutes);
 app.use('/api', psyRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 const PORT = process.env.PORT || 5500;

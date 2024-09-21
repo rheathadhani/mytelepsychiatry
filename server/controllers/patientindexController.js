@@ -41,13 +41,14 @@ const getUpcomingSessions = (req, res) => {
     const query = `
         SELECT 
             a.appointment_date,
-            p.full_name AS psychiatrist_name
-        FROM 
+            p.full_name AS psychiatrist_name,
+            a.meeting_link
+        FROM
             Appointments a
         JOIN 
             Psychiatrists p ON a.psychiatrist_id = p.psychiatrist_id
         WHERE 
-            a.patient_id = ? AND a.appointment_date > NOW()
+            a.patient_id = ? AND a.appointment_date
         ORDER BY 
             a.appointment_date ASC;
     `;
@@ -179,17 +180,8 @@ const getPsychiatristProfile = (req, res) => {
 };
 
 
-// Set up multer for file uploads
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/'); // Directory to store uploaded files
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + "payment " + path.extname(file.originalname)); // Appending file extension
-    }
-});
 
-const upload = multer({ storage: storage });
+
 
 // Get Appointment Details for Review and Payment Page
 const getAppointmentDetails = (req, res) => {
@@ -226,6 +218,18 @@ const getAppointmentDetails = (req, res) => {
     });
 };
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/'); // Directory to store uploaded files
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + "payment " + path.extname(file.originalname)); // Appending file extension
+    }
+});
+
+const upload = multer({ storage: storage });
+// Set up multer for file uploads
+
 // Post Payment Details and Save Payment Proof
 const postPaymentDetails = (req, res) => {
     const { patientId, appointmentDateTime, psychiatristId, paymentMethod } = req.body; // Getting all the relevant data
@@ -239,7 +243,7 @@ const postPaymentDetails = (req, res) => {
         VALUES (?, ?, ?, ?, 'scheduled');
     `;
 
-    db.query(insertAppointmentQuery, [patientId, psychiatristId, appointmentDateTime, meetingLink], (err, appointmentResult) => {
+    db.query(insertAppointmentQuery, [patientId, psychiatristId, appointmentDateTime], (err, appointmentResult) => {
         if (err) {
             console.error('Error saving appointment details:', err);
             return res.status(500).send('Server error while saving appointment details.');
@@ -253,7 +257,7 @@ const postPaymentDetails = (req, res) => {
             VALUES (?, ?, ?, ?);
         `;
 
-        db.query(insertPaymentQuery, [patientId, appointmentId, paymentMethod, paymentProof], (err, paymentResult) => {
+        db.query(insertPaymentQuery, [patientId, appointmentId, paymentMethod, paymentProof, meetingLink], (err, paymentResult) => {
             if (err) {
                 console.error('Error saving payment details:', err);
                 return res.status(500).send('Server error while saving payment details.');

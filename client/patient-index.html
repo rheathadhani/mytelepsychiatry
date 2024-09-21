@@ -47,13 +47,15 @@
               </div>
             </div>
           </div>
+
+
           <div class="col-lg-4" id="upcoming-session">
             <div class="card mb-4">
               <div class="card-header bg-dark text-white"> Upcoming Session</div>
               <div class="card-body">
                 <p><strong>Psychiatrist:</strong> <span id="upcomingPsychiatrist"></span></p>
                 <p><strong>Date & Time:</strong> <span id="upcomingDateTime"> </span></p>
-                <p><strong>Link:</strong></p>
+                <p class="mb-2"><strong>Link:</strong><span id="meetingLink"></span></p>
               </div>
             </div>
           </div>
@@ -234,13 +236,16 @@
       axios.get(`http://localhost:5500/api/patient/${patientId}/upcoming-sessions`)
         .then(function (response) {
           const upcomingSessions = response.data;
+          console.log(upcomingSessions);
 
           if (upcomingSessions.length > 0) {
             // Assuming only one upcoming session
             const session = upcomingSessions[0];
+            console.log(session);
 
             const psychiatristName = session.psychiatrist_name;
             const appointmentDate = new Date(session.appointment_date);
+            const meetingLink = session.meeting_link;
 
             const formattedDate = appointmentDate.toLocaleDateString();
             const formattedTime = appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -248,10 +253,10 @@
             // Update the HTML with session details
             document.getElementById('upcomingPsychiatrist').innerText = psychiatristName;
             document.getElementById('upcomingDateTime').innerText = `${formattedDate}, ${formattedTime}`;
+            document.getElementById('meetingLink').innerText = ' ' + meetingLink;
 
           } else {
             document.getElementById('upcomingPsychiatrist').innerText = 'No upcoming sessions';
-            document.getElementById('upcomingDateTime').innerText = '';
           }
         })
         .catch(function (error) {
