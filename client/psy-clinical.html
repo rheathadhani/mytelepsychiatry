@@ -337,6 +337,9 @@
             $(document).on('click', '.edit-note', function () {
                 const row = $(this).closest('tr');
                 const selectedNotes = row.find('.select-note:checked');
+                
+                // Disable the delete button when the edit button is clicked
+                row.find('.delete-note').hide();  // Disable the delete button
 
                 selectedNotes.each(function () {
                     const noteDiv = $(this).closest('.single-note').find('span');
@@ -344,9 +347,11 @@
 
                     noteDiv.html(`<textarea class="form-control edit-note-textarea">${noteText}</textarea>`);
                 });
-
+                
                 row.find('.save-note, .cancel-note').show();
                 $(this).hide();
+
+                
             });
 
             // Save edited clinical notes
