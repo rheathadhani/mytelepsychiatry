@@ -243,7 +243,7 @@ const postPaymentDetails = (req, res) => {
         VALUES (?, ?, ?, ?, 'scheduled');
     `;
 
-    db.query(insertAppointmentQuery, [patientId, psychiatristId, appointmentDateTime], (err, appointmentResult) => {
+    db.query(insertAppointmentQuery, [patientId, psychiatristId, appointmentDateTime, meetingLink], (err, appointmentResult) => {
         if (err) {
             console.error('Error saving appointment details:', err);
             return res.status(500).send('Server error while saving appointment details.');
@@ -257,7 +257,7 @@ const postPaymentDetails = (req, res) => {
             VALUES (?, ?, ?, ?);
         `;
 
-        db.query(insertPaymentQuery, [patientId, appointmentId, paymentMethod, paymentProof, meetingLink], (err, paymentResult) => {
+        db.query(insertPaymentQuery, [patientId, appointmentId, paymentMethod, paymentProof], (err, paymentResult) => {
             if (err) {
                 console.error('Error saving payment details:', err);
                 return res.status(500).send('Server error while saving payment details.');
@@ -267,6 +267,7 @@ const postPaymentDetails = (req, res) => {
         });
     });
 };
+
 
 
 
@@ -298,7 +299,7 @@ const getPaymentDetails = (req, res) => {
 
         if (results.length === 0) {
             return res.status(404).json({ message: 'Appointment not found.' });
-        }
+        }   
 
         res.status(200).json(results[0]);
     });
