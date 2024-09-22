@@ -230,7 +230,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 // Set up multer for file uploads
 
-// Post Payment Details and Save Payment Proof
 const postPaymentDetails = (req, res) => {
     const { patientId, appointmentDateTime, psychiatristId, paymentMethod } = req.body; // Getting all the relevant data
     const paymentProof = req.file ? req.file.filename : null; // Get the payment proof if uploaded
@@ -267,6 +266,7 @@ const postPaymentDetails = (req, res) => {
         });
     });
 };
+
 
 
 

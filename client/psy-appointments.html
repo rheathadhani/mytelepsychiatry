@@ -68,13 +68,14 @@
         /* Centering the buttons in the Actions column */
         .table-actions {
             display: flex;
-            justify-content: flex; /* Distribute buttons equally */
-            align-items: center; /* Vertical centering */
-            height: 100%; /* Ensures the buttons fill the cell height */
+            justify-content: flex;
+            /* Distribute buttons equally */
+            align-items: center;
+            /* Vertical centering */
+            height: 100%;
+            /* Ensures the buttons fill the cell height */
             gap: 10px;
         }
-
-
     </style>
 </head>
 
@@ -83,11 +84,15 @@
         <!-- Sidebar -->
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> + </span></strong></p>
+                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> +
+                        </span></strong></p>
                 <a href="psy-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-                <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
-                <a href="psy-med-pre.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
-                <a href="psy-clinical.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical Notes</a>
+                <a href="psy-appointments.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
+                <a href="psy-med-pre.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine
+                    Prescription</a>
+                <a href="psy-clinical.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical
+                    Notes</a>
                 <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
         </div>
@@ -118,7 +123,8 @@
                     <div class="card-body">
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <input type="text" class="form-control search-box" placeholder="Search by patient name" id="searchBox">
+                                <input type="text" class="form-control search-box" placeholder="Search by patient name"
+                                    id="searchBox">
                             </div>
                             <div class="col-md-6">
                                 <select class="form-control status-box" id="statusFilter">
@@ -127,7 +133,7 @@
                                     <option value="ongoing">Ongoing</option>
                                     <option value="completed">Completed</option>
                                 </select>
-                                
+
                             </div>
                         </div>
                         <table class="table">
@@ -141,26 +147,7 @@
                                 </tr>
                             </thead>
                             <tbody id="appointmentTable">
-                                <tr data-status="Confirmed" data-name="John Doe" data-sessions="Details of previous sessions go here." data-notes='[]' data-payment="Paid">
-                                    <td>John Doe</td>
-                                    <td class="appointment-date">09/11/2024</td>
-                                    <td class="appointment-time">07:37 AM</td>
-                                    <td><span class="badge bg-success p-2 text-white">Confirmed</span></td>
-                                    <td class="table-actions">
-                                        <button class="btn btn-info btn-sm view-details">View Details</button>
-                                        <button class="btn btn-danger btn-sm cancel-appointment">Delete Record</button>
-                                    </td>
-                                </tr>
-                                <tr data-status="Pending" data-name="Jane Smith" data-sessions="Details of previous sessions go here." data-notes='[]' data-payment="Unpaid">
-                                    <td>Jane Smith</td>
-                                    <td class="appointment-date">09/19/2024</td>
-                                    <td class="appointment-time">03:41 AM</td>
-                                    <td><span class="badge bg-warning p-2 text-white">Pending</span></td>
-                                    <td class="table-actions">
-                                        <button class="btn btn-info btn-sm view-details">View Details</button>
-                                        <button class="btn btn-danger btn-sm cancel-appointment">Delete Record</button>
-                                    </td>
-                                </tr>
+
                             </tbody>
                         </table>
                     </div>
@@ -187,11 +174,13 @@
                                         <ul class="list-group" id="notesList">
                                             <!-- Clinical notes will be added here -->
                                         </ul>
-                                        <textarea class="form-control mt-3" rows="2" placeholder="Write new clinical notes..."></textarea>
+                                        <textarea class="form-control mt-3" rows="2"
+                                            placeholder="Write new clinical notes..."></textarea>
                                     </td>
                                     <td>
                                         <button class="btn btn-dark btn-sm add-note">Add New Clinical Notes</button>
-                                        <button class="btn btn-danger btn-sm delete-selected-notes">Delete Selected Notes</button>
+                                        <button class="btn btn-danger btn-sm delete-selected-notes">Delete Selected
+                                            Notes</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -200,7 +189,8 @@
                 </div>
 
                 <!-- Confirmation Modal -->
-                <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog"
+                    aria-labelledby="confirmationModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -248,36 +238,41 @@
     <script>
         $(document).ready(function () {
             const psychiatristId = localStorage.getItem('psychiatristId'); // Assuming psychiatrist ID is stored in local storage
-    
+
             // Function to fetch appointments from the server
             function fetchAppointments() {
                 axios.get(`http://localhost:5500/api/psychiatrist/upcoming-appointments/${psychiatristId}`)
                     .then(function (response) {
                         const appointments = response.data.appointments;
-    
+                        console.log(appointments);
+
                         // Clear the existing table body
                         const appointmentTable = $('#appointmentTable');
                         appointmentTable.empty();
-    
+
                         // Check if appointments exist
                         if (appointments.length === 0) {
                             appointmentTable.append('<tr><td colspan="5">No upcoming appointments found.</td></tr>');
                             return;
                         }
-    
+
                         // Loop through each appointment and append to the table
                         appointments.forEach(function (appointment) {
                             const appointmentRow = `
-                                <tr data-status="${appointment.bookingStatus}" data-name="${appointment.patientName}" data-payment="${appointment.paymentStatus}">
-                                    <td>${appointment.patientName}</td>
-                                    <td class="appointment-date">${new Date(appointment.appointmentDate).toLocaleDateString()}</td>
-                                    <td class="appointment-time">${new Date(appointment.appointmentDate).toLocaleTimeString()}</td>
-                                    <td><span class="badge ${appointment.bookingStatus === 'scheduled' ? 'bg-success' : 'bg-warning'} p-2 text-white">${appointment.bookingStatus}</span></td>
-                                    <td class="table-actions">
-                                        <button class="btn btn-info btn-sm view-details">View Details</button>
-                                        <button class="btn btn-danger btn-sm cancel-appointment">Delete Record</button>
-                                    </td>
-                                </tr>
+                               <tr data-status="${appointment.bookingStatus}" 
+                                data-name="${appointment.patientName}" 
+                                data-payment="${appointment.paymentStatus}" 
+                                data-patient-id="${appointment.patientId}"> <!-- Make sure this value is set correctly -->
+                                <td>${appointment.patientName}</td>
+                                <td class="appointment-date">${new Date(appointment.appointmentDate).toLocaleDateString()}</td>
+                                <td class="appointment-time">${new Date(appointment.appointmentDate).toLocaleTimeString()}</td>
+                                <td><span class="badge ${appointment.bookingStatus === 'scheduled' ? 'bg-success' : 'bg-warning'} p-2 text-white">${appointment.bookingStatus}</span></td>
+                                <td class="table-actions">
+                                    <button class="btn btn-info btn-sm view-details">View Details</button>
+                                    <button class="btn btn-danger btn-sm cancel-appointment">Delete Record</button>
+                                </td>
+                            </tr>
+
                             `;
                             appointmentTable.append(appointmentRow);
                         });
@@ -287,10 +282,64 @@
                         alert('Error fetching appointments.');
                     });
             }
-    
+            //.................................................................................
+            $(document).ready(function () {
+                const psychiatristId = localStorage.getItem('psychiatristId');
+
+                // Handle View Details button
+                $(document).on('click', '.view-details', function () {
+                    const patientId = $(this).closest('tr').data('patient-id');
+                    const patientName = $(this).closest('tr').data('name');  // Get the patient's name
+
+                    console.log("Fetching details for Patient ID:", patientId);
+
+                    axios.get(`http://localhost:5500/api/psychiatrist/view-details/${psychiatristId}/${patientId}`)
+                        .then(function (response) {
+                            const sessions = response.data.sessions;
+                            const clinicalNotes = response.data.clinicalNotes;
+
+                            // Show the dynamic content section for patient details
+                            $('#dynamicContent').show();
+
+                            // Populate patient name correctly
+                            $('#patientName').text(patientName);
+
+                            // Clear previous session and notes content
+                            $('#previousSessions').html('');
+                            $('#notesList').html('');
+
+                            // Populate previous sessions (only status, no link or date)
+                            sessions.forEach(function (session) {
+                                const sessionRow = `
+                        <p>Status: ${session.status}</p>
+                    `;
+                                $('#previousSessions').append(sessionRow);
+                            });
+
+                            // Populate clinical notes (only the note text, no time or date)
+                            if (clinicalNotes.length > 0) {
+                                clinicalNotes.forEach(function (note) {
+                                    const noteItem = `
+                            <li class="list-group-item">
+                                ${note.noteText}
+                            </li>
+                        `;
+                                    $('#notesList').append(noteItem);
+                                });
+                            } else {
+                                $('#notesList').append('<p>No clinical notes found.</p>');
+                            }
+                        })
+                        .catch(function (error) {
+                            console.error('Error fetching patient details:', error);
+                        });
+                });
+            });
+
+            //.......................................................................
             // Call the function to fetch appointments on page load
             fetchAppointments();
-    
+
             // Search and Filter Logic
             $('#searchBox').on('input', function () {
                 const searchTerm = $(this).val().toLowerCase();
@@ -303,7 +352,7 @@
                     }
                 });
             });
-    
+
             $('#statusFilter').on('change', function () {
                 const status = $(this).val().toLowerCase();
                 $('#appointmentTable tr').each(function () {
@@ -315,27 +364,70 @@
                     }
                 });
             });
-    
+
             // Handle Delete Record
             $(document).on('click', '.cancel-appointment', function () {
                 const appointmentRow = $(this).closest('tr');
                 const patientName = appointmentRow.data('name');
-    
+
                 if (confirm(`Are you sure you want to delete the appointment for ${patientName}?`)) {
                     // Call the backend to delete the appointment (assume appointment deletion is handled in the backend)
                     appointmentRow.remove();  // Remove the appointment row from the table
                     alert(`Appointment for ${patientName} has been deleted.`);
                 }
             });
-    
-            // Handle View Details Button (you can further extend this functionality)
+
+            // Handle View Details Button
             $(document).on('click', '.view-details', function () {
-                const patientName = $(this).closest('tr').data('name');
-                alert(`Viewing details for ${patientName}`);  // Placeholder action for viewing details
+                const patientId = $(this).closest('tr').data('patient-id');
+
+                // Make Axios request to get details of previous sessions and clinical notes
+                axios.get(`http://localhost:5500/api/psychiatrist/view-details/${psychiatristId}/${patientId}`)
+                    .then(function (response) {
+                        const sessions = response.data.sessions;
+                        const clinicalNotes = response.data.clinicalNotes;
+                        console.log(response)
+                        // Show the dynamic content section for patient details
+                        $('#dynamicContent').show();
+
+                        // Populate patient details (update the dynamic content section)
+                        $('#patientName').text($(this).closest('tr').data('name'));  // Get patient name from the table
+                        $('#previousSessions').html('');
+
+                        // Append session details
+                        sessions.forEach(function (session) {
+                            const sessionRow = `
+                                <p>Appointment Date: ${new Date(session.appointmentDate).toLocaleDateString()} - Status: ${session.status} - <a href="${session.meetingLink}">Meeting Link</a></p>
+                            `;
+                            $('#previousSessions').append(sessionRow);
+                        });
+
+                        // Ensure clinicalNotes are not undefined
+                        $('#notesList').html('');  // Clear previous notes
+                        if (clinicalNotes && clinicalNotes.length > 0) {
+                            clinicalNotes.forEach(function (note) {
+                                const noteItem = `
+                        <li class="list-group-item">
+                            ${note.noteDate}: ${note.noteText}
+                            <button class="btn btn-sm btn-danger float-right delete-note">Delete</button>
+                        </li>
+                    `;
+                                $('#notesList').append(noteItem);
+                            });
+                        } else {
+                            $('#notesList').append('<p>No clinical notes found.</p>');
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Error fetching patient details:', error);
+                        //alert('Error fetching patient details.');
+                    });
             });
         });
+
+
+
     </script>
-    
 
 </body>
 

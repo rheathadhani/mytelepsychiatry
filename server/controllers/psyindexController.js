@@ -194,9 +194,9 @@ const getHistoryOfAppointments = (req, res) => {
 const getUpcomingAppointments = (req, res) => {
     const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
 
-    // Query to get the upcoming appointments and related details
+    // Query to get the upcoming appointments and related details, including patient ID
     const upcomingAppointmentsQuery = `
-        SELECT p.full_name, a.appointment_date, a.status AS booking_status, 
+        SELECT p.patient_id, p.full_name, a.appointment_date, a.status AS booking_status, 
                pa.payment_status
         FROM Appointments a
         INNER JOIN Patients p ON a.patient_id = p.patient_id
@@ -217,33 +217,33 @@ const getUpcomingAppointments = (req, res) => {
             return res.status(200).json({ message: 'No upcoming appointments found.', appointments: [] });
         }
 
-        // Return the list of upcoming appointments with patient name, appointment date, payment status, and booking status
+        // Return the list of upcoming appointments with patient ID, name, appointment date, payment status, and booking status
         res.status(200).json({
             message: 'Upcoming appointments',
             appointments: results.map(appointment => ({
+                patientId: appointment.patient_id, // Include patient ID in the response
                 patientName: appointment.full_name,
                 appointmentDate: appointment.appointment_date,
                 bookingStatus: appointment.booking_status,
-                paymentStatus: appointment.payment_status || 'pending'
+                paymentStatus: appointment.payment_status || 'pending' // Optional field handling for payment status
             }))
         });
     });
 };
+
     
 //view details button
 // Get the details of previous sessions and clinical notes for a selected patient
 const getViewDetails = (req, res) => {
+    const psychiatristId = req.params.psychiatrist_id;
+    const patientId = req.params.patientId;
 
-    const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
-    const patientId = req.params.patientId; // Get patient ID from request parameters
-
-    // Query to get previous session details for the patient (completed appointments)
     const previousSessionsQuery = `
-        SELECT a.appointment_date, a.meeting_link, a.status
+        SELECT a.status
         FROM Appointments a
         WHERE a.psychiatrist_id = ? 
         AND a.patient_id = ? 
-        AND a.status = 'completed'
+        AND (a.status = 'scheduled' OR a.status = 'completed')
         ORDER BY a.appointment_date DESC;
     `;
 
@@ -257,9 +257,9 @@ const getViewDetails = (req, res) => {
             return res.status(200).json({ message: 'No previous sessions found for this patient.', sessions: [] });
         }
 
-        // Query to get clinical notes for the patient
+        // Adjusted query to return only `note_text`, no date
         const clinicalNotesQuery = `
-            SELECT note_text, note_date
+            SELECT note_text
             FROM ClinicalNotes
             WHERE psychiatrist_id = ? 
             AND patient_id = ?
@@ -272,22 +272,19 @@ const getViewDetails = (req, res) => {
                 return res.status(500).send('Server error');
             }
 
-            // Return the session details and clinical notes
             res.status(200).json({
                 message: 'Patient session details and clinical notes',
                 sessions: sessions.map(session => ({
-                    appointmentDate: session.appointment_date,
-                    meetingLink: session.meeting_link,
-                    status: session.status
+                    status: session.status  // No date or meeting link
                 })),
                 clinicalNotes: notes.map(note => ({
-                    noteText: note.note_text,
-                    noteDate: note.note_date
+                    noteText: note.note_text  // Only the note text, no date
                 }))
             });
         });
     });
 };
+
 //save the new changes in the view details
 // Post a new clinical note for the selected patient
 const postNewClinicalNotes = (req, res) => {
