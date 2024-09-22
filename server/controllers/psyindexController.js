@@ -189,10 +189,9 @@ const getHistoryOfAppointments = (req, res) => {
 };
 //End Dashbod
 
-//Patient Appointments
+// Patient Appointments
 // Get the list of upcoming appointments for the logged-in psychiatrist
 const getUpcomingAppointments = (req, res) => {
-
     const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
 
     // Query to get the upcoming appointments and related details
@@ -203,7 +202,7 @@ const getUpcomingAppointments = (req, res) => {
         INNER JOIN Patients p ON a.patient_id = p.patient_id
         LEFT JOIN Payments pa ON a.appointment_id = pa.appointment_id
         WHERE a.psychiatrist_id = ?
-        AND a.status IN ('confirmed', 'pending', 'ongoing', 'rescheduled')
+        AND a.status IN ('scheduled', 'ongoing')
         AND a.appointment_date > NOW()
         ORDER BY a.appointment_date ASC;
     `;
@@ -230,6 +229,7 @@ const getUpcomingAppointments = (req, res) => {
         });
     });
 };
+    
 //view details button
 // Get the details of previous sessions and clinical notes for a selected patient
 const getViewDetails = (req, res) => {
