@@ -234,6 +234,7 @@ const getUpcomingAppointments = (req, res) => {
     
 //view details button
 // Get the details of previous sessions and clinical notes for a selected patient
+// Get the details of previous sessions and clinical notes for a selected patient
 const getViewDetails = (req, res) => {
     const psychiatristId = req.params.psychiatrist_id;
     const patientId = req.params.patientId;
@@ -246,7 +247,7 @@ const getViewDetails = (req, res) => {
         AND (a.status = 'scheduled' OR a.status = 'completed')
         ORDER BY a.appointment_date DESC;
     `;
-
+    
     db.query(previousSessionsQuery, [psychiatristId, patientId], (err, sessions) => {
         if (err) {
             console.error('Error querying previous sessions:', err);
@@ -257,9 +258,9 @@ const getViewDetails = (req, res) => {
             return res.status(200).json({ message: 'No previous sessions found for this patient.', sessions: [] });
         }
 
-        // Adjusted query to return only `note_text`, no date
+        // Adjusted query to return `note_id` and `note_text`
         const clinicalNotesQuery = `
-            SELECT note_text
+            SELECT note_id, note_text
             FROM ClinicalNotes
             WHERE psychiatrist_id = ? 
             AND patient_id = ?
@@ -278,6 +279,7 @@ const getViewDetails = (req, res) => {
                     status: session.status  // No date or meeting link
                 })),
                 clinicalNotes: notes.map(note => ({
+                    noteId: note.note_id,  // Fetch note ID for later use (like deletion)
                     noteText: note.note_text  // Only the note text, no date
                 }))
             });
@@ -318,7 +320,6 @@ const postNewClinicalNotes = (req, res) => {
 //delete selected notes button
 // Delete selected clinical notes for the logged-in psychiatrist
 const deleteSelectedNotes = (req, res) => {
-
     const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { noteIds } = req.body; // Get the selected note IDs from the request body
 
@@ -331,11 +332,7 @@ const deleteSelectedNotes = (req, res) => {
     }
 
     // Query to delete the selected clinical notes
-    const deleteNotesQuery = `
-        DELETE FROM ClinicalNotes 
-        WHERE note_id IN (?) 
-        AND psychiatrist_id = ?;
-    `;
+    const deleteNotesQuery = `DELETE FROM ClinicalNotes WHERE note_id IN (?) AND psychiatrist_id = ?;`;
 
     db.query(deleteNotesQuery, [noteIds, psychiatristId], (err, result) => {
         if (err) {
@@ -343,13 +340,48 @@ const deleteSelectedNotes = (req, res) => {
             return res.status(500).send('Server error');
         }
 
-        // Respond with success message
         res.status(200).json({
             message: 'Selected clinical notes deleted successfully',
             deletedCount: result.affectedRows // Return the number of rows deleted
         });
     });
 };
+
+
+
+// const deleteSelectedNotes = (req, res) => {
+
+//     const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
+//     const { noteIds } = req.body; // Get the selected note IDs from the request body
+
+//     if (!psychiatristId) {
+//         return res.status(401).json({ message: 'Unauthorized. Please log in.' });
+//     }
+
+//     if (!noteIds || noteIds.length === 0) {
+//         return res.status(400).json({ message: 'No notes selected for deletion.' });
+//     }
+
+//     // Query to delete the selected clinical notes
+//     const deleteNotesQuery = `
+//         DELETE FROM ClinicalNotes 
+//         WHERE note_id IN (?) 
+//         AND psychiatrist_id = ?;
+//     `;
+
+//     db.query(deleteNotesQuery, [noteIds, psychiatristId], (err, result) => {
+//         if (err) {
+//             console.error('Error deleting clinical notes:', err);
+//             return res.status(500).send('Server error');
+//         }
+
+//         // Respond with success message
+//         res.status(200).json({
+//             message: 'Selected clinical notes deleted successfully',
+//             deletedCount: result.affectedRows // Return the number of rows deleted
+//         });
+//     });
+// };
 
 //delete button
 // Delete the selected patient's appointments but keep the clinical notes and other patient data

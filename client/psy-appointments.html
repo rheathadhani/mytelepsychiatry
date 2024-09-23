@@ -170,9 +170,10 @@
                                 <tr>
                                     <td id="patientName"></td>
                                     <td id="previousSessions"></td>
+                                    <!-- Clinical Notes Section -->
                                     <td id="clinicalNotes">
                                         <ul class="list-group" id="notesList">
-                                            <!-- Clinical notes will be added here -->
+                                            <!-- Clinical notes will be added here with checkboxes -->
                                         </ul>
                                         <textarea class="form-control mt-3" rows="2"
                                             placeholder="Write new clinical notes..." id="textarea"></textarea>
@@ -244,8 +245,6 @@
                 axios.get(`http://localhost:5500/api/psychiatrist/upcoming-appointments/${psychiatristId}`)
                     .then(function (response) {
                         const appointments = response.data.appointments;
-                        console.log(appointments);
-
                         const appointmentTable = $('#appointmentTable');
                         appointmentTable.empty();
 
@@ -278,10 +277,59 @@
                     });
             }
 
+            // Function to fetch and display patient details
+            function fetchPatientDetails(patientId, patientName) {
+                axios.get(`http://localhost:5500/api/psychiatrist/view-details/${psychiatristId}/${patientId}`)
+                    .then(function (response) {
+                        const sessions = response.data.sessions;
+                        const clinicalNotes = response.data.clinicalNotes;
+
+                        $('#dynamicContent').show();
+                        $('#patientName').text(patientName).data('patient-id', patientId);
+                        $('#previousSessions').html('');
+                        $('#notesList').html('');  // Clear the list before appending new notes
+
+                        // Populate previous sessions
+                        if (Array.isArray(sessions)) {
+                            sessions.forEach(function (session) {
+                                const sessionRow = `<p>Status: ${session.status}</p>`;
+                                $('#previousSessions').append(sessionRow);
+                            });
+                        }
+
+                        // Populate clinical notes with noteId and noteText
+                        if (Array.isArray(clinicalNotes)) {
+                            clinicalNotes.forEach(function (note) {
+                                if (note.noteText && note.noteId) {
+                                    const noteItem = `
+                            <li class="list-group-item">
+                                <input type="checkbox" class="note-checkbox" data-note-id="${note.noteId}">
+                                ${note.noteText}
+                            </li>`;
+                                    $('#notesList').append(noteItem);  // Append notes with checkboxes and IDs
+                                }
+                            });
+                        } else {
+                            $('#notesList').append('<p>No clinical notes found.</p>');
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Error fetching patient details:', error);
+                    });
+            }
+
+
+            // Event listener for 'View Details' button
+            $(document).on('click', '.view-details', function () {
+                const patientId = $(this).closest('tr').data('patient-id');
+                const patientName = $(this).closest('tr').data('name');
+                fetchPatientDetails(patientId, patientName);
+            });
+
             // Function to post a new clinical note
             $(document).on('click', '.add-note', function () {
-                const patientId = $('#patientName').data('patient-id');  // Retrieve the patient ID from the data attribute
-                const noteText = $(this).closest('tr').find('textarea').val();
+                const patientId = $('#patientName').data('patient-id');
+                const noteText = $('#textarea').val();  // Use the specific textarea for the note
 
                 if (!noteText) {
                     alert('Please enter a clinical note.');
@@ -295,21 +343,20 @@
 
                 console.log('Patient ID:', patientId, 'Note Text:', noteText);
 
+                // Post the note to the backend
                 axios.post(`http://localhost:5500/api/psychiatrist/clinical-notes/${psychiatristId}`, {
                     patientId: patientId,
                     noteText: noteText
                 })
                     .then(function (response) {
-                        console.log('Clinical note added:', response.data);
-
+                        // Add the new note with the noteId returned from the backend
                         const newNoteItem = `
-                    <li class="list-group-item">
-                        ${noteText}
-                    </li>`;
-                        $('#notesList').append(newNoteItem);
-                        $('#textarea').val('');
-
-                        $(this).closest('tr').find('textarea').val('');
+                <li class="list-group-item">
+                    <input type="checkbox" class="note-checkbox" data-note-id="${response.data.noteId}">
+                    ${noteText}
+                </li>`;
+                        $('#notesList').append(newNoteItem);  // Append the new note with checkbox
+                        $('#textarea').val('');  // Clear the textarea after submission
                         alert('Clinical note added successfully.');
                     })
                     .catch(function (error) {
@@ -317,74 +364,45 @@
                         alert('Error adding clinical note.');
                     });
             });
+            // Event listener for deleting selected notes
+            $(document).on('click', '.delete-selected-notes', function () {
+                const selectedNotes = [];
 
-            // Function to fetch and display patient details
-            function fetchPatientDetails(patientId, patientName) {
-                axios.get(`http://localhost:5500/api/psychiatrist/view-details/${psychiatristId}/${patientId}`)
+                // Collect the note IDs from selected checkboxes
+                $('#notesList input.note-checkbox:checked').each(function () {
+                    const noteId = $(this).data('note-id');  // Capture the noteId from data attribute
+                    if (noteId) {
+                        selectedNotes.push(noteId);
+                    }
+                });
+
+                if (selectedNotes.length === 0) {
+                    alert('Please select at least one note to delete.');
+                    return;
+                }
+
+                console.log('Selected note IDs for deletion:', selectedNotes);
+
+                // Send delete request to the backend
+                axios.delete(`http://localhost:5500/api/psychiatrist/delete-notes/${psychiatristId}`, {
+                    data: { noteIds: selectedNotes }  // Pass the noteIds in the request body
+                })
                     .then(function (response) {
-                        const sessions = response.data.sessions;
-                        const clinicalNotes = response.data.clinicalNotes;
+                        console.log('Deleted notes:', response.data);
 
-                        $('#dynamicContent').show();
-                        $('#patientName').text(patientName).data('patient-id', patientId);  // Set the patient ID in the data attribute
-
-                        $('#previousSessions').html('');
-                        $('#notesList').html('');
-
-                        sessions.forEach(function (session) {
-                            const sessionRow = `<p>Status: ${session.status}</p>`;
-                            $('#previousSessions').append(sessionRow);
+                        // Remove the deleted notes from the UI
+                        $('#notesList input.note-checkbox:checked').each(function () {
+                            $(this).closest('li').remove();
                         });
 
-                        if (clinicalNotes.length > 0) {
-                            clinicalNotes.forEach(function (note) {
-                                const noteItem = `<li class="list-group-item">${note.noteText}</li>`;
-                                $('#notesList').append(noteItem);
-                            });
-                        } else {
-                            $('#notesList').append('<p>No clinical notes found.</p>');
-                        }
+                        alert('Selected notes deleted successfully.');
                     })
                     .catch(function (error) {
-                        console.error('Error fetching patient details:', error);
+                        console.error('Error deleting notes:', error);
+                        alert('Error deleting notes.');
                     });
-            }
-
-            // Event listener for 'View Details' button
-            $(document).on('click', '.view-details', function () {
-                const patientId = $(this).closest('tr').data('patient-id');
-                const patientName = $(this).closest('tr').data('name');
-                fetchPatientDetails(patientId, patientName);
             });
 
-            // Event listener for search functionality
-            $('#searchBox').on('input', function () {
-                const searchTerm = $(this).val().toLowerCase();
-                $('#appointmentTable tr').each(function () {
-                    const name = $(this).data('name').toLowerCase();
-                    $(this).toggle(name.includes(searchTerm));
-                });
-            });
-
-            // Event listener for filtering appointments by status
-            $('#statusFilter').on('change', function () {
-                const status = $(this).val().toLowerCase();
-                $('#appointmentTable tr').each(function () {
-                    const appointmentStatus = $(this).data('status').toLowerCase();
-                    $(this).toggle(status === 'all' || appointmentStatus === status);
-                });
-            });
-
-            // Event listener for canceling appointments
-            $(document).on('click', '.cancel-appointment', function () {
-                const appointmentRow = $(this).closest('tr');
-                const patientName = appointmentRow.data('name');
-
-                if (confirm(`Are you sure you want to delete the appointment for ${patientName}?`)) {
-                    appointmentRow.remove();
-                    alert(`Appointment for ${patientName} has been deleted.`);
-                }
-            });
 
             // Fetch appointments on page load
             fetchAppointments();
