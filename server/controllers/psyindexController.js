@@ -288,15 +288,15 @@ const getViewDetails = (req, res) => {
 //save the new changes in the view details
 // Post a new clinical note for the selected patient
 const postNewClinicalNotes = (req, res) => {
+    const psychiatristId = req.params.psychiatrist_id;  // From URL parameter
+    const { patientId, noteText } = req.body;  // From request body
 
-    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
-    const { patientId, noteText } = req.body; // Get patient ID and note text from the request body
-
+    // Ensure that both fields are provided
     if (!patientId || !noteText) {
         return res.status(400).json({ message: 'Patient ID and note text are required.' });
     }
 
-    // Query to insert a new clinical note for the patient
+    // Proceed to insert into the database
     const insertNoteQuery = `
         INSERT INTO ClinicalNotes (patient_id, psychiatrist_id, note_text, note_date)
         VALUES (?, ?, ?, NOW());
@@ -308,13 +308,13 @@ const postNewClinicalNotes = (req, res) => {
             return res.status(500).send('Server error');
         }
 
-        // Respond with success message
         res.status(201).json({
             message: 'Clinical note added successfully',
-            noteId: result.insertId // Return the ID of the inserted note for reference
+            noteId: result.insertId // Return the ID of the inserted note
         });
     });
 };
+
 //delete selected notes button
 // Delete selected clinical notes for the logged-in psychiatrist
 const deleteSelectedNotes = (req, res) => {

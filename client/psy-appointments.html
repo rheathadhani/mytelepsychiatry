@@ -175,7 +175,7 @@
                                             <!-- Clinical notes will be added here -->
                                         </ul>
                                         <textarea class="form-control mt-3" rows="2"
-                                            placeholder="Write new clinical notes..."></textarea>
+                                            placeholder="Write new clinical notes..." id="textarea"></textarea>
                                     </td>
                                     <td>
                                         <button class="btn btn-dark btn-sm add-note">Add New Clinical Notes</button>
@@ -246,34 +246,29 @@
                         const appointments = response.data.appointments;
                         console.log(appointments);
 
-                        // Clear the existing table body
                         const appointmentTable = $('#appointmentTable');
                         appointmentTable.empty();
 
-                        // Check if appointments exist
                         if (appointments.length === 0) {
                             appointmentTable.append('<tr><td colspan="5">No upcoming appointments found.</td></tr>');
                             return;
                         }
 
-                        // Loop through each appointment and append to the table
                         appointments.forEach(function (appointment) {
                             const appointmentRow = `
-                               <tr data-status="${appointment.bookingStatus}" 
-                                data-name="${appointment.patientName}" 
-                                data-payment="${appointment.paymentStatus}" 
-                                data-patient-id="${appointment.patientId}"> <!-- Make sure this value is set correctly -->
-                                <td>${appointment.patientName}</td>
-                                <td class="appointment-date">${new Date(appointment.appointmentDate).toLocaleDateString()}</td>
-                                <td class="appointment-time">${new Date(appointment.appointmentDate).toLocaleTimeString()}</td>
-                                <td><span class="badge ${appointment.bookingStatus === 'scheduled' ? 'bg-success' : 'bg-warning'} p-2 text-white">${appointment.bookingStatus}</span></td>
-                                <td class="table-actions">
-                                    <button class="btn btn-info btn-sm view-details">View Details</button>
-                                    <button class="btn btn-danger btn-sm cancel-appointment">Delete Record</button>
-                                </td>
-                            </tr>
-
-                            `;
+                        <tr data-status="${appointment.bookingStatus}" 
+                            data-name="${appointment.patientName}" 
+                            data-payment="${appointment.paymentStatus}" 
+                            data-patient-id="${appointment.patientId}">
+                            <td>${appointment.patientName}</td>
+                            <td class="appointment-date">${new Date(appointment.appointmentDate).toLocaleDateString()}</td>
+                            <td class="appointment-time">${new Date(appointment.appointmentDate).toLocaleTimeString()}</td>
+                            <td><span class="badge ${appointment.bookingStatus === 'scheduled' ? 'bg-success' : 'bg-warning'} p-2 text-white">${appointment.bookingStatus}</span></td>
+                            <td class="table-actions">
+                                <button class="btn btn-info btn-sm view-details">View Details</button>
+                                <button class="btn btn-danger btn-sm cancel-appointment">Delete Record</button>
+                            </td>
+                        </tr>`;
                             appointmentTable.append(appointmentRow);
                         });
                     })
@@ -282,136 +277,68 @@
                         alert('Error fetching appointments.');
                     });
             }
-            //.................................................................................
-            $(document).ready(function () {
-                const psychiatristId = localStorage.getItem('psychiatristId');
 
-                // Handle View Details button
-                $(document).on('click', '.view-details', function () {
-                    const patientId = $(this).closest('tr').data('patient-id');
-                    const patientName = $(this).closest('tr').data('name');  // Get the patient's name
+            // Function to post a new clinical note
+            $(document).on('click', '.add-note', function () {
+                const patientId = $('#patientName').data('patient-id');  // Retrieve the patient ID from the data attribute
+                const noteText = $(this).closest('tr').find('textarea').val();
 
-                    console.log("Fetching details for Patient ID:", patientId);
-
-                    axios.get(`http://localhost:5500/api/psychiatrist/view-details/${psychiatristId}/${patientId}`)
-                        .then(function (response) {
-                            const sessions = response.data.sessions;
-                            const clinicalNotes = response.data.clinicalNotes;
-
-                            // Show the dynamic content section for patient details
-                            $('#dynamicContent').show();
-
-                            // Populate patient name correctly
-                            $('#patientName').text(patientName);
-
-                            // Clear previous session and notes content
-                            $('#previousSessions').html('');
-                            $('#notesList').html('');
-
-                            // Populate previous sessions (only status, no link or date)
-                            sessions.forEach(function (session) {
-                                const sessionRow = `
-                        <p>Status: ${session.status}</p>
-                    `;
-                                $('#previousSessions').append(sessionRow);
-                            });
-
-                            // Populate clinical notes (only the note text, no time or date)
-                            if (clinicalNotes.length > 0) {
-                                clinicalNotes.forEach(function (note) {
-                                    const noteItem = `
-                            <li class="list-group-item">
-                                ${note.noteText}
-                            </li>
-                        `;
-                                    $('#notesList').append(noteItem);
-                                });
-                            } else {
-                                $('#notesList').append('<p>No clinical notes found.</p>');
-                            }
-                        })
-                        .catch(function (error) {
-                            console.error('Error fetching patient details:', error);
-                        });
-                });
-            });
-
-            //.......................................................................
-            // Call the function to fetch appointments on page load
-            fetchAppointments();
-
-            // Search and Filter Logic
-            $('#searchBox').on('input', function () {
-                const searchTerm = $(this).val().toLowerCase();
-                $('#appointmentTable tr').each(function () {
-                    const name = $(this).data('name').toLowerCase();
-                    if (name.includes(searchTerm)) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            });
-
-            $('#statusFilter').on('change', function () {
-                const status = $(this).val().toLowerCase();
-                $('#appointmentTable tr').each(function () {
-                    const appointmentStatus = $(this).data('status').toLowerCase();
-                    if (status === 'all' || appointmentStatus === status) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            });
-
-            // Handle Delete Record
-            $(document).on('click', '.cancel-appointment', function () {
-                const appointmentRow = $(this).closest('tr');
-                const patientName = appointmentRow.data('name');
-
-                if (confirm(`Are you sure you want to delete the appointment for ${patientName}?`)) {
-                    // Call the backend to delete the appointment (assume appointment deletion is handled in the backend)
-                    appointmentRow.remove();  // Remove the appointment row from the table
-                    alert(`Appointment for ${patientName} has been deleted.`);
+                if (!noteText) {
+                    alert('Please enter a clinical note.');
+                    return;
                 }
+
+                if (!patientId) {
+                    alert('Patient ID not found. Please select a patient.');
+                    return;
+                }
+
+                console.log('Patient ID:', patientId, 'Note Text:', noteText);
+
+                axios.post(`http://localhost:5500/api/psychiatrist/clinical-notes/${psychiatristId}`, {
+                    patientId: patientId,
+                    noteText: noteText
+                })
+                    .then(function (response) {
+                        console.log('Clinical note added:', response.data);
+
+                        const newNoteItem = `
+                    <li class="list-group-item">
+                        ${noteText}
+                    </li>`;
+                        $('#notesList').append(newNoteItem);
+                        $('#textarea').val('');
+
+                        $(this).closest('tr').find('textarea').val('');
+                        alert('Clinical note added successfully.');
+                    })
+                    .catch(function (error) {
+                        console.error('Error adding clinical note:', error);
+                        alert('Error adding clinical note.');
+                    });
             });
 
-            // Handle View Details Button
-            $(document).on('click', '.view-details', function () {
-                const patientId = $(this).closest('tr').data('patient-id');
-
-                // Make Axios request to get details of previous sessions and clinical notes
+            // Function to fetch and display patient details
+            function fetchPatientDetails(patientId, patientName) {
                 axios.get(`http://localhost:5500/api/psychiatrist/view-details/${psychiatristId}/${patientId}`)
                     .then(function (response) {
                         const sessions = response.data.sessions;
                         const clinicalNotes = response.data.clinicalNotes;
-                        console.log(response)
-                        // Show the dynamic content section for patient details
+
                         $('#dynamicContent').show();
+                        $('#patientName').text(patientName).data('patient-id', patientId);  // Set the patient ID in the data attribute
 
-                        // Populate patient details (update the dynamic content section)
-                        $('#patientName').text($(this).closest('tr').data('name'));  // Get patient name from the table
                         $('#previousSessions').html('');
+                        $('#notesList').html('');
 
-                        // Append session details
                         sessions.forEach(function (session) {
-                            const sessionRow = `
-                                <p>Appointment Date: ${new Date(session.appointmentDate).toLocaleDateString()} - Status: ${session.status} - <a href="${session.meetingLink}">Meeting Link</a></p>
-                            `;
+                            const sessionRow = `<p>Status: ${session.status}</p>`;
                             $('#previousSessions').append(sessionRow);
                         });
 
-                        // Ensure clinicalNotes are not undefined
-                        $('#notesList').html('');  // Clear previous notes
-                        if (clinicalNotes && clinicalNotes.length > 0) {
+                        if (clinicalNotes.length > 0) {
                             clinicalNotes.forEach(function (note) {
-                                const noteItem = `
-                        <li class="list-group-item">
-                            ${note.noteDate}: ${note.noteText}
-                            <button class="btn btn-sm btn-danger float-right delete-note">Delete</button>
-                        </li>
-                    `;
+                                const noteItem = `<li class="list-group-item">${note.noteText}</li>`;
                                 $('#notesList').append(noteItem);
                             });
                         } else {
@@ -420,11 +347,48 @@
                     })
                     .catch(function (error) {
                         console.error('Error fetching patient details:', error);
-                        //alert('Error fetching patient details.');
                     });
-            });
-        });
+            }
 
+            // Event listener for 'View Details' button
+            $(document).on('click', '.view-details', function () {
+                const patientId = $(this).closest('tr').data('patient-id');
+                const patientName = $(this).closest('tr').data('name');
+                fetchPatientDetails(patientId, patientName);
+            });
+
+            // Event listener for search functionality
+            $('#searchBox').on('input', function () {
+                const searchTerm = $(this).val().toLowerCase();
+                $('#appointmentTable tr').each(function () {
+                    const name = $(this).data('name').toLowerCase();
+                    $(this).toggle(name.includes(searchTerm));
+                });
+            });
+
+            // Event listener for filtering appointments by status
+            $('#statusFilter').on('change', function () {
+                const status = $(this).val().toLowerCase();
+                $('#appointmentTable tr').each(function () {
+                    const appointmentStatus = $(this).data('status').toLowerCase();
+                    $(this).toggle(status === 'all' || appointmentStatus === status);
+                });
+            });
+
+            // Event listener for canceling appointments
+            $(document).on('click', '.cancel-appointment', function () {
+                const appointmentRow = $(this).closest('tr');
+                const patientName = appointmentRow.data('name');
+
+                if (confirm(`Are you sure you want to delete the appointment for ${patientName}?`)) {
+                    appointmentRow.remove();
+                    alert(`Appointment for ${patientName} has been deleted.`);
+                }
+            });
+
+            // Fetch appointments on page load
+            fetchAppointments();
+        });
 
 
     </script>
