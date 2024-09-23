@@ -7,7 +7,7 @@
     <title>Psychiatrist Profile</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link rel="stylesheet" href="patient-index.css" />
-    <link rel="stylesheet" href="psychiatrist-profile.css">
+
 </head>
 
 <body>
@@ -15,11 +15,15 @@
         <!-- Sidebar -->
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="list-group list-group-flush">
-                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> + </span></strong></p>
+                <p class="bg-dark text-white mb-4 ml-4 mt-4"><strong>Telepsychiatry <br> Platform <span> +
+                        </span></strong></p>
                 <a href="psy-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-                <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
-                <a href="psy-med-pre.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
-                <a href="psy-clinical.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical Notes</a>
+                <a href="psy-appointments.html"
+                    class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
+                <a href="psy-med-pre.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine
+                    Prescription</a>
+                <a href="psy-clinical.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical
+                    Notes</a>
                 <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
             </div>
         </div>
@@ -34,12 +38,12 @@
             <!-- Form Heading -->
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h2 class="text-dark mb-0">Personal Details</h2>
-                <button type="submit" class="btn btn-dark">Delete Account</button>
+                <button type="button" class="btn btn-dark" id="deleteAccountBtn">Delete Account</button>
             </div>
             <br>
 
             <!-- Personal Details Form -->
-            <form>
+            <form id="personalDetailsForm">
                 <div class="form-row">
                     <div class="form-group col-md-12">
                         <label for="fullName">Full Name</label>
@@ -68,23 +72,26 @@
 
             <!-- Change Password Form -->
             <h2 class="mt-5 mb-4 text-dark">Change Password</h2>
-            <form>
+            <form id="changePasswordForm">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="inputCurrentPassword">Current Password</label>
-                        <input type="password" class="form-control" id="inputCurrentPassword" placeholder="Enter your current password">
+                        <input type="password" class="form-control" id="inputCurrentPassword"
+                            placeholder="Enter your current password">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="inputNewPassword">New Password</label>
-                        <input type="password" class="form-control" id="inputNewPassword" placeholder="Enter your new password">
+                        <input type="password" class="form-control" id="inputNewPassword"
+                            placeholder="Enter your new password">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="inputConfirmPassword">Confirm New Password</label>
-                        <input type="password" class="form-control" id="inputConfirmPassword" placeholder="Confirm your new password">
+                        <input type="password" class="form-control" id="inputConfirmPassword"
+                            placeholder="Confirm your new password">
                     </div>
                 </div>
                 <!-- Change Password Button -->
@@ -96,10 +103,114 @@
     </div>
     <!-- /#wrapper -->
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Bootstrap and jQuery scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const psychiatristId = localStorage.getItem('psychiatristId');  // Assuming psychiatrist ID is stored in local storage
+
+            // Fetch personal details
+            axios.get(`http://localhost:5500/api/psychiatrist/personal-details/${psychiatristId}`)
+                .then(function (response) {
+                    const details = response.data;
+
+                    // Populate the form fields
+                    $('#fullName').val(details.fullName || "");  // Update the full name field
+                    $('#inputEmail').val(details.email || "");   // Update the email field
+                    $('#inputSpecialization').val(details.specialization || ""); // Update specialization
+                })
+                .catch(function (error) {
+                    console.error("Error fetching personal details:", error);
+                });
+
+            // Handle form submission for updating profile details
+            $('#personal-details').on('submit', function (e) {
+                e.preventDefault();  // Prevent the form from submitting the traditional way
+
+                // Collect form data
+                const fullName = $('#fullName').val();
+                const email = $('#inputEmail').val();
+                const specialization = $('#inputSpecialization').val();
+
+                // Prepare the data to send in the request
+                const data = {
+                    fullName: fullName,
+                    email: email,
+                    specialization: specialization
+                };
+
+                // Make the PATCH request to update personal details
+                axios.patch(`http://localhost:5500/api/psychiatrist/${psychiatristId}/personal-details`, data)
+                    .then(function (response) {
+                        alert('Profile updated successfully.');
+                    })
+                    .catch(function (error) {
+                        console.error('Error updating profile:', error);
+                        alert('An error occurred while updating the profile. Please try again.');
+                    });
+            });
+        });
+
+
+
+        //     axios.patch(`http://localhost:5500/api/psychiatrist/personal-details/${psychiatristId}`, data)
+        //         .then(function (response) {
+        //             alert('Profile updated successfully.');
+        //         })
+        //         .catch(function (error) {
+        //             console.error('Error updating profile:', error);
+        //             alert('An error occurred while updating the profile.');
+        //         });
+        // });
+
+        // // Handle form submission for changing password
+        // $('#changePasswordForm').on('submit', function (e) {
+        //     e.preventDefault();
+
+        //     // Collect password fields data
+        //     const currentPassword = $('#inputCurrentPassword').val();
+        //     const newPassword = $('#inputNewPassword').val();
+        //     const confirmPassword = $('#inputConfirmPassword').val();
+
+        //     if (newPassword !== confirmPassword) {
+        //         alert('New password and confirm password do not match');
+        //         return;
+        //     }
+
+        //     // Send change password request
+        //     axios.patch(`http://localhost:5500/api/psychiatrist/password/${psychiatristId}`, { currentPassword, newPassword })
+        //         .then(function (response) {
+        //             alert('Password updated successfully.');
+        //             $('#inputCurrentPassword, #inputNewPassword, #inputConfirmPassword').val('');
+        //         })
+        //         .catch(function (error) {
+        //             console.error('Error changing password:', error);
+        //             alert('Failed to update password.');
+        //         });
+        // });
+
+        // // Delete account functionality
+        // $('#deleteAccountBtn').on('click', function () {
+        //     if (confirm('Are you sure you want to delete your account? This action is irreversible.')) {
+        //         axios.delete(`http://localhost:5500/api/psychiatrist/account/${psychiatristId}`)
+        //             .then(function (response) {
+        //                 alert('Account deleted successfully.');
+        //                 // Redirect to sign out or home page
+        //                 window.location.href = 'signout.html';
+        //             })
+        //             .catch(function (error) {
+        //                 console.error('Error deleting account:', error);
+        //                 alert('Failed to delete account.');
+        //             });
+        //         }
+        // });
+        // });
+
+    </script>
+
 </body>
 
 </html>

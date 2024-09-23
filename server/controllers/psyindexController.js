@@ -717,15 +717,14 @@ const deleteSingleClinicalNote = (req, res) => {
 //Start of Psychiatrist Profile
 // Get Psychiatrist Personal Details
 const getPersonalDetails = (req, res) => {
-   // checkAdminRole(req, res);
+    const psychiatristId = req.params.psychiatrist_id;   // Assuming the psychiatrist is logged in and their ID is stored in the session.
 
-   const psychiatristId = req.params.psychiatrist_id;   // Assuming the psychiatrist is logged in and their ID is stored in the session.
-
+    // Update query to match the provided schema
     const query = `
-        SELECT u.username AS fullName, u.email, p.specialization
+        SELECT p.full_name AS fullName, u.email, p.specialization
         FROM Users u
         JOIN Psychiatrists p ON u.user_id = p.user_id
-        WHERE u.user_id = ?;
+        WHERE p.psychiatrist_id = ?;
     `;
 
     db.query(query, [psychiatristId], (err, results) => {
@@ -745,6 +744,7 @@ const getPersonalDetails = (req, res) => {
         });
     });
 };
+
 
 // Update Psychiatrist Password
 const patchPassword = (req, res) => {
