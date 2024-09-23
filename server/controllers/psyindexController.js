@@ -348,47 +348,11 @@ const deleteSelectedNotes = (req, res) => {
 };
 
 
-
-// const deleteSelectedNotes = (req, res) => {
-
-//     const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
-//     const { noteIds } = req.body; // Get the selected note IDs from the request body
-
-//     if (!psychiatristId) {
-//         return res.status(401).json({ message: 'Unauthorized. Please log in.' });
-//     }
-
-//     if (!noteIds || noteIds.length === 0) {
-//         return res.status(400).json({ message: 'No notes selected for deletion.' });
-//     }
-
-//     // Query to delete the selected clinical notes
-//     const deleteNotesQuery = `
-//         DELETE FROM ClinicalNotes 
-//         WHERE note_id IN (?) 
-//         AND psychiatrist_id = ?;
-//     `;
-
-//     db.query(deleteNotesQuery, [noteIds, psychiatristId], (err, result) => {
-//         if (err) {
-//             console.error('Error deleting clinical notes:', err);
-//             return res.status(500).send('Server error');
-//         }
-
-//         // Respond with success message
-//         res.status(200).json({
-//             message: 'Selected clinical notes deleted successfully',
-//             deletedCount: result.affectedRows // Return the number of rows deleted
-//         });
-//     });
-// };
-
 //delete button
-// Delete the selected patient's appointments but keep the clinical notes and other patient data
+// Delete the selected patient's appointments but keep the clinical notes
 const deleteRecord = (req, res) => {
-
-    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
-    const { patientId } = req.params; // Get patient ID from the request parameters
+    const psychiatristId = req.params.psychiatrist_id;
+    const patientId = req.params.patientId;
 
     if (!psychiatristId) {
         return res.status(401).json({ message: 'Unauthorized. Please log in.' });
@@ -398,19 +362,19 @@ const deleteRecord = (req, res) => {
         return res.status(400).json({ message: 'Patient ID is required.' });
     }
 
-    // Start a transaction to ensure appointments are deleted but clinical notes remain intact
+    // Begin transaction
     db.beginTransaction(err => {
         if (err) {
             console.error('Error starting transaction:', err);
             return res.status(500).send('Server error');
         }
 
-        // Step 1: Delete appointments associated with the patient
+        // Delete appointments related to the patient
         const deleteAppointmentsQuery = `
             DELETE FROM Appointments 
-            WHERE patient_id = ?;
+            WHERE patient_id = ? AND psychiatrist_id = ?;
         `;
-        db.query(deleteAppointmentsQuery, [patientId], (err, result) => {
+        db.query(deleteAppointmentsQuery, [patientId, psychiatristId], (err, result) => {
             if (err) {
                 return db.rollback(() => {
                     console.error('Error deleting appointments:', err);
@@ -418,7 +382,7 @@ const deleteRecord = (req, res) => {
                 });
             }
 
-            // Commit the transaction after appointments are deleted successfully
+            // Commit the transaction
             db.commit(err => {
                 if (err) {
                     return db.rollback(() => {
@@ -427,7 +391,7 @@ const deleteRecord = (req, res) => {
                     });
                 }
 
-                // Success response
+                // Respond with success
                 res.status(200).json({
                     message: 'Patient appointments deleted successfully, clinical notes preserved.'
                 });
@@ -435,6 +399,7 @@ const deleteRecord = (req, res) => {
         });
     });
 };
+
 //end of patient appointments page
 
 
