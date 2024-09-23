@@ -73,14 +73,8 @@ router.patch('/psychiatrist/clinical-notes/save/:psychiatrist_id/:noteId', psyin
 router.delete('/psychiatrist/clinical-notes/delete/:psychiatrist_id/:patientId', psyindexController.deleteAllClinicalNotes);
 
 // Psychiatrist Profile Routes
-
-// Route to get psychiatrist personal details
 router.get('/psychiatrist/personal-details/:psychiatrist_id', psyindexController.getPersonalDetails);
-
-// Route to update psychiatrist password
+router.patch('/psychiatrist/:psychiatrist_id/personal-details', psyindexController.updatePsychiatristProfile);
 router.patch('/psychiatrist/password/:psychiatrist_id', psyindexController.patchPassword);
-
-// Route to delete psychiatrist account
-router.delete('/psychiatrist/account/:psychiatrist_id', psyindexController.deleteAccount);
 
 module.exports = router;

@@ -745,6 +745,60 @@ const getPersonalDetails = (req, res) => {
     });
 };
 
+// Update Psychiatrist Profile
+const updatePsychiatristProfile = (req, res) => {
+    const psychiatristId = req.params.psychiatrist_id; // Get the psychiatrist_id from the request parameters
+    const { fullName, email, specialization } = req.body;
+
+    // First, retrieve the user_id associated with this psychiatrist_id
+    const getUserQuery = `
+        SELECT user_id 
+        FROM Psychiatrists 
+        WHERE psychiatrist_id = ?;
+    `;
+
+    db.query(getUserQuery, [psychiatristId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching user_id', error: err });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Psychiatrist not found' });
+        }
+
+        const userId = results[0].user_id;
+
+        // Now update the Users table with the correct user_id
+        const queryUsers = `
+            UPDATE Users 
+            SET email = ? 
+            WHERE user_id = ?;
+        `;
+
+        db.query(queryUsers, [email, userId], (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error updating user email', error: err });
+            }
+
+            // Then update the Psychiatrists table with the psychiatrist-specific details
+            const queryPsychiatrists = `
+                UPDATE Psychiatrists 
+                SET full_name = ?, specialization = ? 
+                WHERE psychiatrist_id = ?;
+            `;
+
+            db.query(queryPsychiatrists, [fullName, specialization, psychiatristId], (err) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Error updating psychiatrist details', error: err });
+                }
+
+                res.status(200).json({ message: 'Psychiatrist details updated successfully' });
+            });
+        });
+    });
+};
+
+
 
 // Update Psychiatrist Password
 const patchPassword = (req, res) => {
@@ -753,7 +807,7 @@ const patchPassword = (req, res) => {
 
     // Step 1: Fetch the current password from the database
     const getCurrentPasswordQuery = `
-        SELECT password FROM Users WHERE user_id = ?;
+        SELECT password FROM Users WHERE user_id = (SELECT user_id FROM Psychiatrists WHERE psychiatrist_id = ?);
     `;
 
     db.query(getCurrentPasswordQuery, [psychiatristId], (err, results) => {
@@ -774,7 +828,7 @@ const patchPassword = (req, res) => {
 
         // Step 3: Update the password with the new password
         const updatePasswordQuery = `
-            UPDATE Users SET password = ? WHERE user_id = ?;
+            UPDATE Users SET password = ? WHERE user_id = (SELECT user_id FROM Psychiatrists WHERE psychiatrist_id = ?);
         `;
 
         db.query(updatePasswordQuery, [newPassword, psychiatristId], (err) => {
@@ -787,42 +841,6 @@ const patchPassword = (req, res) => {
     });
 };
 
-
-// Delete Psychiatrist Account
-const deleteAccount = (req, res) => {
-    const psychiatristId = req.params.psychiatrist_id;  // Assuming psychiatrist ID is stored in the session.
-
-    // Step 1: Delete from the Psychiatrists table
-    const deletePsychiatristQuery = `
-        DELETE FROM Psychiatrists WHERE user_id = ?;
-    `;
-
-    db.query(deletePsychiatristQuery, [psychiatristId], (err) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error deleting psychiatrist account', error: err });
-        }
-
-        // Step 2: Delete from the Users table
-        const deleteUserQuery = `
-            DELETE FROM Users WHERE user_id = ?;
-        `;
-
-        db.query(deleteUserQuery, [psychiatristId], (err) => {
-            if (err) {
-                return res.status(500).json({ message: 'Error deleting user account', error: err });
-            }
-
-            // Optionally, clear the session or log the user out after account deletion
-            req.session.destroy((err) => {
-                if (err) {
-                    return res.status(500).json({ message: 'Error ending session after account deletion', error: err });
-                }
-
-                res.status(200).json({ message: 'Account deleted successfully' });
-            });
-        });
-    });
-};
 
 //End of Psychiatrist Profile
 
@@ -850,6 +868,6 @@ module.exports = {
     saveEditedNotes,
     deleteSingleClinicalNote, 
     getPersonalDetails,
+    updatePsychiatristProfile,
     patchPassword,
-    deleteAccount,
 };
