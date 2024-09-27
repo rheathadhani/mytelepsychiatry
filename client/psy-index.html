@@ -14,13 +14,15 @@
     <!-- Sidebar -->
     <div class="bg-dark border-right" id="sidebar-wrapper">
       <div class="list-group list-group-flush">
-        <p class="bg-dark text-white mb-4 ml-4 mt-4"> <strong>Telepsychiatry <br> Platform <span> + </span></strong> </p>
+        <p class="bg-dark text-white mb-4 ml-4 mt-4"> <strong>Telepsychiatry <br> Platform <span> + </span></strong>
+        </p>
         <a href="psy-index.html" class="list-group-item list-group-item-action bg-dark text-white">Dashboard</a>
-        <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient Appointments</a>
-        <a href="psy-med-pre.html"
-          class="list-group-item list-group-item-action bg-dark text-white">Medicine Prescription</a>
+        <a href="psy-appointments.html" class="list-group-item list-group-item-action bg-dark text-white">Patient
+          Appointments</a>
+        <a href="psy-med-pre.html" class="list-group-item list-group-item-action bg-dark text-white">Medicine
+          Prescription</a>
         <a href="psy-clinical.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical Notes</a>
-        <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+        <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto" id="signOut">Sign Out</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -125,7 +127,7 @@
     $(document).ready(function () {
       // Retrieve the psychiatrist ID from localStorage or another source (depending on your application)
       const psychiatristId = localStorage.getItem('psychiatristId');
-    
+
       // Fetch psychiatrist's name
       $.get(`http://localhost:5500/api/psychiatrist/name/${psychiatristId}`, function (response) {
         const psychiatristName = response.psychiatristName;
@@ -133,7 +135,7 @@
       }).fail(function (error) {
         console.error('Error fetching psychiatrist name:', error);
       });
-  
+
       // Fetch total patients with completed appointments
       $.get(`http://localhost:5500/api/psychiatrist/total-patients/${psychiatristId}`, function (response) {
         const totalPatients = response.totalPatients;
@@ -141,7 +143,7 @@
       }).fail(function (error) {
         console.error('Error fetching total patients:', error);
       });
-  
+
       // Fetch total appointments with completed status
       $.get(`http://localhost:5500/api/psychiatrist/total-appointments/${psychiatristId}`, function (response) {
         const totalAppointments = response.totalAppointments;
@@ -149,7 +151,7 @@
       }).fail(function (error) {
         console.error('Error fetching total appointments:', error);
       });
-  
+
       // Fetch total patients prescribed medicines
       $.get(`http://localhost:5500/api/psychiatrist/total-patients-prescribed/${psychiatristId}`, function (response) {
         const totalPatientsPrescribed = response.totalPatientsPrescribed;
@@ -157,11 +159,11 @@
       }).fail(function (error) {
         console.error('Error fetching total patients prescribed:', error);
       });
-    
+
       // Fetch upcoming sessions
       $.get(`http://localhost:5500/api/psychiatrist/upcoming-sessions/${psychiatristId}`, function (response) {
         const upcomingSessions = response.sessions;
-    
+
         if (upcomingSessions.length > 0) {
           const session = upcomingSessions[0];
           $('#upcomingPatient').text(session.patientName);
@@ -206,6 +208,17 @@
         }
       }).fail(function (error) {
         console.error('Error fetching appointment history:', error);
+      });
+    });
+    $(document).ready(function () {
+      // Handle sign-out
+      $('#signOut').on('click', function () {
+        // Clear any stored authentication data
+        localStorage.removeItem('role'); // Remove stored role data if applicable
+        sessionStorage.clear(); // Optionally clear other session-specific data
+
+        // Immediately redirect to the login/index page
+        window.location.href = 'index.html';
       });
     });
   </script>
