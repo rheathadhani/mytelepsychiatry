@@ -194,9 +194,9 @@ const getHistoryOfAppointments = (req, res) => {
 const getUpcomingAppointments = (req, res) => {
     const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
 
-    // Query to get the upcoming appointments and related details
+    // Query to get the upcoming appointments and related details, including patient ID
     const upcomingAppointmentsQuery = `
-        SELECT p.full_name, a.appointment_date, a.status AS booking_status, 
+        SELECT p.patient_id, p.full_name, a.appointment_date, a.status AS booking_status, 
                pa.payment_status
         FROM Appointments a
         INNER JOIN Patients p ON a.patient_id = p.patient_id
@@ -217,36 +217,37 @@ const getUpcomingAppointments = (req, res) => {
             return res.status(200).json({ message: 'No upcoming appointments found.', appointments: [] });
         }
 
-        // Return the list of upcoming appointments with patient name, appointment date, payment status, and booking status
+        // Return the list of upcoming appointments with patient ID, name, appointment date, payment status, and booking status
         res.status(200).json({
             message: 'Upcoming appointments',
             appointments: results.map(appointment => ({
+                patientId: appointment.patient_id, // Include patient ID in the response
                 patientName: appointment.full_name,
                 appointmentDate: appointment.appointment_date,
                 bookingStatus: appointment.booking_status,
-                paymentStatus: appointment.payment_status || 'pending'
+                paymentStatus: appointment.payment_status || 'pending' // Optional field handling for payment status
             }))
         });
     });
 };
+
     
 //view details button
 // Get the details of previous sessions and clinical notes for a selected patient
+// Get the details of previous sessions and clinical notes for a selected patient
 const getViewDetails = (req, res) => {
+    const psychiatristId = req.params.psychiatrist_id;
+    const patientId = req.params.patientId;
 
-    const psychiatristId = req.params.psychiatrist_id; // Get psychiatrist's user ID from the session
-    const patientId = req.params.patientId; // Get patient ID from request parameters
-
-    // Query to get previous session details for the patient (completed appointments)
     const previousSessionsQuery = `
-        SELECT a.appointment_date, a.meeting_link, a.status
+        SELECT a.status
         FROM Appointments a
         WHERE a.psychiatrist_id = ? 
         AND a.patient_id = ? 
-        AND a.status = 'completed'
+        AND (a.status = 'scheduled' OR a.status = 'completed')
         ORDER BY a.appointment_date DESC;
     `;
-
+    
     db.query(previousSessionsQuery, [psychiatristId, patientId], (err, sessions) => {
         if (err) {
             console.error('Error querying previous sessions:', err);
@@ -257,9 +258,9 @@ const getViewDetails = (req, res) => {
             return res.status(200).json({ message: 'No previous sessions found for this patient.', sessions: [] });
         }
 
-        // Query to get clinical notes for the patient
+        // Adjusted query to return `note_id` and `note_text`
         const clinicalNotesQuery = `
-            SELECT note_text, note_date
+            SELECT note_id, note_text
             FROM ClinicalNotes
             WHERE psychiatrist_id = ? 
             AND patient_id = ?
@@ -272,34 +273,32 @@ const getViewDetails = (req, res) => {
                 return res.status(500).send('Server error');
             }
 
-            // Return the session details and clinical notes
             res.status(200).json({
                 message: 'Patient session details and clinical notes',
                 sessions: sessions.map(session => ({
-                    appointmentDate: session.appointment_date,
-                    meetingLink: session.meeting_link,
-                    status: session.status
+                    status: session.status  // No date or meeting link
                 })),
                 clinicalNotes: notes.map(note => ({
-                    noteText: note.note_text,
-                    noteDate: note.note_date
+                    noteId: note.note_id,  // Fetch note ID for later use (like deletion)
+                    noteText: note.note_text  // Only the note text, no date
                 }))
             });
         });
     });
 };
+
 //save the new changes in the view details
 // Post a new clinical note for the selected patient
 const postNewClinicalNotes = (req, res) => {
+    const psychiatristId = req.params.psychiatrist_id;  // From URL parameter
+    const { patientId, noteText } = req.body;  // From request body
 
-    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
-    const { patientId, noteText } = req.body; // Get patient ID and note text from the request body
-
+    // Ensure that both fields are provided
     if (!patientId || !noteText) {
         return res.status(400).json({ message: 'Patient ID and note text are required.' });
     }
 
-    // Query to insert a new clinical note for the patient
+    // Proceed to insert into the database
     const insertNoteQuery = `
         INSERT INTO ClinicalNotes (patient_id, psychiatrist_id, note_text, note_date)
         VALUES (?, ?, ?, NOW());
@@ -311,17 +310,16 @@ const postNewClinicalNotes = (req, res) => {
             return res.status(500).send('Server error');
         }
 
-        // Respond with success message
         res.status(201).json({
             message: 'Clinical note added successfully',
-            noteId: result.insertId // Return the ID of the inserted note for reference
+            noteId: result.insertId // Return the ID of the inserted note
         });
     });
 };
+
 //delete selected notes button
 // Delete selected clinical notes for the logged-in psychiatrist
 const deleteSelectedNotes = (req, res) => {
-
     const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
     const { noteIds } = req.body; // Get the selected note IDs from the request body
 
@@ -334,11 +332,7 @@ const deleteSelectedNotes = (req, res) => {
     }
 
     // Query to delete the selected clinical notes
-    const deleteNotesQuery = `
-        DELETE FROM ClinicalNotes 
-        WHERE note_id IN (?) 
-        AND psychiatrist_id = ?;
-    `;
+    const deleteNotesQuery = `DELETE FROM ClinicalNotes WHERE note_id IN (?) AND psychiatrist_id = ?;`;
 
     db.query(deleteNotesQuery, [noteIds, psychiatristId], (err, result) => {
         if (err) {
@@ -346,7 +340,6 @@ const deleteSelectedNotes = (req, res) => {
             return res.status(500).send('Server error');
         }
 
-        // Respond with success message
         res.status(200).json({
             message: 'Selected clinical notes deleted successfully',
             deletedCount: result.affectedRows // Return the number of rows deleted
@@ -354,12 +347,12 @@ const deleteSelectedNotes = (req, res) => {
     });
 };
 
-//delete button
-// Delete the selected patient's appointments but keep the clinical notes and other patient data
-const deleteRecord = (req, res) => {
 
-    const psychiatristId = req.params.psychiatrist_id;  // Get psychiatrist's user ID from the session
-    const { patientId } = req.params; // Get patient ID from the request parameters
+//delete button
+// Delete the selected patient's appointments but keep the clinical notes
+const deleteRecord = (req, res) => {
+    const psychiatristId = req.params.psychiatrist_id;
+    const patientId = req.params.patientId;
 
     if (!psychiatristId) {
         return res.status(401).json({ message: 'Unauthorized. Please log in.' });
@@ -369,19 +362,19 @@ const deleteRecord = (req, res) => {
         return res.status(400).json({ message: 'Patient ID is required.' });
     }
 
-    // Start a transaction to ensure appointments are deleted but clinical notes remain intact
+    // Begin transaction
     db.beginTransaction(err => {
         if (err) {
             console.error('Error starting transaction:', err);
             return res.status(500).send('Server error');
         }
 
-        // Step 1: Delete appointments associated with the patient
+        // Delete appointments related to the patient
         const deleteAppointmentsQuery = `
             DELETE FROM Appointments 
-            WHERE patient_id = ?;
+            WHERE patient_id = ? AND psychiatrist_id = ?;
         `;
-        db.query(deleteAppointmentsQuery, [patientId], (err, result) => {
+        db.query(deleteAppointmentsQuery, [patientId, psychiatristId], (err, result) => {
             if (err) {
                 return db.rollback(() => {
                     console.error('Error deleting appointments:', err);
@@ -389,7 +382,7 @@ const deleteRecord = (req, res) => {
                 });
             }
 
-            // Commit the transaction after appointments are deleted successfully
+            // Commit the transaction
             db.commit(err => {
                 if (err) {
                     return db.rollback(() => {
@@ -398,7 +391,7 @@ const deleteRecord = (req, res) => {
                     });
                 }
 
-                // Success response
+                // Respond with success
                 res.status(200).json({
                     message: 'Patient appointments deleted successfully, clinical notes preserved.'
                 });
@@ -406,6 +399,7 @@ const deleteRecord = (req, res) => {
         });
     });
 };
+
 //end of patient appointments page
 
 
@@ -723,15 +717,14 @@ const deleteSingleClinicalNote = (req, res) => {
 //Start of Psychiatrist Profile
 // Get Psychiatrist Personal Details
 const getPersonalDetails = (req, res) => {
-   // checkAdminRole(req, res);
+    const psychiatristId = req.params.psychiatrist_id;   // Assuming the psychiatrist is logged in and their ID is stored in the session.
 
-   const psychiatristId = req.params.psychiatrist_id;   // Assuming the psychiatrist is logged in and their ID is stored in the session.
-
+    // Update query to match the provided schema
     const query = `
-        SELECT u.username AS fullName, u.email, p.specialization
+        SELECT p.full_name AS fullName, u.email, p.specialization
         FROM Users u
         JOIN Psychiatrists p ON u.user_id = p.user_id
-        WHERE u.user_id = ?;
+        WHERE p.psychiatrist_id = ?;
     `;
 
     db.query(query, [psychiatristId], (err, results) => {
@@ -752,6 +745,61 @@ const getPersonalDetails = (req, res) => {
     });
 };
 
+// Update Psychiatrist Profile
+const updatePsychiatristProfile = (req, res) => {
+    const psychiatristId = req.params.psychiatrist_id; // Get the psychiatrist_id from the request parameters
+    const { fullName, email, specialization } = req.body;
+
+    // First, retrieve the user_id associated with this psychiatrist_id
+    const getUserQuery = `
+        SELECT user_id 
+        FROM Psychiatrists 
+        WHERE psychiatrist_id = ?;
+    `;
+
+    db.query(getUserQuery, [psychiatristId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching user_id', error: err });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Psychiatrist not found' });
+        }
+
+        const userId = results[0].user_id;
+
+        // Now update the Users table with the correct user_id
+        const queryUsers = `
+            UPDATE Users 
+            SET email = ? 
+            WHERE user_id = ?;
+        `;
+
+        db.query(queryUsers, [email, userId], (err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error updating user email', error: err });
+            }
+
+            // Then update the Psychiatrists table with the psychiatrist-specific details
+            const queryPsychiatrists = `
+                UPDATE Psychiatrists 
+                SET full_name = ?, specialization = ? 
+                WHERE psychiatrist_id = ?;
+            `;
+
+            db.query(queryPsychiatrists, [fullName, specialization, psychiatristId], (err) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Error updating psychiatrist details', error: err });
+                }
+
+                res.status(200).json({ message: 'Psychiatrist details updated successfully' });
+            });
+        });
+    });
+};
+
+
+
 // Update Psychiatrist Password
 const patchPassword = (req, res) => {
     const { currentPassword, newPassword } = req.body;
@@ -759,7 +807,7 @@ const patchPassword = (req, res) => {
 
     // Step 1: Fetch the current password from the database
     const getCurrentPasswordQuery = `
-        SELECT password FROM Users WHERE user_id = ?;
+        SELECT password FROM Users WHERE user_id = (SELECT user_id FROM Psychiatrists WHERE psychiatrist_id = ?);
     `;
 
     db.query(getCurrentPasswordQuery, [psychiatristId], (err, results) => {
@@ -780,7 +828,7 @@ const patchPassword = (req, res) => {
 
         // Step 3: Update the password with the new password
         const updatePasswordQuery = `
-            UPDATE Users SET password = ? WHERE user_id = ?;
+            UPDATE Users SET password = ? WHERE user_id = (SELECT user_id FROM Psychiatrists WHERE psychiatrist_id = ?);
         `;
 
         db.query(updatePasswordQuery, [newPassword, psychiatristId], (err) => {
@@ -793,42 +841,6 @@ const patchPassword = (req, res) => {
     });
 };
 
-
-// Delete Psychiatrist Account
-const deleteAccount = (req, res) => {
-    const psychiatristId = req.params.psychiatrist_id;  // Assuming psychiatrist ID is stored in the session.
-
-    // Step 1: Delete from the Psychiatrists table
-    const deletePsychiatristQuery = `
-        DELETE FROM Psychiatrists WHERE user_id = ?;
-    `;
-
-    db.query(deletePsychiatristQuery, [psychiatristId], (err) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error deleting psychiatrist account', error: err });
-        }
-
-        // Step 2: Delete from the Users table
-        const deleteUserQuery = `
-            DELETE FROM Users WHERE user_id = ?;
-        `;
-
-        db.query(deleteUserQuery, [psychiatristId], (err) => {
-            if (err) {
-                return res.status(500).json({ message: 'Error deleting user account', error: err });
-            }
-
-            // Optionally, clear the session or log the user out after account deletion
-            req.session.destroy((err) => {
-                if (err) {
-                    return res.status(500).json({ message: 'Error ending session after account deletion', error: err });
-                }
-
-                res.status(200).json({ message: 'Account deleted successfully' });
-            });
-        });
-    });
-};
 
 //End of Psychiatrist Profile
 
@@ -856,6 +868,6 @@ module.exports = {
     saveEditedNotes,
     deleteSingleClinicalNote, 
     getPersonalDetails,
+    updatePsychiatristProfile,
     patchPassword,
-    deleteAccount,
 };
