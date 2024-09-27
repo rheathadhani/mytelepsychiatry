@@ -117,10 +117,12 @@
         .spacer {
             margin-bottom: 20px;
         }
+
         .email {
             width: 100px;
         }
-        .emergencyContactName{
+
+        .emergencyContactName {
             width: 150px;
         }
     </style>
@@ -142,7 +144,8 @@
                     class="list-group-item list-group-item-action bg-dark text-white">Patients</a>
                 <a href="admin-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness
                     Content</a>
-                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto" id="signOut">Sign
+                    Out</a>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -172,20 +175,7 @@
                         <!-- Spacer for better UI -->
                         <div class="spacer"></div>
                         <!-- Filters Section -->
-                        <div class="filter-row">
-                            <div>
-                                <label for="filterByCreatedDateTime">Created Date & Time</label>
-                                <input type="datetime-local" id="filterByCreatedDateTime" class="form-control">
-                            </div>
-                            <div>
-                                <label for="filterByDOB">Date of Birth</label>
-                                <input type="date" id="filterByDOB" class="form-control">
-                            </div>
-                            <div>
-                                <label>&nbsp;</label>
-                                <button class="btn btn-secondary form-control" id="resetFilters">Reset Filters</button>
-                            </div>
-                        </div>
+
                         <!-- Spacer for better UI -->
                         <div class="spacer"></div>
                         <!-- Table -->
@@ -415,11 +405,17 @@
                 doc.save('patient-report.pdf');
             });
 
+            $(document).ready(function () {
+                // Handle sign-out
+                $('#signOut').on('click', function () {
+                    // Clear any stored authentication data
+                    localStorage.removeItem('role'); // Remove stored role data if applicable
+                    sessionStorage.clear(); // Optionally clear other session-specific data
 
-
-
-
-
+                    // Immediately redirect to the login/index page
+                    window.location.href = 'index.html';
+                });
+            });
 
         });
     </script>

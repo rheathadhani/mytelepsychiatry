@@ -78,7 +78,8 @@
                     class="list-group-item list-group-item-action bg-dark text-white">Patients</a>
                 <a href="admin-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness
                     Content</a>
-                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto" id="signOut">Sign
+                    Out</a>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -264,6 +265,18 @@
                 });
 
                 doc.save('psychiatrists-report.pdf');
+            });
+        });
+
+        $(document).ready(function () {
+            // Handle sign-out
+            $('#signOut').on('click', function () {
+                // Clear any stored authentication data
+                localStorage.removeItem('role'); // Remove stored role data if applicable
+                sessionStorage.clear(); // Optionally clear other session-specific data
+
+                // Immediately redirect to the login/index page
+                window.location.href = 'index.html';
             });
         });
 
