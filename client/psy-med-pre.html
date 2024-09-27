@@ -32,7 +32,8 @@
                     Prescription</a>
                 <a href="psy-clinical.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical
                     Notes</a>
-                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto" id="signOut">Sign
+                    Out</a>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -194,9 +195,9 @@
                     alert('Failed to load patients.');
                 });
 
-                //new
+            //new
 
-                  // Submit the prescription form
+            // Submit the prescription form
             $('#prescriptionForm').submit(function (event) {
                 event.preventDefault();
 
@@ -276,6 +277,21 @@
             // Initial load of prescription history
             fetchPrescriptionHistory();
         });
+
+
+        //Sign Out
+        $(document).ready(function () {
+            // Handle sign-out
+            $('#signOut').on('click', function () {
+                // Clear any stored authentication data
+                localStorage.removeItem('role'); // Remove stored role data if applicable
+                sessionStorage.clear(); // Optionally clear other session-specific data
+
+                // Immediately redirect to the login/index page
+                window.location.href = 'index.html';
+            });
+        });
+
     </script>
 
 

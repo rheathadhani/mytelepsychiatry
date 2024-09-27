@@ -22,7 +22,7 @@
           class="list-group-item list-group-item-action bg-dark text-white">Appointments</a>
         <a href="patient-st.html" class="list-group-item list-group-item-action bg-dark text-white">Symptom Tracker</a>
         <a href="patient-wc.html" class="list-group-item list-group-item-action bg-dark text-white">Wellness Content</a>
-        <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+        <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto" id="signOut">Sign Out</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -36,7 +36,7 @@
       <!-- Form Heading -->
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="text-dark mb-0">Personal Details</h2>
-        
+
       </div>
       <br>
 
@@ -226,6 +226,20 @@
 
 
 
+    });
+
+
+    //Sign Out
+    $(document).ready(function () {
+      // Handle sign-out
+      $('#signOut').on('click', function () {
+        // Clear any stored authentication data
+        localStorage.removeItem('role'); // Remove stored role data if applicable
+        sessionStorage.clear(); // Optionally clear other session-specific data
+
+        // Immediately redirect to the login/index page
+        window.location.href = 'index.html';
+      });
     });
 
   </script>

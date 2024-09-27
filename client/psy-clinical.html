@@ -65,7 +65,8 @@
                     Prescription</a>
                 <a href="psy-clinical.html" class="list-group-item list-group-item-action bg-dark text-white">Clinical
                     Notes</a>
-                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto">Sign Out</a>
+                <a href="#" class="list-group-item list-group-item-action bg-dark text-white mt-auto" id="signOut">Sign
+                    Out</a>
             </div>
         </div>
 
@@ -231,8 +232,8 @@
                 fetchClinicalNotes(patientId);
             });
 
-                // Clear the clinical notes table when page loads
-                $('#clinicalNotesTable').empty();
+            // Clear the clinical notes table when page loads
+            $('#clinicalNotesTable').empty();
 
             // Fetch clinical notes for a specific patient
             function fetchClinicalNotes(patientId) {
@@ -337,7 +338,7 @@
             $(document).on('click', '.edit-note', function () {
                 const row = $(this).closest('tr');
                 const selectedNotes = row.find('.select-note:checked');
-                
+
                 // Disable the delete button when the edit button is clicked
                 row.find('.delete-note').hide();  // Disable the delete button
 
@@ -347,11 +348,11 @@
 
                     noteDiv.html(`<textarea class="form-control edit-note-textarea">${noteText}</textarea>`);
                 });
-                
+
                 row.find('.save-note, .cancel-note').show();
                 $(this).hide();
 
-                
+
             });
 
             // Save edited clinical notes
@@ -416,8 +417,23 @@
                 }
             });
         });
+
+
+        //Sign Out
+        $(document).ready(function () {
+            // Handle sign-out
+            $('#signOut').on('click', function () {
+                // Clear any stored authentication data
+                localStorage.removeItem('role'); // Remove stored role data if applicable
+                sessionStorage.clear(); // Optionally clear other session-specific data
+
+                // Immediately redirect to the login/index page
+                window.location.href = 'index.html';
+            });
+        });
+
     </script>
-    
+
 </body>
 
 </html>
