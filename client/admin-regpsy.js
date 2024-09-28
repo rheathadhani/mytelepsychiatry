@@ -22,7 +22,7 @@ $(document).ready(function () {
         };
 
         // Send a POST request using Axios
-        axios.post('http://localhost:5500/api/psychiatrists', psychiatristData)
+        axios.post('http://52.23.204.162:5500/api/psychiatrists', psychiatristData)
             .then(function (response) {
                 // Handle success
                 alert('Psychiatrist registered successfully!');

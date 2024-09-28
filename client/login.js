@@ -61,7 +61,7 @@ $(document).ready(function () {
             role: selectedRole
         };
 
-        axios.post('http://localhost:5500/api/login', loginData)
+        axios.post('http://52.23.204.162:5500/api/login', loginData)
     .then(function (response) {
         const user = response.data.user; // Assuming `user` object contains the IDs
         if (selectedRole == 'patient') {

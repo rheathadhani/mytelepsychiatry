@@ -372,7 +372,7 @@ const getRecentPayments = (req, res) => {
         // Add the URL for downloading the payment proof
         const modifiedResults = results.map(payment => ({
             ...payment,
-            paymentProofUrl: payment.paymentProof ? `http://localhost:5500/uploads/${payment.paymentProof}` : null
+            paymentProofUrl: payment.paymentProof ? `http://52.23.204.162:5500/uploads/${payment.paymentProof}` : null
         }));
         //console.log(...payment)
         res.status(200).json(modifiedResults);

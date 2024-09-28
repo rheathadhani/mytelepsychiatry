@@ -12,16 +12,22 @@ const psyRoutes = require("./routes/psyIndexRoutes");
 
 require('dotenv').config();
 
-
 const app = express();
 
+// Serve all static files from 'client' directory
+app.use(express.static(path.join(__dirname, '../client')));
+
+// Serve the index.html file
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client', 'index.html'));
+});
+
 app.use(cors({
-    origin: ['http://127.0.0.1:5500', 'http://127.0.0.1:5501'],  //Cross Origin Request w/ Frontend URL
+    origin: ['http://127.0.0.1:5500', 'http://127.0.0.1:5501', 'http://52.23.204.162:5500'],  //Cross Origin Request w/ Frontend URL
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,  
     allowedHeaders: ['Content-Type', 'Authorization'] 
 }));
-
 
 // Set up session middleware
 app.use(session({
