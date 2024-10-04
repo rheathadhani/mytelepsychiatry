@@ -216,7 +216,7 @@
         $(document).ready(function () {
             // Fetch all patients and populate the table
             function fetchPatients() {
-                axios.get('http://52.23.204.162:5500/api/patients')
+                axios.get('http://localhost:5500/api/patients')
                     .then(function (response) {
                         const patients = response.data;
                         let tableRows = '';
@@ -253,7 +253,7 @@
             $(document).on('click', '.view-btn', function () {
                 const patientId = $(this).data('id');
 
-                axios.get(`http://52.23.204.162:5500/api/patients/${patientId}`)
+                axios.get(`http://localhost:5500/api/patients/${patientId}`)
                     .then(function (response) {
                         const patient = response.data;
                         localStorage.setItem('viewPatient', JSON.stringify(patient));
@@ -294,7 +294,7 @@
                     contactNumber: row.find('.contactNumber input').val(),
                 };
 
-                axios.put(`http://52.23.204.162:5500/api/patients/${patientId}`, updatedData)
+                axios.put(`http://localhost:5500/api/patients/${patientId}`, updatedData)
                     .then(function () {
                         row.find('.fullName').text(updatedData.fullName);
                         row.find('.email').text(updatedData.email);
@@ -317,7 +317,7 @@
             $(document).on('click', '.delete-btn', function () {
                 const patientId = $(this).data('id');
 
-                axios.delete(`http://52.23.204.162:5500/api/patients/${patientId}`)
+                axios.delete(`http://localhost:5500/api/patients/${patientId}`)
                     .then(function () {
                         fetchPatients(); // Reload the table after deletion
                     })
@@ -334,7 +334,7 @@
                 const patientId = $(this).data('id');
 
                 // Fetch the patient data from the row
-                axios.get(`http://52.23.204.162:5500/api/patients/${patientId}`)
+                axios.get(`http://localhost:5500/api/patients/${patientId}`)
                     .then(function (response) {
                         const patient = response.data;
 

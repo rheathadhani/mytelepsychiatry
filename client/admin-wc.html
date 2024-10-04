@@ -191,7 +191,7 @@
         $(document).ready(function () {
             // Function to load wellness content
             function loadWellnessContent() {
-                axios.get('http://52.23.204.162:5500/api/wellness-content', { withCredentials: true })
+                axios.get('http://localhost:5500/api/wellness-content', { withCredentials: true })
                     .then(function (response) {
                         console.log(response.data); // Log the response to check if `content_category` is returned correctly
                         var allContent = response.data;
@@ -233,7 +233,7 @@
                 }
 
                 // Send delete request using Axios
-                axios.delete(`http://52.23.204.162:5500/api/wellness-content/${id}`)
+                axios.delete(`http://localhost:5500/api/wellness-content/${id}`)
                     .then(function () {
                         //alert('Content deleted successfully');
                         loadWellnessContent(); // Reload the content after deletion

@@ -252,7 +252,7 @@
                     };
 
                     // Axios POST request to track symptoms (with patientId in URL)
-                    axios.post(`http://52.23.204.162:5500/api/patient/${patientId}/track-symptoms`, symptomData, { withCredentials: true })
+                    axios.post(`http://localhost:5500/api/patient/${patientId}/track-symptoms`, symptomData, { withCredentials: true })
                         .then(response => {
                             console.log('Symptoms tracked:', response.data);
                             // Show toast notification
@@ -272,7 +272,7 @@
             function fetchSymptomsHistory(patientId) {
                 // If patientId exists, proceed
                 if (patientId) {
-                    axios.get(`http://52.23.204.162:5500/api/patient/${patientId}/symptoms-history`, { withCredentials: true })
+                    axios.get(`http://localhost:5500/api/patient/${patientId}/symptoms-history`, { withCredentials: true })
                         .then(response => {
                             const symptomsHistory = response.data;
                             let historyRows = '';

@@ -3,8 +3,6 @@ const session = require('express-session');
 const cors = require('cors');
 const path = require('path');
 
-//const httpContext = require('express-http-context'); // Import http-context
-
 const authRoutes = require("./routes/authenticationsRoutes");
 const patientRoutes = require('./routes/patientIndexRoutes'); 
 const adminRoutes = require("./routes/adminRoutes");
@@ -13,7 +11,6 @@ const psyRoutes = require("./routes/psyIndexRoutes");
 require('dotenv').config();
 
 const app = express();
-
 // Serve all static files from 'client' directory
 app.use(express.static(path.join(__dirname, '../client')));
 
@@ -50,7 +47,6 @@ app.use('/api', patientRoutes);
 app.use('/api', adminRoutes);
 app.use('/api', psyRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 
 const PORT = process.env.PORT || 5500;
 
