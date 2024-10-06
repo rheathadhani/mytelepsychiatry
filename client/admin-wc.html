@@ -143,9 +143,9 @@
                                 <label for="filterByCategory">Filter By Category</label>
                                 <select id="filterByCategory" class="form-control">
                                     <option value="">Filter by Category</option>
-                                    <option value="Mindfullness">Mindfullness</option>
-                                    <option value="Exercise">Exercise</option>
-                                    <option value="Nutrition">Nutrition</option>
+                                    <option value="mindfullness">Mindfullness</option>
+                                    <option value="exercise">Exercise</option>
+                                    <option value="nutrition">Nutrition</option>
                                 </select>
                             </div>
                             <div>
@@ -203,7 +203,7 @@
                         <tr>
                             <td>${content.contentID}</td>
                             <td class = "imageLink">${content.image_link}</td>
-                            <td>${content.content_category || 'N/A'}</td>
+                            <td class = "category">${content.content_category || 'N/A'}</td>
                             <td class = "description">${content.description}</td>
                             <td class = "videoLink">${content.video_link}</td>
                             <td>
