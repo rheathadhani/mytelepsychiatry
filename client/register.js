@@ -18,7 +18,7 @@ $(document).ready(function() {
         };
 
         // Send data to the backend using Axios
-        axios.post('http://localhost:5500/api/register', registrationData)
+        axios.post('http://184.73.250.53:5500/api/register', registrationData)
             .then(function(response) {
                 // Handle success
                 alert('Registration successful!');

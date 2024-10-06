@@ -118,8 +118,8 @@
                     description: description,
                     videoLink: videoLink
                 };
-
-                axios.post('http://localhost:5500/api/wellness-content', newContent, {
+                
+                axios.post('http://184.73.250.53:5500/api/wellness-content', newContent, {
                     withCredentials: true
                 })
                     .then(function (response) {

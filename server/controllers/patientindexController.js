@@ -37,6 +37,7 @@ const getPatientName = (req, res) => {
 // Get Upcoming Sessions based on patientId from params
 const getUpcomingSessions = (req, res) => {
     const patientId = req.params.patientId;  // Get patientId from URL parameters
+    const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' '); 
 
     const query = `
         SELECT 
@@ -48,12 +49,12 @@ const getUpcomingSessions = (req, res) => {
         JOIN 
             Psychiatrists p ON a.psychiatrist_id = p.psychiatrist_id
         WHERE 
-            a.patient_id = ? AND a.appointment_date
+            a.patient_id = ? AND a.appointment_date >= ?
         ORDER BY 
             a.appointment_date ASC;
     `;
-    
-    db.query(query, [patientId], (err, results) => {
+
+    db.query(query, [patientId, currentDate], (err, results) => {
         if (err) {
             return res.status(500).send(err);
         }
@@ -465,42 +466,6 @@ const patchPassword = (req, res) => {
 };
 
 
-// Delete patient account
-const deleteAccount = (req, res) => {
-    const patientId = req.params.patientId;  // Assuming userId is stored in session
-
-    // Step 1: Delete from Patients table
-    const deletePatientQuery = `
-        DELETE FROM Patients WHERE user_id = ?;
-    `;
-
-    db.query(deletePatientQuery, [patientId], (err) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error deleting patient account', error: err });
-        }
-
-        // Step 2: Delete from Users table
-        const deleteUserQuery = `
-            DELETE FROM Users WHERE user_id = ?;
-        `;
-
-        db.query(deleteUserQuery, [patientId], (err) => {
-            if (err) {
-                return res.status(500).json({ message: 'Error deleting user account', error: err });
-            }
-
-            req.session.destroy((err) => {
-                if (err) {
-                    return res.status(500).json({ message: 'Error ending session after account deletion', error: err });
-                }
-
-                res.status(200).json({ message: 'Account deleted successfully' });
-            });
-        });
-    });
-};
-
-
 const getPsychiatristsVisited = (req, res) => {
     const patientId = req.params.patientId;// Assuming userId is stored in session
 
@@ -616,7 +581,6 @@ module.exports = {
     getPersonalDetails,
     patchPersonalDetails,
     patchPassword,
-    deleteAccount,
     getPsychiatristsVisited,
     getConsultation,
     getTotalMedicationReceived,

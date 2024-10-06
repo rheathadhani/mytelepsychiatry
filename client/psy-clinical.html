@@ -192,7 +192,7 @@
                 const psychiatristId = localStorage.getItem('psychiatristId');
 
                 // Axios request to get the list of patients
-                axios.get(`http://localhost:5500/api/psychiatrist/patient-list/${psychiatristId}`)
+                axios.get(`http://184.73.250.53:5500/api/psychiatrist/patient-list/${psychiatristId}`)
                     .then(function (response) {
                         const patients = response.data.patients;
                         const patientTableBody = $('#patient-list');
@@ -241,7 +241,7 @@
                 $('.edit-note').prop('disabled', true);  // Disable edit buttons
                 $('.delete-note').prop('disabled', true);  // Disable delete buttons
 
-                axios.get(`http://localhost:5500/api/psychiatrist/clinical-notes/edit/${psychiatristId}/${patientId}`)
+                axios.get(`http://184.73.250.53:5500/api/psychiatrist/clinical-notes/edit/${psychiatristId}/${patientId}`)
                     .then(function (response) {
                         const notes = response.data.notes;
                         const clinicalNotesTable = $('#clinicalNotesTable');
@@ -301,7 +301,7 @@
                 const psychiatristId = localStorage.getItem('psychiatristId');
 
                 if (patientId && notes.trim()) {
-                    axios.post(`http://localhost:5500/api/psychiatrist/clinical-notes/${psychiatristId}`, {
+                    axios.post(`http://184.73.250.53:5500/api/psychiatrist/clinical-notes/${psychiatristId}`, {
                         patientId: patientId,
                         noteText: notes
                     })
@@ -367,7 +367,7 @@
                     const updatedNoteText = noteDiv.val();
                     const noteId = $(this).data('note-id');
 
-                    axios.patch(`http://localhost:5500/api/psychiatrist/clinical-notes/save/${psychiatristId}/${noteId}`, {
+                    axios.patch(`http://184.73.250.53:5500/api/psychiatrist/clinical-notes/save/${psychiatristId}/${noteId}`, {
                         updatedNoteText: updatedNoteText
                     })
                         .then(function (response) {
@@ -399,7 +399,7 @@
                         console.log(`Deleting note with ID: ${noteId}`); // Debugging log
 
                         // Use Axios to send a DELETE request to delete the clinical note
-                        axios.delete(`http://localhost:5500/api/psychiatrist/clinical-notes/delete/${noteId}`)
+                        axios.delete(`http://184.73.250.53:5500/api/psychiatrist/clinical-notes/delete/${noteId}`)
                             .then(function (response) {
                                 console.log(response.data.message); // Log the success message
 

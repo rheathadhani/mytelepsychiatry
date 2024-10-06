@@ -119,9 +119,9 @@
                     password: password,
                     specialization: specialization
                 };
-
+                
                 // Send the data to the server via POST request
-                axios.post('http://localhost:5500/api/psychiatrists', newPsychiatrist, {
+                axios.post('http://184.73.250.53:5500/api/psychiatrists', newPsychiatrist, {
                     withCredentials: true
                 })
                     .then(function (response) {

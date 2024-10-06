@@ -123,7 +123,7 @@
                     return;
                 }
 
-                axios.post('http://localhost:5500/api/patient/available-psychiatrists', {
+                axios.post('http://184.73.250.53:5500/api/patient/available-psychiatrists', {
                     selectedDateTime: selectedDateTime
                 })
                     .then(function (response) {
@@ -157,7 +157,7 @@
             }
 
             // Axios call to get the selected psychiatrist's profile
-            axios.get(`http://localhost:5500/api/patient/psychiatrist-profile/${selectedPsychiatristId}`)
+            axios.get(`http://184.73.250.53:5500/api/patient/psychiatrist-profile/${selectedPsychiatristId}`)
                 .then(function (response) {
                     const psychiatristProfile = response.data;
 

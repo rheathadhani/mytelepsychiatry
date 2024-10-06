@@ -39,7 +39,6 @@ router.get('/patient/:patientId/medications-received', getTotalMedicationReceive
 router.get('/patient/:patientId/personal-details', getPersonalDetails);   // Get patient details
 router.patch('/patient/:patientId/personal-details', patchPersonalDetails);  // Update patient details
 router.patch('/patient/:patientId/password', patchPassword);    // Update password
-router.delete('/patient/:patientId/account', deleteAccount);    // Delete account
 
 // Psychiatrist-related routes
 router.post('/patient/available-psychiatrists', getAvailablePsychiatrists);

@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 });
 
 app.use(cors({
-    origin: ['http://127.0.0.1:5500', 'http://127.0.0.1:5501', 'http://52.23.204.162:5500'],  //Cross Origin Request w/ Frontend URL
+    origin: ['http://127.0.0.1:5500', 'http://127.0.0.1:5501', 'http://184.73.250.53:5500'],  //Cross Origin Request w/ Frontend URL
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true,  
     allowedHeaders: ['Content-Type', 'Authorization'] 
@@ -46,6 +46,7 @@ app.use('/api', authRoutes);
 app.use('/api', patientRoutes);
 app.use('/api', adminRoutes);
 app.use('/api', psyRoutes);
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const PORT = process.env.PORT || 5500;

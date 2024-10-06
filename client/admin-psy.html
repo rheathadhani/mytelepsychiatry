@@ -168,7 +168,7 @@
         $(document).ready(function () {
             // Fetch all psychiatrists
             function loadPsychiatrists() {
-                axios.get('http://localhost:5500/api/psychiatrists')
+                axios.get('http://184.73.250.53:5500/api/psychiatrists')
                     .then(function (response) {
                         console.log(response.data); // Debugging purpose
                         var psychiatrists = response.data;

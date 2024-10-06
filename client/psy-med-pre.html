@@ -173,7 +173,7 @@
             const $patientSelect = $('#patient');
 
             // Fetch patients for the logged-in psychiatrist using Axios
-            axios.get(`http://localhost:5500/api/psychiatrist/${psychiatristId}/patients-for-prescription`)
+            axios.get(`http://184.73.250.53:5500/api/psychiatrist/${psychiatristId}/patients-for-prescription`)
                 .then(function (response) {
                     const patients = response.data;
 
@@ -223,7 +223,7 @@
                 };
 
                 // Post new prescription using Axios
-                axios.post(`http://localhost:5500/api/psychiatrist/prescription/${psychiatristId}`, prescriptionData)
+                axios.post(`http://184.73.250.53:5500/api/psychiatrist/prescription/${psychiatristId}`, prescriptionData)
                     .then(function (response) {
                         // Show success message
                         $('#successMessage').show();
@@ -242,7 +242,7 @@
 
             // Fetch prescription history
             function fetchPrescriptionHistory() {
-                axios.get(`http://localhost:5500/api/psychiatrist/prescription-history/${psychiatristId}`)
+                axios.get(`http://184.73.250.53:5500/api/psychiatrist/prescription-history/${psychiatristId}`)
                     .then(function (response) {
                         const prescriptions = response.data.history;
                         const $historyBody = $('#prescriptionHistoryBody');
