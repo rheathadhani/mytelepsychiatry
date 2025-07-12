@@ -129,11 +129,11 @@ const registerPatient = (req, res) => {
 
         // Insert into Users table
         const userInsertQuery = `
-            INSERT INTO Users (username, password, email, role)
-            VALUES (?, ?, ?, 'patient');
+            INSERT INTO Users (password, email, role)
+            VALUES (?, ?, 'patient');
         `;
 
-        db.query(userInsertQuery, [fullName, password, email], (err, result) => {
+        db.query(userInsertQuery, [password, email], (err, result) => {
             if (err) {
                 console.error('Error inserting user:', err);
                 return res.status(500).send('Server error');
@@ -158,7 +158,6 @@ const registerPatient = (req, res) => {
                     message: 'Patient registered successfully',
                     user: {
                         user_id: userId,
-                        username: fullName,
                         email: email,
                         role: 'patient'
                     }
